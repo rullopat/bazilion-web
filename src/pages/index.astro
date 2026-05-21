@@ -1,0 +1,374 @@
+---
+import '../styles/global.css';
+
+const features = [
+  {
+    n: '01',
+    title: 'Many minds, one workspace',
+    body: 'Spawn named agents from profiles you author. Each one is its own process with its own identity, soul, and tools — but they share a workspace and a memory.',
+  },
+  {
+    n: '02',
+    title: 'A mailbox between them',
+    body: 'Agents talk to each other through a database-backed mailbox. They send, wait, reply. The conversations are durable; the coordination is theirs.',
+  },
+  {
+    n: '03',
+    title: 'A library they all read from',
+    body: 'A single, BM25-searchable knowledge base for the whole group. Decisions, codebase notes, things learned the hard way — everyone in the room remembers.',
+  },
+  {
+    n: '04',
+    title: 'Personality, written down',
+    body: 'IDENTITY.md, SOUL.md, AGENTS.md. Every agent carries a quiet little folder of who they are. They can edit it themselves, slowly, over time.',
+  },
+  {
+    n: '05',
+    title: 'Tools that mean it',
+    body: 'Web search, web fetch with SSRF guards, file I/O, bash, grep — wired straight into the workspace. Agents act in the world, not against an abstraction.',
+  },
+  {
+    n: '06',
+    title: 'Heartbeats and crons',
+    body: 'Set an agent to wake on an interval, on a cron, on a message. They check their inbox, they think, they go back to sleep. Like an animal would.',
+  },
+  {
+    n: '07',
+    title: 'Twenty providers, one runtime',
+    body: 'Anthropic, OpenAI, Google, Groq, Mistral, Azure, Bedrock — and Ollama and LM Studio when you would rather nothing left the house.',
+  },
+  {
+    n: '08',
+    title: 'Web, CLI, on your phone',
+    body: 'A TanStack React UI on :4322, a small CLI for the terminal-bound, and an Expo app for when you want to chat from the kitchen.',
+  },
+];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/baziu.svg" />
+    <meta name="theme-color" content="#F5F0E8" />
+
+    <title>Bazilion — a local-only multi-agent runtime</title>
+    <meta
+      name="description"
+      content="Bazilion is a local-only multi-agent runtime. Spawn agents that share a workspace, a memory, and a mailbox — on your own machine. Named after a cat."
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Bazilion — a local-only multi-agent runtime" />
+    <meta
+      property="og:description"
+      content="Many minds, one workspace. Local-only. Twenty providers. Named after a cat."
+    />
+    <meta property="og:url" content="https://bazilion.com" />
+    <meta property="og:image" content="https://bazilion.com/baziu.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="page">
+      <!-- ───────────── nav ───────────── -->
+      <nav class="nav" data-reveal="1">
+        <a href="/" class="mark" aria-label="Bazilion home">
+          Baz<span class="dot" aria-hidden="true"></span>lion
+        </a>
+        <ul role="list">
+          <li><a href="#manifesto">manifesto</a></li>
+          <li><a href="#library">the library</a></li>
+          <li><a href="#agents">agents</a></li>
+          <li><a href="https://github.com/rullopat/bazilion" rel="noreferrer">github ↗</a></li>
+        </ul>
+      </nav>
+
+      <!-- ───────────── hero ───────────── -->
+      <header class="hero">
+        <div>
+          <div class="hero__supra" data-reveal="2">
+            multi-agent runtime · your machine, your keys
+          </div>
+          <h1 class="hero__wordmark" data-reveal="3">
+            Baz<span class="ink-eye">i</span>lion
+          </h1>
+          <p class="hero__lede" data-reveal="4">
+            A quiet runtime <br />for <em>many minds</em>, <br />living on your machine.
+          </p>
+          <div class="hero__meta" data-reveal="5">
+            <a class="hero__cta" href="#install">
+              <span>install bazilion</span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="hero__link" href="#manifesto">read the manifesto</a>
+          </div>
+        </div>
+
+        <figure class="hero__portrait" data-reveal="4">
+          <img
+            src="/baziu.svg"
+            alt="Baziu — a Neva Masquerade cat, portrait used as the Bazilion mark"
+            width="460"
+            height="460"
+            fetchpriority="high"
+          />
+          <figcaption class="caption">
+            Baziu, <span>♡</span> 2007 — 2025
+          </figcaption>
+        </figure>
+      </header>
+
+      <!-- ───────────── manifesto ───────────── -->
+      <section class="section" id="manifesto">
+        <div class="section__label">A small manifesto</div>
+        <h2 class="section__title">
+          I wanted agents that <em>stayed home</em>.
+        </h2>
+
+        <div class="manifesto">
+          <div class="manifesto__body">
+            <p class="dropcap">
+              Bazilion is a runtime for many AI agents living together on a single
+              machine — yours. It runs as a small daemon, owns a folder in your
+              home directory, and from that folder it can spawn agents that hold
+              their own identity, write their own notes, and talk to one another
+              through a shared mailbox. The runtime stays on your machine; the
+              transcripts, the memory, and the agents' own folders stay with it.
+              The models are whichever ones you bring keys for — Anthropic,
+              OpenAI, Groq, or a local Ollama if you would rather nothing leaves
+              the house at all.
+            </p>
+            <p>
+              The point is not novelty. The point is that the most interesting
+              things happen when agents can <em>cooperate</em>: read the same
+              library, leave each other notes, hand off a task in the middle of
+              the night and trust the next one will pick it up. Bazilion is the
+              smallest piece of software I could build that lets that happen on
+              one machine, with files you can read.
+            </p>
+          </div>
+
+          <aside class="manifesto__aside">
+            <strong>House rules</strong>
+            Everything lives in <code>~/.bazilion</code>. The daemon owns the
+            state. The agents own their own folders. Memory is plain markdown —
+            <em>you can read it with</em> <code>cat</code>. Bazilion itself
+            never phones home — what your model provider sees is between you
+            and them.
+          </aside>
+        </div>
+      </section>
+
+      <!-- ───────────── library / features ───────────── -->
+      <section class="section" id="library">
+        <div class="section__label">The library</div>
+        <h2 class="section__title">
+          Eight things it does, <em>quietly</em>.
+        </h2>
+
+        <ol class="library" role="list">
+          {features.map((f) => (
+            <li class="library__item">
+              <div class="library__num">{f.n}</div>
+              <div>
+                <h3 class="library__title">{f.title}</h3>
+                <p class="library__desc">{f.body}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <!-- ───────────── agent showcase ───────────── -->
+      <section class="section" id="agents">
+        <div class="section__label">An agent's morning</div>
+        <h2 class="section__title">
+          Each one is a <em>small person</em>.
+        </h2>
+
+        <div class="showcase">
+          <div class="showcase__left">
+            <p class="showcase__lead">
+              "i prefer to think in lists.<br />
+              i ask before i act.<br />
+              i remember what others forget."
+            </p>
+            <p class="showcase__copy">
+              That's the contents of <code>agents/nestor/SOUL.md</code> — a few lines
+              of plain text injected into the agent's system prompt on every turn.
+              Pair it with an <code>IDENTITY.md</code>, an <code>AGENTS.md</code>, a
+              <code>HEARTBEAT.md</code>, and you have a small, persistent persona
+              that lives on disk, that the agent itself can revise, and that
+              you can grep.
+            </p>
+          </div>
+
+          <div>
+            <div class="card-code">
+              <div class="card-code__head">
+                <span>~/.bazilion · session.jsonl</span>
+                <span class="pill">live</span>
+              </div>
+<pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">serve</span>
+<span class="c-ok">✱</span> daemon listening on <span class="c-flag">:4321</span>
+<span class="c-ok">✱</span> workspace <span class="c-flag">~/.bazilion</span>
+<span class="c-ok">✱</span> first run · welcome
+
+<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">spawn</span> <span class="c-flag">nestor</span>
+<span class="c-dim">  ↳</span> profile <span class="c-rose">nestor</span> loaded
+<span class="c-dim">  ↳</span> SOUL.md injected (3 lines)
+<span class="c-dim">  ↳</span> mailbox attached · 0 unread
+<span class="c-dim">  ↳</span> ready.</pre>
+            </div>
+
+            <div class="card-code">
+              <div class="card-code__head">
+                <span>nestor → ada</span>
+                <span class="pill">mailbox</span>
+              </div>
+<pre><span class="c-comment"># nestor leaves a note for ada at 07:14</span>
+<span class="c-cmd">to:</span>   ada
+<span class="c-cmd">re:</span>   the migration we ran last night
+<span class="c-cmd">body:</span>
+  i ran the backfill on 4M rows.
+  found a duplicate-key in <span class="c-rose">orders.legacy_id</span>.
+  noted in <span class="c-flag">memory/migrations.md</span>.
+  please confirm before we drop the column.</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────── rail ───────────── -->
+      <section class="section">
+        <div class="section__label">Three small principles</div>
+        <h2 class="section__title">
+          The shape of the <em>house</em>.
+        </h2>
+
+        <div class="rail">
+          <div class="rail__cell">
+            <h4>Lives on your machine</h4>
+            <p>
+              The daemon never phones home. Workers spawn as subprocesses; their
+              transcripts are JSONL files. Run it on a laptop with the lid closed,
+              run it on a homelab, run it air-gapped.
+            </p>
+          </div>
+          <div class="rail__cell">
+            <h4>State you can read</h4>
+            <p>
+              Everything Bazilion stores is either plain markdown or a single
+              SQLite file. No proprietary blobs. If the project disappeared
+              tomorrow, your agents' memory would still be sitting there, legible.
+            </p>
+          </div>
+          <div class="rail__cell">
+            <h4>Patient, not eager</h4>
+            <p>
+              Heartbeats and crons mean agents can wait. A research agent that
+              checks for new arXiv papers every morning is a more honest design
+              than one that polls every six seconds.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ───────────── install ───────────── -->
+      <section class="section" id="install">
+        <div class="section__label">How to begin</div>
+        <h2 class="section__title">
+          One file. <em>One command.</em>
+        </h2>
+
+        <div class="card-code" style="max-width: 720px;">
+          <div class="card-code__head">
+            <span>terminal</span>
+            <span class="pill">macOS · linux</span>
+          </div>
+<pre><span class="c-comment"># clone the repo, install, run.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">git clone</span> https://github.com/rullopat/bazilion
+<span class="c-prompt">$</span> <span class="c-cmd">cd</span> bazilion &amp;&amp; <span class="c-cmd">pnpm install</span>
+<span class="c-prompt">$</span> <span class="c-cmd">pnpm bazilion serve</span>
+<span class="c-ok">✱</span> open <span class="c-flag">http://localhost:4322</span>
+
+<span class="c-comment"># requires Node 22.12+ (built-in node:sqlite).</span>
+<span class="c-comment"># the first run creates ~/.bazilion with a default profile.</span></pre>
+        </div>
+      </section>
+
+      <!-- ───────────── dedication ───────────── -->
+      <section class="section">
+        <div class="dedication">
+          <div class="glyph" aria-hidden="true">⁂</div>
+          <p>
+            <strong>Bazilion takes its name and its face</strong> from a Neva
+            Masquerade cat who lived with us for eighteen and a half years and
+            left in 2025.
+          </p>
+          <p>
+            He was sweet. He was cuddly. He was sharper than he had any right
+            to be — and he had a temper, especially at the vet, and especially
+            when we had been gone too long. He met us at the door when we came
+            home, and he let us hear about it when we had kept him waiting.
+            He had opinions, and he kept them.
+          </p>
+          <p>
+            I wanted a runtime that worked a little like that: living on its
+            own machine, doing small useful things in the background, keeping
+            track of who was home and who was not. So I named it after him,
+            and put his portrait on the box.
+          </p>
+          <div class="sig">in memoriam · Baziu · the original local agent</div>
+        </div>
+      </section>
+
+      <!-- ───────────── footer ───────────── -->
+      <footer class="footer">
+        <div class="mark">Baz<span class="ink-eye">i</span>lion</div>
+        <div class="footer__meta">
+          <div class="row">
+            <a href="https://github.com/rullopat/bazilion" rel="noreferrer">github</a>
+            <a href="#manifesto">manifesto</a>
+            <a href="https://www.patriziorullo.com/" rel="noreferrer">built by Patrizio Rullo ↗</a>
+          </div>
+          <div>© 2026 Bazilion · <span class="imo">made slowly, in memory of a cat.</span></div>
+        </div>
+      </footer>
+    </div>
+
+    <script is:inline>
+      // light intersection-observer reveal for sections below the fold.
+      (function () {
+        if (typeof IntersectionObserver === 'undefined') return;
+        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduce) return;
+
+        const targets = document.querySelectorAll('section.section');
+        targets.forEach((el) => el.classList.add('in-view-hidden'));
+
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.remove('in-view-hidden');
+                e.target.classList.add('in-view-shown');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
+        );
+        targets.forEach((el) => io.observe(el));
+      })();
+    </script>
+  </body>
+</html>

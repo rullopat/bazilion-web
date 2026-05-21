@@ -1,0 +1,23 @@
+{
+  "name": "bazilion-web",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Marketing site for Bazilion — a local-only multi-agent runtime.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "deploy": "astro build && wrangler deploy",
+    "cf:dev": "astro build && wrangler dev"
+  },
+  "dependencies": {
+    "astro": "^6.3.7"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  },
+  "packageManager": "pnpm@10.29.2"
+}

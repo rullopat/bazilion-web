@@ -1,0 +1,15 @@
+{
+  // Static-only Cloudflare Worker. No worker code — `assets.directory`
+  // makes the Worker serve files from `dist/` directly. Build with
+  // `pnpm build`, deploy with `pnpm deploy`.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bazilion-web",
+  "compatibility_date": "2026-05-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
