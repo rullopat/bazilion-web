@@ -2,6 +2,9 @@
   // Static-only Cloudflare Worker. No worker code — `assets.directory`
   // makes the Worker serve files from `dist/` directly. Build with
   // `pnpm build`, deploy with `pnpm deploy`.
+  // The Cloudflare account_id is read from CLOUDFLARE_ACCOUNT_ID
+  // (loaded by the `deploy` script from a gitignored .env file —
+  // see .env.example).
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "bazilion-web",
   "compatibility_date": "2026-05-01",
