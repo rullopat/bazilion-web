@@ -1,0 +1,9 @@
+[
+  {
+    "name": "astro-static-site",
+    "description": "Use when editing, reviewing, building, or deploying this Bazilion Astro static marketing site.",
+    "path": "skills/astro-static-site/SKILL.md",
+    "tags": ["astro", "static-site", "cloudflare", "marketing-site"],
+    "version": "1.0.0"
+  }
+]
