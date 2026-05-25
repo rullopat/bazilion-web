@@ -3,7 +3,7 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "Marketing site for Bazilion — a local-only multi-agent runtime.",
+  "description": "Static website for Bazilion, an MIT-licensed local-first multi-agent runtime.",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",

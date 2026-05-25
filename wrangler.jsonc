@@ -1,7 +1,7 @@
 {
   // Static-only Cloudflare Worker. No worker code — `assets.directory`
-  // makes the Worker serve files from `dist/` directly. Cloudflare's Git
-  // integration handles production deploys from `main`.
+  // makes the Worker serve files from `dist/` directly. Cloudflare Workers
+  // Builds handles production deploys from `main`.
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "bazilion-web",
   "compatibility_date": "2026-05-01",
