@@ -4,48 +4,48 @@ import '../styles/global.css';
 const features = [
   {
     n: '01',
-    title: 'Many minds, one workspace',
-    body: 'Spawn named agents from profiles you author. Each one is its own process with its own identity, soul, and tools — but they share a workspace and a memory.',
+    title: 'Profiles become agents',
+    body: 'A profile is an agent template: SOUL.md, IDENTITY.md, AGENTS.md, tools, skills mode, default model, and the notes that shape how that agent behaves when spawned.',
   },
   {
     n: '02',
-    title: 'A mailbox between them',
-    body: 'Agents talk to each other through a database-backed mailbox. They send, wait, reply. The conversations are durable; the coordination is theirs.',
+    title: 'Profile groups spawn teams',
+    body: 'New in the 0.2 line: profile groups are reusable team templates. One spawn materializes an ordered set of agents into a target group, with per-member names, models, and reasoning levels.',
   },
   {
     n: '03',
-    title: 'A library they all read from',
-    body: 'A single, BM25-searchable knowledge base for the whole group. Decisions, codebase notes, things learned the hard way — everyone in the room remembers.',
+    title: 'A mailbox between them',
+    body: 'Agents coordinate through a durable mailbox: send_message, read_inbox, and wait_for_reply in the loop, plus CLI, API, and web inbox surfaces outside it.',
   },
   {
     n: '04',
-    title: 'Personality, written down',
-    body: 'IDENTITY.md, SOUL.md, AGENTS.md. Every agent carries a quiet little folder of who they are. They can edit it themselves, slowly, over time.',
+    title: 'Shared memory, indexed by qmd',
+    body: 'Every group has one memory rooted at <group>/memory. Bazilion uses qmd for BM25 over markdown, so project facts, decisions, and discoveries are searchable by every agent in the group.',
   },
   {
     n: '05',
-    title: 'Tools that mean it',
-    body: 'Web search, web fetch with SSRF guards, file I/O, bash, grep — wired straight into the workspace. Agents act in the world, not against an abstraction.',
+    title: 'The user context is explicit',
+    body: 'A group has one USER.md for the person, project, preferences, and standing instructions. It is injected into prompts, and agents can update it through guarded user_md tools.',
   },
   {
     n: '06',
-    title: 'Heartbeats and crons',
-    body: 'Set an agent to wake on an interval, on a cron, on a message. They check their inbox, they think, they go back to sleep. Like an animal would.',
+    title: 'State is mostly files',
+    body: 'Agent homes, group roots, templates, sessions, skills, and memory live under ~/.bazilion. The daemon owns SQLite; the useful material stays inspectable on disk.',
   },
   {
     n: '07',
-    title: 'Twenty providers, one runtime',
-    body: 'Anthropic, OpenAI, Google, Groq, Mistral, Azure, Bedrock — and Ollama and LM Studio when you would rather nothing left the house.',
+    title: 'Tools live in the workspace',
+    body: 'Agents get coding tools, web search, hardened web fetch, mailbox tools, memory tools, and home-file tools. They can work in a linked project folder instead of a toy sandbox.',
   },
   {
     n: '08',
-    title: 'Web, CLI, on your phone',
-    body: 'A TanStack React UI on :4322, a small CLI for the terminal-bound, and an Expo app for when you want to chat from the kitchen.',
+    title: 'Heartbeats and crons',
+    body: 'Interval and cron triggers can wake an agent with a stored message, so an agent can check inboxes, review notes, or run a recurring research task without a chat window open.',
   },
   {
     n: '09',
-    title: 'Skills, on a shelf',
-    body: 'A library of SKILL.md files in ~/.bazilion/skills. Attach one to an agent and its contents slip into the system prompt — instructions, examples, taste. Bring your own, or import the ones written for OpenClaw.',
+    title: 'MIT, local-first, provider-flexible',
+    body: 'Bazilion is a personal open source project published under the MIT license. Use hosted providers, ChatGPT OAuth, Ollama, LM Studio, or other supported backends.',
   },
 ];
 ---
@@ -58,17 +58,17 @@ const features = [
     <link rel="icon" type="image/svg+xml" href="/baziu.svg" />
     <meta name="theme-color" content="#F5F0E8" />
 
-    <title>Bazilion — a local-only multi-agent runtime</title>
+    <title>Bazilion — personal open source multi-agent runtime</title>
     <meta
       name="description"
-      content="Bazilion is a local-only multi-agent runtime. Spawn agents that share a workspace, a memory, and a mailbox — on your own machine. Named after a cat."
+      content="Bazilion is Patrizio Rullo's MIT-licensed local-first multi-agent runtime. Build agent templates, spawn teams from profile groups, and let agents share messages, USER.md, and qmd-indexed memory."
     />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Bazilion — a local-only multi-agent runtime" />
+    <meta property="og:title" content="Bazilion — personal open source multi-agent runtime" />
     <meta
       property="og:description"
-      content="Many minds, one workspace. Local-only. Twenty providers. Named after a cat."
+      content="MIT-licensed, local-first, and built around profiles, profile groups, agent messaging, shared USER.md, and qmd memory."
     />
     <meta property="og:url" content="https://bazilion.com" />
     <meta property="og:image" content="https://bazilion.com/baziu.svg" />
@@ -89,9 +89,10 @@ const features = [
           Baz<span class="dot" aria-hidden="true"></span>lion
         </a>
         <ul role="list">
-          <li><a href="#manifesto">manifesto</a></li>
-          <li><a href="#library">the library</a></li>
-          <li><a href="#agents">agents</a></li>
+          <li><a href="#manifesto">why</a></li>
+          <li><a href="#library">features</a></li>
+          <li><a href="#agents">templates</a></li>
+          <li><a href="#install">install</a></li>
           <li><a href="https://github.com/rullopat/bazilion" rel="noreferrer">github ↗</a></li>
         </ul>
       </nav>
@@ -106,14 +107,14 @@ const features = [
             Baz<span class="ink-eye">i</span>lion
           </h1>
           <p class="hero__lede" data-reveal="4">
-            A quiet runtime <br />for <em>many minds</em>, <br />living on your machine.
+            An MIT-licensed runtime <br />for <em>agent teams</em>, <br />living on your machine.
           </p>
           <div class="hero__meta" data-reveal="5">
             <a class="hero__cta" href="#install">
               <span>install bazilion</span>
               <span class="arrow" aria-hidden="true">→</span>
             </a>
-            <a class="hero__link" href="#manifesto">read the manifesto</a>
+            <a class="hero__link" href="https://github.com/rullopat/bazilion/blob/main/LICENSE" rel="noreferrer">MIT license ↗</a>
           </div>
         </div>
 
@@ -133,50 +134,45 @@ const features = [
 
       <!-- ───────────── manifesto ───────────── -->
       <section class="section" id="manifesto">
-        <div class="section__label">A small manifesto</div>
+        <div class="section__label">Personal open source</div>
         <h2 class="section__title">
-          I wanted agents that <em>stayed home</em>.
+          A runtime I built because I wanted agents that <em>stayed home</em>.
         </h2>
 
         <div class="manifesto">
           <div class="manifesto__body">
             <p class="dropcap">
-              Bazilion is a runtime for many AI agents living together on a single
-              machine — yours. It runs as a small daemon, owns a folder in your
-              home directory, and from that folder it can spawn agents that hold
-              their own identity, write their own notes, and talk to one another
-              through a shared mailbox. The runtime stays on your machine; the
-              transcripts, the memory, and the agents' own folders stay with it.
-              The models are whichever ones you bring keys for — Anthropic,
-              OpenAI, Groq, or a local Ollama if you would rather nothing leaves
-              the house at all.
+              Bazilion is my personal open source attempt at a local-first
+              multi-agent runtime. It is not a company platform or hosted
+              service. It is a small MIT-licensed daemon, CLI, and source-run web
+              UI for people who want to experiment with agents that have files,
+              memory, templates, and a way to talk to each other while remaining
+              under their own control.
             </p>
             <p>
-              The point is not novelty. The point is that the most interesting
-              things happen when agents can <em>cooperate</em>: read the same
-              library, leave each other notes, hand off a task in the middle of
-              the night and trust the next one will pick it up. Bazilion is the
-              smallest piece of software I could build that lets that happen on
-              one machine, with files you can read.
+              The 0.2 line is especially about templates. A profile defines one
+              kind of agent. A profile group defines a whole team: several
+              profile-backed agents, ordered, named, optionally model-overridden,
+              and spawned transactionally into one collaboration group. Once
+              there, they share a USER.md, a qmd-indexed markdown memory, and a
+              durable mailbox.
             </p>
           </div>
 
           <aside class="manifesto__aside">
-            <strong>House rules</strong>
-            Everything lives in <code>~/.bazilion</code>. The daemon owns the
-            state. The agents own their own folders. Memory is plain markdown —
-            <em>you can read it with</em> <code>cat</code>. Bazilion itself
-            never phones home — what your model provider sees is between you
-            and them.
+            <strong>Release 0.2.1</strong>
+            Published on npm as <code>bazilion@0.2.1</code>. The CLI package is
+            MIT licensed, requires Node 24+, and bundles the daemon. The web UI
+            is still run from the source checkout while the project is young.
           </aside>
         </div>
       </section>
 
       <!-- ───────────── library / features ───────────── -->
       <section class="section" id="library">
-        <div class="section__label">The library</div>
+        <div class="section__label">Core ideas</div>
         <h2 class="section__title">
-          Nine things it does, <em>quietly</em>.
+          The pieces that make agent collaboration <em>concrete</em>.
         </h2>
 
         <ol class="library" role="list">
@@ -194,59 +190,54 @@ const features = [
 
       <!-- ───────────── agent showcase ───────────── -->
       <section class="section" id="agents">
-        <div class="section__label">An agent's morning</div>
+        <div class="section__label">Templates</div>
         <h2 class="section__title">
-          Each one is a <em>small person</em>.
+          Profiles describe agents. Profile groups describe <em>teams</em>.
         </h2>
 
         <div class="showcase">
           <div class="showcase__left">
             <p class="showcase__lead">
-              "i prefer to think in lists.<br />
-              i ask before i act.<br />
-              i remember what others forget."
+              Draft the roles once.<br />
+              Spawn the whole working group.<br />
+              Let them coordinate in the open.
             </p>
             <p class="showcase__copy">
-              That's the contents of <code>agents/nestor/SOUL.md</code> — a few lines
-              of plain text injected into the agent's system prompt on every turn.
-              Pair it with an <code>IDENTITY.md</code>, an <code>AGENTS.md</code>, a
-              <code>HEARTBEAT.md</code>, and you have a small, persistent persona
-              that lives on disk, that the agent itself can revise, and that
-              you can grep.
+              A profile is the reusable agent shape. A profile group is the
+              reusable collaboration shape. In the 0.2 line the CLI, HTTP API, and web
+              UI can all create profile groups, edit their members, and spawn an
+              entire team into a target group in one call.
             </p>
           </div>
 
           <div>
             <div class="card-code">
               <div class="card-code__head">
-                <span>~/.bazilion · session.jsonl</span>
-                <span class="pill">live</span>
+                <span>team template</span>
+                <span class="pill">0.2.1</span>
               </div>
-<pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">serve</span>
-<span class="c-ok">✱</span> daemon listening on <span class="c-flag">:4321</span>
-<span class="c-ok">✱</span> workspace <span class="c-flag">~/.bazilion</span>
-<span class="c-ok">✱</span> first run · welcome
-
-<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">spawn</span> <span class="c-flag">nestor</span>
-<span class="c-dim">  ↳</span> profile <span class="c-rose">nestor</span> loaded
-<span class="c-dim">  ↳</span> SOUL.md injected (3 lines)
-<span class="c-dim">  ↳</span> mailbox attached · 0 unread
-<span class="c-dim">  ↳</span> ready.</pre>
+<pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">profile-group</span> <span class="c-cmd">spawn</span> <span class="c-flag">release-review</span> \
+    <span class="c-flag">--group</span> bazilion-020
+<span class="c-ok">*</span> group <span class="c-rose">bazilion-020</span> created
+<span class="c-ok">*</span> spawned <span class="c-flag">reader</span> from profile docs-reviewer
+<span class="c-ok">*</span> spawned <span class="c-flag">tester</span> from profile cli-tester
+<span class="c-ok">*</span> spawned <span class="c-flag">maintainer</span> from profile release-captain
+<span class="c-dim">  -></span> one USER.md · one qmd memory · one mailbox</pre>
             </div>
 
             <div class="card-code">
               <div class="card-code__head">
-                <span>nestor → ada</span>
+                <span>agent messaging</span>
                 <span class="pill">mailbox</span>
               </div>
-<pre><span class="c-comment"># nestor leaves a note for ada at 07:14</span>
-<span class="c-cmd">to:</span>   ada
-<span class="c-cmd">re:</span>   the migration we ran last night
+<pre><span class="c-comment"># reader leaves a note for maintainer</span>
+<span class="c-cmd">to:</span>   maintainer
+<span class="c-cmd">re:</span>   changelog summary for the 0.2 line
 <span class="c-cmd">body:</span>
-  i ran the backfill on 4M rows.
-  found a duplicate-key in <span class="c-rose">orders.legacy_id</span>.
-  noted in <span class="c-flag">memory/migrations.md</span>.
-  please confirm before we drop the column.</pre>
+  profile groups are the headline.
+  web, CLI, and API paths are in parity.
+  wrote notes to <span class="c-flag">memory/releases.md</span>.
+  please check install docs before publishing.</pre>
             </div>
           </div>
         </div>
@@ -254,34 +245,35 @@ const features = [
 
       <!-- ───────────── rail ───────────── -->
       <section class="section">
-        <div class="section__label">Three small principles</div>
+        <div class="section__label">How shared context works</div>
         <h2 class="section__title">
-          The shape of the <em>house</em>.
+          USER.md, memory, and messages make the group <em>coherent</em>.
         </h2>
 
         <div class="rail">
           <div class="rail__cell">
-            <h4>Lives on your machine</h4>
+            <h4>USER.md is shared</h4>
             <p>
-              The daemon never phones home. Workers spawn as subprocesses; their
-              transcripts are JSONL files. Run it on a laptop with the lid closed,
-              run it on a homelab, run it air-gapped.
+              Each group has one USER.md for stable context about the user,
+              project, preferences, and standing instructions. Agents share that
+              briefing, and updates go through guarded tools with concurrency
+              checks instead of ad hoc prompt drift.
             </p>
           </div>
           <div class="rail__cell">
-            <h4>State you can read</h4>
+            <h4>Memory is searchable markdown</h4>
             <p>
-              Everything Bazilion stores is either plain markdown or a single
-              SQLite file. No proprietary blobs. If the project disappeared
-              tomorrow, your agents' memory would still be sitting there, legible.
+              Group memory is backed by qmd: BM25 over markdown under the group
+              memory folder. Agents can write decisions once and later retrieve
+              them by search instead of relying on chat history.
             </p>
           </div>
           <div class="rail__cell">
-            <h4>Patient, not eager</h4>
+            <h4>Messages are first-class</h4>
             <p>
-              Heartbeats and crons mean agents can wait. A research agent that
-              checks for new arXiv papers every morning is a more honest design
-              than one that polls every six seconds.
+              The mailbox is not just UI chat. It is a coordination primitive:
+              agents can send, read, wait for replies, and pick up work left by
+              another member of the group.
             </p>
           </div>
         </div>
@@ -291,27 +283,44 @@ const features = [
       <section class="section" id="install">
         <div class="section__label">How to begin</div>
         <h2 class="section__title">
-          One file. <em>One command.</em>
+          Daemon from npm. Web UI from the <em>source checkout</em>.
         </h2>
 
-        <div class="card-code" style="max-width: 720px;">
-          <div class="card-code__head">
-            <span>terminal</span>
-            <span class="pill">macOS · linux</span>
-          </div>
-<pre><span class="c-comment"># zero install. one command.</span>
+        <div class="install-grid">
+          <div class="card-code">
+            <div class="card-code__head">
+              <span>daemon + CLI</span>
+              <span class="pill">npm</span>
+            </div>
+<pre><span class="c-comment"># Requires Node 24+.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">npx</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">serve</span>
-<span class="c-ok">✱</span> daemon listening on <span class="c-flag">127.0.0.1:4321</span>
-<span class="c-ok">✱</span> workspace <span class="c-flag">~/.bazilion</span> · first run · welcome
-<span class="c-ok">✱</span> ready.
+<span class="c-ok">*</span> daemon listening on <span class="c-flag">127.0.0.1:4321</span>
+<span class="c-ok">*</span> workspace <span class="c-flag">~/.bazilion</span>
+<span class="c-ok">*</span> bootstrap token written to <span class="c-flag">auth.json</span>
 
-<span class="c-comment"># requires Node 24+ (native TS, node:sqlite).</span>
-<span class="c-comment"># published on npm as `bazilion`, with provenance.</span>
+<span class="c-comment"># Or install once:</span>
+<span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">bazilion</span>
+<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">serve</span></pre>
+          </div>
 
-<span class="c-comment"># want the bundled web UI too? clone the repo:</span>
-<span class="c-prompt">$</span> <span class="c-cmd">git clone</span> https://github.com/rullopat/bazilion
-<span class="c-prompt">$</span> <span class="c-cmd">cd</span> bazilion &amp;&amp; <span class="c-cmd">pnpm install</span> &amp;&amp; <span class="c-cmd">pnpm bazilion serve</span>
-<span class="c-ok">✱</span> open <span class="c-flag">http://localhost:4322</span></pre>
+          <div class="card-code">
+            <div class="card-code__head">
+              <span>web UI today</span>
+              <span class="pill">source</span>
+            </div>
+<pre><span class="c-comment"># The web UI is not bundled in npm yet.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">git</span> <span class="c-cmd">clone</span> https://github.com/rullopat/bazilion
+<span class="c-prompt">$</span> <span class="c-cmd">cd</span> bazilion
+<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">install</span>
+
+<span class="c-comment"># Terminal 1: source daemon.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">tsx</span> apps/cli/src/index.ts serve
+
+<span class="c-comment"># Terminal 2: web app on 4322.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">cd</span> apps/web
+<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">dev</span>
+<span class="c-ok">*</span> open <span class="c-flag">http://127.0.0.1:4322</span></pre>
+          </div>
         </div>
       </section>
 
@@ -347,10 +356,10 @@ const features = [
         <div class="footer__meta">
           <div class="row">
             <a href="https://github.com/rullopat/bazilion" rel="noreferrer">github</a>
-            <a href="#manifesto">manifesto</a>
+            <a href="#manifesto">why</a>
             <a href="https://www.patriziorullo.com/" rel="noreferrer">built by Patrizio Rullo ↗</a>
           </div>
-          <div>© 2026 Bazilion · <span class="imo">made slowly, in memory of a cat.</span></div>
+          <div>© 2026 Patrizio Rullo · MIT licensed · <span class="imo">made slowly, in memory of a cat.</span></div>
         </div>
       </footer>
     </div>

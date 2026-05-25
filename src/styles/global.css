@@ -569,8 +569,18 @@ a:hover { color: var(--sapphire-deep); }
 
 .card-code + .card-code { margin-top: 1.25rem; }
 
+.install-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.install-grid .card-code + .card-code { margin-top: 0; }
+
 @media (max-width: 880px) {
   .showcase { grid-template-columns: 1fr; }
+  .install-grid { grid-template-columns: 1fr; }
 }
 
 /* ---------- two-cell rail (philosophy / providers etc.) ---------- */
