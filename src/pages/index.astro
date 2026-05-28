@@ -10,7 +10,7 @@ const features = [
   {
     n: '02',
     title: 'Profile groups spawn teams',
-    body: 'New in the 0.2 line: profile groups are reusable team templates. One spawn materializes an ordered set of agents into a target group, with per-member names, models, and reasoning levels.',
+    body: 'Profile groups are reusable team templates. One spawn materializes an ordered set of agents into a target group, with per-member names, models, and reasoning levels.',
   },
   {
     n: '03',
@@ -93,6 +93,7 @@ const features = [
           <li><a href="#library">features</a></li>
           <li><a href="#agents">templates</a></li>
           <li><a href="#install">install</a></li>
+          <li><a href="/docs">docs</a></li>
           <li><a href="https://github.com/rullopat/bazilion" rel="noreferrer">github ↗</a></li>
         </ul>
       </nav>
@@ -150,7 +151,7 @@ const features = [
               under their own control.
             </p>
             <p>
-              The 0.2 line is especially about templates. A profile defines one
+              Bazilion is especially about templates. A profile defines one
               kind of agent. A profile group defines a whole team: several
               profile-backed agents, ordered, named, optionally model-overridden,
               and spawned transactionally into one collaboration group. Once
@@ -160,8 +161,8 @@ const features = [
           </div>
 
           <aside class="manifesto__aside">
-            <strong>Release 0.2.1</strong>
-            Published on npm as <code>bazilion@0.2.1</code>. The CLI package is
+            <strong>On npm</strong>
+            Published on npm as <code>bazilion</code>. The CLI package is
             MIT licensed, requires Node 24+, and bundles the daemon. The web UI
             is still run from the source checkout while the project is young.
           </aside>
@@ -204,7 +205,7 @@ const features = [
             </p>
             <p class="showcase__copy">
               A profile is the reusable agent shape. A profile group is the
-              reusable collaboration shape. In the 0.2 line the CLI, HTTP API, and web
+              reusable collaboration shape. The CLI, HTTP API, and web
               UI can all create profile groups, edit their members, and spawn an
               entire team into a target group in one call.
             </p>
@@ -214,7 +215,7 @@ const features = [
             <div class="card-code">
               <div class="card-code__head">
                 <span>team template</span>
-                <span class="pill">0.2.1</span>
+                <span class="pill">cli</span>
               </div>
 <pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">profile-group</span> <span class="c-cmd">spawn</span> <span class="c-flag">release-review</span> \
     <span class="c-flag">--group</span> bazilion-020
@@ -232,7 +233,7 @@ const features = [
               </div>
 <pre><span class="c-comment"># reader leaves a note for maintainer</span>
 <span class="c-cmd">to:</span>   maintainer
-<span class="c-cmd">re:</span>   changelog summary for the 0.2 line
+<span class="c-cmd">re:</span>   changelog summary for the release
 <span class="c-cmd">body:</span>
   profile groups are the headline.
   web, CLI, and API paths are in parity.
@@ -355,6 +356,7 @@ const features = [
         <div class="mark">Baz<span class="ink-eye">i</span>lion</div>
         <div class="footer__meta">
           <div class="row">
+            <a href="/docs">docs</a>
             <a href="https://github.com/rullopat/bazilion" rel="noreferrer">github</a>
             <a href="#manifesto">why</a>
             <a href="https://www.patriziorullo.com/" rel="noreferrer">built by Patrizio Rullo ↗</a>

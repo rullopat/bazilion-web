@@ -1,0 +1,54 @@
+---
+title: Bazilion documentation
+description: An MIT-licensed, local-first multi-agent runtime — profiles, profile groups, shared memory, and a mailbox between agents.
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+Bazilion is a personal, open-source, **local-first multi-agent runtime**. It
+runs as a small daemon on your own machine, owns a workspace under
+`~/.bazilion`, and lets you build agent templates, spawn whole teams from them,
+and let those agents share files, memory, and messages — all under your own
+control, with your own provider keys.
+
+It is not a hosted platform. It is a daemon, a CLI, and a web UI you run
+yourself, published under the MIT license.
+
+<CardGrid>
+  <LinkCard
+    title="Getting started"
+    href="/docs/getting-started/"
+    description="Install the daemon, boot it, and finish first-run setup."
+  />
+  <LinkCard
+    title="Core concepts"
+    href="/docs/concepts/"
+    description="Profiles, profile groups, groups, memory, and the mailbox."
+  />
+  <LinkCard
+    title="Configuration"
+    href="/docs/configuration/"
+    description="Providers, secrets, tokens, and the on-disk layout."
+  />
+</CardGrid>
+
+## How the pieces fit
+
+<CardGrid stagger>
+  <Card title="Profiles become agents" icon="seti:config">
+    A profile is an agent template — SOUL.md, IDENTITY.md, tools, skills mode,
+    and a default model. Spawning a profile creates a live agent.
+  </Card>
+  <Card title="Profile groups spawn teams" icon="rocket">
+    An ordered set of profile-backed members spawned transactionally into one
+    collaboration group, with per-member names, models, and reasoning levels.
+  </Card>
+  <Card title="A mailbox between them" icon="email">
+    Agents coordinate through a durable mailbox: `send_message`, `read_inbox`,
+    and `wait_for_reply` in the loop, plus CLI, API, and web surfaces.
+  </Card>
+  <Card title="Shared memory, indexed" icon="magnifier">
+    Each group has one memory rooted at `<group>/memory`, indexed with qmd
+    (BM25 over markdown) so every agent in the group can search it.
+  </Card>
+</CardGrid>
