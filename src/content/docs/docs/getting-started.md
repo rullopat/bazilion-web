@@ -73,6 +73,8 @@ bazilion agent chat <agent-id>
 - [Core concepts](/docs/concepts/) — profiles, profile groups, groups, memory,
   and the mailbox. Read this before building teams.
 - [The web interface](/docs/web-interface/) — a tour of every screen.
+- [Tools & integrations](/docs/tools/) — browser automation, MCP servers, and
+  sending files to and from agents.
 - [Connecting Telegram](/docs/telegram/) — give your agents their own Telegram
   topics.
 - [Configuration](/docs/configuration/) — providers, secrets, tokens, and the

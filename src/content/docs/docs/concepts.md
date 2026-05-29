@@ -1,6 +1,6 @@
 ---
 title: Core concepts
-description: Profiles, profile groups, groups, USER.md, shared memory, the mailbox, and triggers.
+description: Profiles, profile groups, groups, USER.md, shared memory, the mailbox, triggers, and tools.
 ---
 
 Bazilion is built from a small set of concepts that compose. Once you know
@@ -57,6 +57,13 @@ and the web inbox.
 Interval and cron **triggers** can wake an agent with a stored message — so an
 agent can check its inbox, review notes, or run a recurring task without a chat
 window open.
+
+## Tools
+
+Agents act through **tools**. Alongside the built-in coding, web, mailbox, and
+memory tools, the daemon can give every agent a real Playwright **browser**, the
+tools of any **MCP server** you connect, and the ability to send files back with
+`deliver_file`. See [Tools & integrations](/docs/tools/) for the full toolset.
 
 ## State on disk
 

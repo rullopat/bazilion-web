@@ -80,6 +80,7 @@ export default defineConfig({
           label: 'Guides',
           items: [
             { label: 'The web interface', slug: 'docs/web-interface' },
+            { label: 'Tools & integrations', slug: 'docs/tools' },
             { label: 'Connecting Telegram', slug: 'docs/telegram' },
           ],
         },

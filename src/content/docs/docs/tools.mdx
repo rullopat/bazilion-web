@@ -1,0 +1,103 @@
+---
+title: Tools & integrations
+description: The agent toolset — browser automation with Playwright, MCP servers, file handling, and the built-in coding, web, mailbox, and memory tools.
+---
+
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Every agent runs with a toolset that the daemon assembles for it. Some tools are
+built in; others — a real browser, and any [MCP](#mcp-servers) server you
+connect — are opt-in capabilities you enable once and every agent can then use.
+
+## The built-in tools
+
+By default an agent gets:
+
+- **coding tools** — read, write, and edit files in its group's filesystem root,
+- **web search** and a **hardened web fetch** (SSRF-guarded),
+- **mailbox tools** — `send_message`, `read_inbox`, `wait_for_reply`,
+- **memory tools** — search and write the group's [shared memory](/docs/concepts/#shared-memory),
+- **home-file tools** — read and update its own `IDENTITY.md` and notes.
+
+Because a group's root can be a symlink to a real project (see
+[Core concepts](/docs/concepts/#groups)), agents work on actual code rather than
+a throwaway sandbox.
+
+## Browser automation
+
+Agents can drive a real **Playwright** browser. Perception is
+**accessibility-tree-first**: the agent reads an aria snapshot with stable
+element references and acts on those references, so it doesn't depend on a vision
+model to see the page.
+
+The suite covers navigation and interaction — `browser_navigate`,
+`browser_snapshot`, `browser_click`, `browser_type`, `browser_fill_form`,
+`browser_select`, `browser_hover`, `browser_press_key`, `browser_go_back`,
+`browser_tabs`, `browser_take_screenshot`, `browser_console`, and
+`browser_network`.
+
+Install the browser binary once after upgrading:
+
+```sh
+pnpm exec playwright install chromium
+```
+
+Then enable browser automation on **config → Browser Automation** (or via
+environment variables).
+
+<Aside type="caution">
+A network-layer **SSRF guard** blocks loopback and private-network targets by
+default, so an agent can't browse `localhost` or your LAN. For local development
+you can override it with the `BROWSER_ALLOW_PRIVATE_NETWORK` environment
+variable.
+</Aside>
+
+## MCP servers
+
+The daemon is a **Model Context Protocol** client. Connect an MCP server and its
+tools are discovered automatically and injected into every agent's turn,
+namespaced as `mcp__<server>__<tool>` so they never collide with built-ins.
+
+Three transports are supported:
+
+- **stdio** — the daemon launches the server as a local subprocess,
+- **Streamable-HTTP** — a remote server over HTTP, with optional bearer auth,
+- **SSE** — a server-sent-events endpoint, with optional bearer auth.
+
+Manage servers from the CLI:
+
+```sh
+bazilion mcp add <name> …     # register a server
+bazilion mcp list             # list configured servers
+bazilion mcp show <name>      # inspect one server and its tools
+bazilion mcp test <name>      # connect and verify it responds
+bazilion mcp enable <name>
+bazilion mcp disable <name>
+bazilion mcp rm <name>
+```
+
+The same servers are managed visually on the **`/config/mcp`** page.
+
+## File handling
+
+Files move **both ways** between you and your agents, across the web UI,
+Telegram, and the CLI.
+
+**Inbound.** Attach a file and the daemon classifies it: images are passed to the
+model as vision input, while other files are stored where the agent can open them
+with its coding tools. From the CLI:
+
+```sh
+bazilion agent chat <agent-id> --image ./screenshot.png
+bazilion agent chat <agent-id> --file ./report.pdf
+```
+
+**Outbound.** Agents send files back with the **`deliver_file`** tool (up to
+**25 MB** per file). A delivered image appears as a standalone image block in the
+web chat and as a photo on Telegram; other files arrive as downloads.
+
+<Aside type="note">
+File handling, the browser, and MCP tools are all available the same way from the
+CLI, the HTTP API, and the web UI — they're capabilities of the daemon, not of
+any one surface.
+</Aside>

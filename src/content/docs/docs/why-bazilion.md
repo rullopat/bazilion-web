@@ -52,7 +52,7 @@ cron wake-ups), an agent can pick up work left by another and act on a schedule.
 | | OpenClaw | Bazilion |
 | --- | --- | --- |
 | Shape | Personal assistant gateway | Multi-agent team runtime |
-| Extensibility | Skills **and** plugins (in-process TypeScript, ~28 lifecycle hooks) | Skills only (prompt-only); all other capability is native daemon code |
+| Extensibility | Skills **and** plugins (in-process TypeScript, ~28 lifecycle hooks) | Prompt-only skills **and** out-of-process MCP servers; all other capability is native daemon code |
 | Channels | Many first-class transports (WhatsApp, iMessage, Signal, IRC, …) | HTTP API + web UI + CLI, plus Telegram |
 | Config & secrets | `openclaw.json` (JSON5) + credential files | A single SQLite database (encrypted secrets, plaintext config) |
 | State | Workspace + config files | One daemon owns `~/.bazilion`; agents, groups, sessions, and memory are inspectable files |
@@ -77,9 +77,9 @@ LAN or a phone is an explicit opt-in.
 
 - **No plugin SDK.** OpenClaw's plugin system (new channels, providers, tools,
   and lifecycle hooks via in-process code) is powerful but is also arbitrary code
-  running inside the gateway. Bazilion keeps extensibility to prompt-only skills
-  plus native code, so a third-party extension can't crash the runtime or
-  intercept every tool call.
+  running inside the gateway. Bazilion keeps extensibility to prompt-only skills,
+  out-of-process MCP servers, and native code, so a third-party extension can't
+  crash the runtime or intercept every tool call.
 - **Fewer channels.** Bazilion isn't trying to be everywhere you chat. It exposes
   a clean HTTP API (with a web UI and CLI on top) and a single, deeply-integrated
   Telegram surface.

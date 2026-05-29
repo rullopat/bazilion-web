@@ -54,8 +54,11 @@ Each agent row shows its status, a ✈ marker if it's bound to a Telegram topic,
 and rename/archive controls on hover.
 
 The **chat pane** streams the agent's response live, renders markdown, and shows
-collapsible tool-call details. A **cancel** button appears while the agent is
-working. It also understands a few slash commands typed into the message box:
+collapsible tool-call details. You can **attach files** to a message — images go
+to the model as vision input, other files are stored for the agent to open — and
+files the agent sends back with `deliver_file` surface inline (images as a
+standalone image block). A **cancel** button appears while the agent is working.
+It also understands a few slash commands typed into the message box:
 
 - `/context` — a token/character breakdown of the prompt, tools, skills, and
   history.
@@ -118,13 +121,15 @@ agents through profiles or per-agent on the agent detail page.
 
 ## Configuration
 
-The **config** area has four tabs:
+The **config** area covers:
 
 - **`/config`** (Providers) — enable model providers, add credentials, and curate
   models. This is also the first-run setup gate. ChatGPT OAuth has its own
-  **Connect ChatGPT** card.
+  **Connect ChatGPT** card, and **Browser Automation** is enabled here too.
 - **`/config/services`** — credentials for non-LLM services (web search,
   crawlers, etc.).
+- **`/config/mcp`** — register and manage [MCP servers](/docs/tools/#mcp-servers)
+  (stdio, HTTP, or SSE); their tools are injected into every agent.
 - **`/config/integrations/telegram`** — the Telegram integration: credentials,
   preflight checks, and access control. See [Connecting Telegram](/docs/telegram/).
 - **`/config/tokens`** — mint and revoke API tokens for additional clients. The
