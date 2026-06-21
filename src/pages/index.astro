@@ -137,7 +137,7 @@ const features = [
       <section class="section quickstart" id="install">
         <div class="section__label">Quick start</div>
         <h2 class="section__title">
-          One-line install is the next target. <em>npm works today</em>.
+          One-line install is implemented for the next release. <em>npm daemon works today</em>.
         </h2>
 
         <div class="install-tabs">
@@ -158,9 +158,9 @@ const features = [
               <div class="card-code">
                 <div class="card-code__head">
                   <span>one-line installer</span>
-                  <span class="pill">planned</span>
+                  <span class="pill">release pending</span>
                 </div>
-<pre><span class="c-comment"># BAZ-007: installs Node 24+, bazilion, and the web UI.</span>
+<pre><span class="c-comment"># After the next npm release: Node 24+, bazilion, web UI.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">curl</span> <span class="c-flag">-fsSL</span> \
   https://bazilion.com/install.sh \
   | bash
@@ -174,9 +174,9 @@ const features = [
               <div class="card-code">
                 <div class="card-code__head">
                   <span>powershell installer</span>
-                  <span class="pill">planned</span>
+                  <span class="pill">release pending</span>
                 </div>
-<pre><span class="c-comment"># BAZ-007: native Windows install, no WSL required.</span>
+<pre><span class="c-comment"># After the next npm release: native Windows, no WSL.</span>
 <span class="c-prompt">PS&gt;</span> <span class="c-cmd">irm</span> `
   https://bazilion.com/install.ps1 `
   | iex
@@ -198,7 +198,7 @@ const features = [
 <span class="c-ok">*</span> daemon listening on <span class="c-flag">127.0.0.1:4321</span>
 <span class="c-ok">*</span> workspace <span class="c-flag">~/.bazilion</span>
 
-<span class="c-comment"># Coming with BAZ-007:</span>
+<span class="c-comment"># Coming in the next npm release:</span>
 <span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span></pre>
               </div>
             </div>
@@ -254,8 +254,9 @@ const features = [
           <aside class="manifesto__aside">
             <strong>On npm</strong>
             Published on npm as <code>bazilion</code>. The CLI package is
-            MIT licensed, requires Node 24+, and bundles the daemon. The web UI
-            is still run from the source checkout while the project is young.
+            MIT licensed, requires Node 24+, and currently bundles the daemon.
+            The next release also bundles the production web UI for
+            <code>bazilion dashboard</code>.
           </aside>
         </div>
       </section>
