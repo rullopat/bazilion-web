@@ -163,7 +163,17 @@ a:hover { color: var(--sapphire-deep); }
   background-size: 100% 1px;
 }
 @media (max-width: 640px) {
-  .nav ul { gap: 1.25rem; font-size: 0.85rem; }
+  .nav {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .nav ul {
+    flex-wrap: wrap;
+    gap: 0.65rem 1.1rem;
+    font-size: 0.82rem;
+    line-height: 1.2;
+  }
 }
 
 /* ---------- hero ---------- */
@@ -569,18 +579,104 @@ a:hover { color: var(--sapphire-deep); }
 
 .card-code + .card-code { margin-top: 1.25rem; }
 
-.install-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem;
-  align-items: start;
+.quickstart {
+  padding-top: clamp(3rem, 8vh, 5rem);
 }
 
-.install-grid .card-code + .card-code { margin-top: 0; }
+.install-tabs {
+  border: 1px solid var(--frost);
+  border-radius: 14px;
+  background: rgba(250, 248, 244, 0.72);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.install-tabs__input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.install-tabs__nav {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border-bottom: 1px solid var(--frost);
+  background: var(--cream);
+}
+
+.install-tabs__tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.2rem;
+  padding: 0.8rem 0.9rem;
+  border-right: 1px solid var(--frost);
+  color: var(--mocha);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  transition:
+    color .2s ease,
+    background .2s ease;
+}
+
+.install-tabs__tab:last-child { border-right: none; }
+.install-tabs__tab:hover { color: var(--sapphire-deep); }
+
+.install-tabs__panels {
+  padding: 1.25rem;
+}
+
+.install-tabs__panel {
+  display: none;
+}
+
+#install-macos:checked ~ .install-tabs__nav label[for="install-macos"],
+#install-windows:checked ~ .install-tabs__nav label[for="install-windows"],
+#install-npm:checked ~ .install-tabs__nav label[for="install-npm"],
+#install-hackable:checked ~ .install-tabs__nav label[for="install-hackable"] {
+  background: var(--ivory);
+  color: var(--sapphire-deep);
+}
+
+#install-macos:checked ~ .install-tabs__panels .install-tabs__panel--macos,
+#install-windows:checked ~ .install-tabs__panels .install-tabs__panel--windows,
+#install-npm:checked ~ .install-tabs__panels .install-tabs__panel--npm,
+#install-hackable:checked ~ .install-tabs__panels .install-tabs__panel--hackable {
+  display: block;
+}
+
+.install-tabs .card-code {
+  margin: 0;
+}
 
 @media (max-width: 880px) {
   .showcase { grid-template-columns: 1fr; }
-  .install-grid { grid-template-columns: 1fr; }
+  .install-tabs__nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .install-tabs__tab:nth-child(2n) { border-right: none; }
+  .install-tabs__tab:nth-child(-n + 2) { border-bottom: 1px solid var(--frost); }
+}
+
+@media (max-width: 520px) {
+  .install-tabs__panels { padding: 0.85rem; }
+  .install-tabs__tab {
+    min-height: 2.9rem;
+    padding: 0.7rem 0.55rem;
+    font-size: 0.67rem;
+    letter-spacing: 0.08em;
+  }
+  .install-tabs .card-code pre {
+    font-size: 0.74rem;
+    line-height: 1.65;
+  }
 }
 
 /* ---------- two-cell rail (philosophy / providers etc.) ---------- */

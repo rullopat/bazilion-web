@@ -133,6 +133,97 @@ const features = [
         </figure>
       </header>
 
+      <!-- ───────────── install ───────────── -->
+      <section class="section quickstart" id="install">
+        <div class="section__label">Quick start</div>
+        <h2 class="section__title">
+          One-line install is the next target. <em>npm works today</em>.
+        </h2>
+
+        <div class="install-tabs">
+          <input class="install-tabs__input" type="radio" name="install-method" id="install-macos" checked />
+          <input class="install-tabs__input" type="radio" name="install-method" id="install-windows" />
+          <input class="install-tabs__input" type="radio" name="install-method" id="install-npm" />
+          <input class="install-tabs__input" type="radio" name="install-method" id="install-hackable" />
+
+          <div class="install-tabs__nav" aria-label="Installation methods">
+            <label class="install-tabs__tab" for="install-macos">macOS / Linux</label>
+            <label class="install-tabs__tab" for="install-windows">Windows</label>
+            <label class="install-tabs__tab" for="install-npm">npm</label>
+            <label class="install-tabs__tab" for="install-hackable">Hackable</label>
+          </div>
+
+          <div class="install-tabs__panels">
+            <div class="install-tabs__panel install-tabs__panel--macos">
+              <div class="card-code">
+                <div class="card-code__head">
+                  <span>one-line installer</span>
+                  <span class="pill">planned</span>
+                </div>
+<pre><span class="c-comment"># BAZ-007: installs Node 24+, bazilion, and the web UI.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">curl</span> <span class="c-flag">-fsSL</span> \
+  https://bazilion.com/install.sh \
+  | bash
+
+<span class="c-comment"># Then open the local web dashboard.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span></pre>
+              </div>
+            </div>
+
+            <div class="install-tabs__panel install-tabs__panel--windows">
+              <div class="card-code">
+                <div class="card-code__head">
+                  <span>powershell installer</span>
+                  <span class="pill">planned</span>
+                </div>
+<pre><span class="c-comment"># BAZ-007: native Windows install, no WSL required.</span>
+<span class="c-prompt">PS&gt;</span> <span class="c-cmd">irm</span> `
+  https://bazilion.com/install.ps1 `
+  | iex
+
+<span class="c-comment"># Then open the local web dashboard.</span>
+<span class="c-prompt">PS&gt;</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span></pre>
+              </div>
+            </div>
+
+            <div class="install-tabs__panel install-tabs__panel--npm">
+              <div class="card-code">
+                <div class="card-code__head">
+                  <span>daemon + CLI</span>
+                  <span class="pill">today</span>
+                </div>
+<pre><span class="c-comment"># Requires Node 24+.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">bazilion</span>
+<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">serve</span>
+<span class="c-ok">*</span> daemon listening on <span class="c-flag">127.0.0.1:4321</span>
+<span class="c-ok">*</span> workspace <span class="c-flag">~/.bazilion</span>
+
+<span class="c-comment"># Coming with BAZ-007:</span>
+<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span></pre>
+              </div>
+            </div>
+
+            <div class="install-tabs__panel install-tabs__panel--hackable">
+              <div class="card-code">
+                <div class="card-code__head">
+                  <span>source checkout</span>
+                  <span class="pill">today</span>
+                </div>
+<pre><span class="c-comment"># For people who want to read and change the code.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">git</span> <span class="c-cmd">clone</span> https://github.com/rullopat/bazilion
+<span class="c-prompt">$</span> <span class="c-cmd">cd</span> bazilion
+<span class="c-prompt">$</span> <span class="c-cmd">corepack</span> <span class="c-cmd">enable</span>
+<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">install</span>
+
+<span class="c-comment"># Terminal 1: daemon. Terminal 2: web UI.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">tsx</span> apps/cli/src/index.ts serve
+<span class="c-prompt">$</span> <span class="c-cmd">cd</span> apps/web &amp;&amp; <span class="c-cmd">pnpm</span> <span class="c-cmd">dev</span></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ───────────── manifesto ───────────── -->
       <section class="section" id="manifesto">
         <div class="section__label">Personal open source</div>
@@ -276,51 +367,6 @@ const features = [
               agents can send, read, wait for replies, and pick up work left by
               another member of the group.
             </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ───────────── install ───────────── -->
-      <section class="section" id="install">
-        <div class="section__label">How to begin</div>
-        <h2 class="section__title">
-          Daemon from npm. Web UI from the <em>source checkout</em>.
-        </h2>
-
-        <div class="install-grid">
-          <div class="card-code">
-            <div class="card-code__head">
-              <span>daemon + CLI</span>
-              <span class="pill">npm</span>
-            </div>
-<pre><span class="c-comment"># Requires Node 24+.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">npx</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">serve</span>
-<span class="c-ok">*</span> daemon listening on <span class="c-flag">127.0.0.1:4321</span>
-<span class="c-ok">*</span> workspace <span class="c-flag">~/.bazilion</span>
-<span class="c-ok">*</span> bootstrap token written to <span class="c-flag">auth.json</span>
-
-<span class="c-comment"># Or install once:</span>
-<span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">bazilion</span>
-<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">serve</span></pre>
-          </div>
-
-          <div class="card-code">
-            <div class="card-code__head">
-              <span>web UI today</span>
-              <span class="pill">source</span>
-            </div>
-<pre><span class="c-comment"># The web UI is not bundled in npm yet.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">git</span> <span class="c-cmd">clone</span> https://github.com/rullopat/bazilion
-<span class="c-prompt">$</span> <span class="c-cmd">cd</span> bazilion
-<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">install</span>
-
-<span class="c-comment"># Terminal 1: source daemon.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">tsx</span> apps/cli/src/index.ts serve
-
-<span class="c-comment"># Terminal 2: web app on 4322.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">cd</span> apps/web
-<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">dev</span>
-<span class="c-ok">*</span> open <span class="c-flag">http://127.0.0.1:4322</span></pre>
           </div>
         </div>
       </section>
