@@ -5,16 +5,16 @@ description: A tour of the bazilion web UI — logging in, first-run setup, the 
 
 import { Aside } from '@astrojs/starlight/components';
 
-The web UI is the canonical way to use bazilion. It runs on `http://127.0.0.1:4322`
-during development and talks to the daemon on `127.0.0.1:4321`. This page is a
-tour of every screen.
+The web UI is the canonical way to use bazilion. `bazilion dashboard` runs it on
+`http://127.0.0.1:4322` and talks to the daemon on `127.0.0.1:4321`. This page
+is a tour of every screen.
 
 ## Logging in
 
 Open the web UI and you'll land on **`/login`**. Paste your **bootstrap token**
 — it's the `token` value in `~/.bazilion/auth.json`, created the first time you
-ran `bazilion serve` — and click **log in**. The token is stored in a cookie, so
-you stay logged in.
+ran `bazilion dashboard` or `bazilion serve` — and click **log in**. The token
+is stored in a cookie, so you stay logged in.
 
 <Aside type="tip">
 Need extra tokens for a phone or another machine? Mint them on

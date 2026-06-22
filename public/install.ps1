@@ -70,7 +70,7 @@ if (-not (Get-Command bazilion -ErrorAction SilentlyContinue)) {
 try {
   bazilion dashboard --help *> $null
 } catch {
-  Fail "installed bazilion does not include 'dashboard' yet. Publish the Bazilion release that contains BAZ-007, then rerun this installer."
+  Fail "installed bazilion does not include 'dashboard'. Re-run with `$env:BAZILION_VERSION='latest'`, or install manually with: npm install -g bazilion@latest"
 }
 
 Write-Step "Bazilion installed"

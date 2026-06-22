@@ -54,7 +54,7 @@ npm install -g "bazilion@${BAZILION_VERSION}"
 command -v bazilion >/dev/null 2>&1 || fail "bazilion was installed, but the command is not on PATH"
 
 if ! bazilion dashboard --help >/dev/null 2>&1; then
-  fail "installed bazilion does not include 'dashboard' yet. Publish the Bazilion release that contains BAZ-007, then rerun this installer."
+  fail "installed bazilion does not include 'dashboard'. Re-run with BAZILION_VERSION=latest, or install manually with: npm install -g bazilion@latest"
 fi
 
 log "Bazilion installed"

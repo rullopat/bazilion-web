@@ -137,7 +137,7 @@ const features = [
       <section class="section quickstart" id="install">
         <div class="section__label">Quick start</div>
         <h2 class="section__title">
-          One-line install is implemented for the next release. <em>npm daemon works today</em>.
+          One-line install, npm, or source. <em>The dashboard opens locally</em>.
         </h2>
 
         <div class="install-tabs">
@@ -158,9 +158,9 @@ const features = [
               <div class="card-code">
                 <div class="card-code__head">
                   <span>one-line installer</span>
-                  <span class="pill">release pending</span>
+                  <span class="pill">today</span>
                 </div>
-<pre><span class="c-comment"># After the next npm release: Node 24+, bazilion, web UI.</span>
+<pre><span class="c-comment"># Installs Node 24+ if needed, then bazilion.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">curl</span> <span class="c-flag">-fsSL</span> \
   https://bazilion.com/install.sh \
   | bash
@@ -174,9 +174,9 @@ const features = [
               <div class="card-code">
                 <div class="card-code__head">
                   <span>powershell installer</span>
-                  <span class="pill">release pending</span>
+                  <span class="pill">today</span>
                 </div>
-<pre><span class="c-comment"># After the next npm release: native Windows, no WSL.</span>
+<pre><span class="c-comment"># Native Windows install, no WSL required.</span>
 <span class="c-prompt">PS&gt;</span> <span class="c-cmd">irm</span> `
   https://bazilion.com/install.ps1 `
   | iex
@@ -189,17 +189,15 @@ const features = [
             <div class="install-tabs__panel install-tabs__panel--npm">
               <div class="card-code">
                 <div class="card-code__head">
-                  <span>daemon + CLI</span>
+                  <span>daemon + web UI</span>
                   <span class="pill">today</span>
                 </div>
 <pre><span class="c-comment"># Requires Node 24+.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">bazilion</span>
-<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">serve</span>
-<span class="c-ok">*</span> daemon listening on <span class="c-flag">127.0.0.1:4321</span>
-<span class="c-ok">*</span> workspace <span class="c-flag">~/.bazilion</span>
-
-<span class="c-comment"># Coming in the next npm release:</span>
-<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span></pre>
+<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span>
+<span class="c-ok">*</span> daemon <span class="c-flag">127.0.0.1:4321</span>
+<span class="c-ok">*</span> dashboard <span class="c-flag">127.0.0.1:4322</span>
+<span class="c-ok">*</span> workspace <span class="c-flag">~/.bazilion</span></pre>
               </div>
             </div>
 
@@ -215,9 +213,8 @@ const features = [
 <span class="c-prompt">$</span> <span class="c-cmd">corepack</span> <span class="c-cmd">enable</span>
 <span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">install</span>
 
-<span class="c-comment"># Terminal 1: daemon. Terminal 2: web UI.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">tsx</span> apps/cli/src/index.ts serve
-<span class="c-prompt">$</span> <span class="c-cmd">cd</span> apps/web &amp;&amp; <span class="c-cmd">pnpm</span> <span class="c-cmd">dev</span></pre>
+<span class="c-comment"># Source equivalent of the published dashboard command.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">tsx</span> apps/cli/src/index.ts dashboard</pre>
               </div>
             </div>
           </div>
@@ -236,7 +233,7 @@ const features = [
             <p class="dropcap">
               Bazilion is my personal open source attempt at a local-first
               multi-agent runtime. It is not a company platform or hosted
-              service. It is a small MIT-licensed daemon, CLI, and source-run web
+              service. It is a small MIT-licensed daemon, CLI, and bundled web
               UI for people who want to experiment with agents that have files,
               memory, templates, and a way to talk to each other while remaining
               under their own control.
@@ -254,9 +251,9 @@ const features = [
           <aside class="manifesto__aside">
             <strong>On npm</strong>
             Published on npm as <code>bazilion</code>. The CLI package is
-            MIT licensed, requires Node 24+, and currently bundles the daemon.
-            The next release also bundles the production web UI for
-            <code>bazilion dashboard</code>.
+            MIT licensed, requires Node 24+, and bundles the daemon plus the
+            production web UI. Run <code>bazilion dashboard</code> to open the
+            local dashboard.
           </aside>
         </div>
       </section>
