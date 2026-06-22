@@ -206,11 +206,12 @@ const features = [
 <pre><span class="c-comment"># For people who want to read and change the code.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">git</span> <span class="c-cmd">clone</span> https://github.com/rullopat/bazilion
 <span class="c-prompt">$</span> <span class="c-cmd">cd</span> bazilion
-<span class="c-prompt">$</span> <span class="c-cmd">corepack</span> <span class="c-cmd">enable</span>
+<span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">pnpm</span> <span class="c-comment"># if pnpm is missing</span>
 <span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">install</span>
 
-<span class="c-comment"># Source equivalent of the published dashboard command.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">tsx</span> apps/cli/src/index.ts dashboard</pre>
+<span class="c-comment"># Start the source daemon, then run the web UI in another terminal.</span>
+<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">tsx</span> apps/cli/src/index.ts serve
+<span class="c-prompt">$</span> <span class="c-cmd">cd</span> apps/web && <span class="c-cmd">pnpm</span> <span class="c-cmd">dev</span></pre>
               </div>
             </div>
           </div>

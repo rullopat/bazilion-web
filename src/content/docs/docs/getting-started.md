@@ -49,10 +49,12 @@ On first boot `bazilion dashboard`:
 ```sh
 git clone https://github.com/rullopat/bazilion
 cd bazilion
+npm install -g pnpm # if pnpm is missing
 pnpm install
 
-# Source equivalent of the published dashboard command.
-pnpm tsx apps/cli/src/index.ts dashboard
+# Start the source daemon, then run the web UI in another terminal.
+pnpm tsx apps/cli/src/index.ts serve
+cd apps/web && pnpm dev
 ```
 
 Open `http://127.0.0.1:4322` and log in with your **bootstrap token** — the
