@@ -1,10 +1,22 @@
 ---
 title: Core concepts
-description: Profiles, profile groups, groups, USER.md, shared memory, the mailbox, triggers, and tools.
+description: Pi's agent engine, profiles, profile groups, groups, USER.md, shared memory, the mailbox, triggers, and tools.
 ---
 
 Bazilion is built from a small set of concepts that compose. Once you know
 these, the CLI, API, and web UI are all just surfaces over the same model.
+
+## Pi agent engine
+
+Bazilion is based on
+[Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent).
+Pi runs the per-turn agent loop, stores the canonical JSONL transcript under
+each agent's `sessions/` directory, handles replay and compaction, executes
+providers and tools, and supplies the coding tools.
+
+Bazilion adds the multi-agent shell around that engine: profiles, profile
+groups, groups, shared `USER.md`, qmd memory, mailbox, triggers, browser/MCP
+integrations, the daemon, CLI, and web UI.
 
 ## Profiles
 

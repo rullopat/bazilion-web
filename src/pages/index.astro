@@ -29,21 +29,26 @@ const features = [
   },
   {
     n: '06',
-    title: 'State is mostly files',
-    body: 'Agent homes, group roots, templates, sessions, skills, and memory live under ~/.bazilion. The daemon owns SQLite; the useful material stays inspectable on disk.',
+    title: 'Pi is the engine underneath',
+    body: "Bazilion is built on Pi's coding agent. Pi runs the per-turn loop, stores the JSONL transcript, handles replay and compaction, executes providers and tools, and supplies the coding tools.",
   },
   {
     n: '07',
+    title: 'State is mostly files',
+    body: 'Agent homes, group roots, templates, Pi sessions, skills, and memory live under ~/.bazilion. The daemon owns SQLite; the useful material stays inspectable on disk.',
+  },
+  {
+    n: '08',
     title: 'Tools live in the workspace',
     body: 'Agents get coding tools, web search, a hardened web fetch, a Playwright browser, mailbox and memory tools, and can deliver files back. Connect MCP servers and their tools join the loop too. They work in a linked project folder, not a toy sandbox.',
   },
   {
-    n: '08',
+    n: '09',
     title: 'Heartbeats and crons',
     body: 'Interval and cron triggers can wake an agent with a stored message, so an agent can check inboxes, review notes, or run a recurring research task without a chat window open.',
   },
   {
-    n: '09',
+    n: '10',
     title: 'MIT, local-first, provider-flexible',
     body: 'Bazilion is a personal open source project published under the MIT license. Use hosted providers, ChatGPT OAuth, Ollama, LM Studio, or other supported backends.',
   },
@@ -61,14 +66,14 @@ const features = [
     <title>Bazilion — personal open source multi-agent runtime</title>
     <meta
       name="description"
-      content="Bazilion is Patrizio Rullo's MIT-licensed local-first multi-agent runtime. Build agent templates, spawn teams from profile groups, and let agents share messages, USER.md, and qmd-indexed memory."
+      content="Bazilion is Patrizio Rullo's MIT-licensed local-first multi-agent runtime, built on Pi's coding agent as its core engine. Build agent templates, spawn teams, and let agents share messages, USER.md, and qmd memory."
     />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Bazilion — personal open source multi-agent runtime" />
     <meta
       property="og:description"
-      content="MIT-licensed, local-first, and built around profiles, profile groups, agent messaging, shared USER.md, and qmd memory."
+      content="MIT-licensed, local-first, built on Pi's coding agent, and wrapped with profiles, profile groups, agent messaging, shared USER.md, and qmd memory."
     />
     <meta property="og:url" content="https://bazilion.com" />
     <meta property="og:image" content="https://bazilion.com/baziu.svg" />
@@ -102,7 +107,7 @@ const features = [
       <header class="hero">
         <div>
           <div class="hero__supra" data-reveal="2">
-            multi-agent runtime · your machine, your keys
+            built on Pi · your machine, your keys
           </div>
           <h1 class="hero__wordmark" data-reveal="3">
             Baz<span class="ink-eye">i</span>lion
@@ -229,11 +234,12 @@ const features = [
           <div class="manifesto__body">
             <p class="dropcap">
               Bazilion is my personal open source attempt at a local-first
-              multi-agent runtime. It is not a company platform or hosted
-              service. It is a small MIT-licensed daemon, CLI, and bundled web
-              UI for people who want to experiment with agents that have files,
-              memory, templates, and a way to talk to each other while remaining
-              under their own control.
+              multi-agent runtime. Its core engine is Pi's coding agent:
+              Pi runs the per-turn loop, stores the JSONL transcript, handles
+              replay and compaction, executes providers and tools, and supplies
+              the coding tools. Bazilion adds the local daemon, CLI, bundled web
+              UI, profiles, groups, shared memory, and mailbox around that
+              engine.
             </p>
             <p>
               Bazilion is especially about templates. A profile defines one
@@ -246,11 +252,10 @@ const features = [
           </div>
 
           <aside class="manifesto__aside">
-            <strong>On npm</strong>
-            Published on npm as <code>bazilion</code>. The CLI package is
-            MIT licensed, requires Node 24+, and bundles the daemon plus the
-            production web UI. Run <code>bazilion dashboard</code> to open the
-            local dashboard.
+            <strong>Engine credit</strong>
+            Bazilion is based on <code>@earendil-works/pi-coding-agent</code>,
+            with Bazilion-specific orchestration layered around Pi's agent
+            session, transcript, tool loop, and coding tools.
           </aside>
         </div>
       </section>

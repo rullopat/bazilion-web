@@ -1,12 +1,19 @@
 ---
 title: How Bazilion is different
-description: Bazilion is OpenClaw-inspired but takes a different shape — built around teams of agents, shared memory, and a single local daemon you fully control.
+description: Bazilion is built on Pi's coding agent and OpenClaw-inspired in its skill compatibility, but takes a different shape around teams, shared memory, and a single local daemon.
 ---
 
-Bazilion is openly **OpenClaw-inspired**: it borrows OpenClaw's prompt-only skill
-format, and it can import skills straight from a local OpenClaw install. But it is
-a different kind of tool with a different center of gravity. If you know OpenClaw,
-this page explains what's the same, what's different, and why.
+Bazilion's core engine is
+[Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent):
+Pi owns the per-turn session loop, transcript, compaction, provider/tool
+execution, and coding tools. Bazilion layers profiles, groups, memory, mailbox,
+scheduler, daemon, CLI, and web UI around that engine.
+
+Bazilion is also openly **OpenClaw-inspired** in its skill compatibility: it
+borrows OpenClaw's prompt-only skill format, and it can import skills straight
+from a local OpenClaw install. But it is a different kind of tool with a
+different center of gravity. If you know OpenClaw, this page explains what's the
+same, what's different, and why.
 
 ## The one-line difference
 
@@ -52,6 +59,7 @@ cron wake-ups), an agent can pick up work left by another and act on a schedule.
 | | OpenClaw | Bazilion |
 | --- | --- | --- |
 | Shape | Personal assistant gateway | Multi-agent team runtime |
+| Agent engine | Own assistant runtime | Built on Pi's coding agent for the session loop, transcripts, compaction, provider/tool execution, and coding tools |
 | Extensibility | Skills **and** plugins (in-process TypeScript, ~28 lifecycle hooks) | Prompt-only skills **and** out-of-process MCP servers; all other capability is native daemon code |
 | Channels | Many first-class transports (WhatsApp, iMessage, Signal, IRC, …) | HTTP API + web UI + CLI, plus Telegram |
 | Config & secrets | `openclaw.json` (JSON5) + credential files | A single SQLite database (encrypted secrets, plaintext config) |

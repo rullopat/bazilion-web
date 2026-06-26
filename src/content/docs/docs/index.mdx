@@ -1,15 +1,19 @@
 ---
 title: Bazilion documentation
-description: An MIT-licensed, local-first multi-agent runtime — profiles, profile groups, shared memory, and a mailbox between agents.
+description: An MIT-licensed, local-first multi-agent runtime built on Pi's coding agent — profiles, profile groups, shared memory, and a mailbox between agents.
 ---
 
 import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
-Bazilion is a personal, open-source, **local-first multi-agent runtime**. It
-runs as a small daemon on your own machine, owns a workspace under
-`~/.bazilion`, and lets you build agent templates, spawn whole teams from them,
-and let those agents share files, memory, and messages — all under your own
-control, with your own provider keys.
+Bazilion is a personal, open-source, **local-first multi-agent runtime** built
+on [Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent)
+as its core engine. Pi runs the per-turn loop, stores the JSONL transcript,
+handles replay and compaction, executes providers and tools, and supplies the
+coding tools.
+
+Bazilion wraps that engine with a small daemon on your own machine, a workspace
+under `~/.bazilion`, agent templates, team templates, shared files, memory, and
+messages — all under your own control, with your own provider keys.
 
 It is not a hosted platform. It is a daemon, a CLI, and a web UI you run
 yourself, published under the MIT license.
@@ -43,6 +47,10 @@ yourself, published under the MIT license.
   <Card title="Profiles become agents" icon="seti:config">
     A profile is an agent template — SOUL.md, IDENTITY.md, tools, skills mode,
     and a default model. Spawning a profile creates a live agent.
+  </Card>
+  <Card title="Pi runs the agent loop" icon="settings">
+    Bazilion is based on Pi's coding agent for the session loop, transcript,
+    compaction, provider/tool execution, and coding tools.
   </Card>
   <Card title="Profile groups spawn teams" icon="rocket">
     An ordered set of profile-backed members spawned transactionally into one

@@ -24,7 +24,7 @@ export default defineConfig({
     starlight({
       title: 'Bazilion',
       description:
-        'Documentation for Bazilion — an MIT-licensed, local-first multi-agent runtime.',
+        "Documentation for Bazilion — an MIT-licensed, local-first multi-agent runtime built on Pi's coding agent.",
       favicon: '/baziu.svg',
       social: [
         {
@@ -41,7 +41,7 @@ export default defineConfig({
         starlightLlmsTxt({
           projectName: 'Bazilion',
           description:
-            'Bazilion is an MIT-licensed, local-first multi-agent runtime. It runs as a daemon on your own machine, owns a workspace under ~/.bazilion, and lets you build agent templates (profiles), spawn whole teams (profile groups), and let agents share files, qmd-indexed memory, and a mailbox.',
+            "Bazilion is an MIT-licensed, local-first multi-agent runtime built on Pi's coding agent as its core engine. It runs as a daemon on your own machine, owns a workspace under ~/.bazilion, and lets you build agent templates (profiles), spawn whole teams (profile groups), and let agents share files, qmd-indexed memory, and a mailbox.",
           promote: ['docs'],
         }),
       ],
