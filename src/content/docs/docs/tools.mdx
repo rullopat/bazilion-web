@@ -13,14 +13,17 @@ connect — are opt-in capabilities you enable once and every agent can then use
 
 By default an agent gets:
 
-- **coding tools** — read, write, and edit files in its group's filesystem root,
+- **coding tools** — read, write, and edit files in its Team's filesystem root,
 - **web search** and a **hardened web fetch** (SSRF-guarded),
-- **mailbox tools** — `send_message`, `read_inbox`, `wait_for_reply`,
-- **memory tools** — search and write the group's [shared memory](/docs/concepts/#shared-memory),
+- **mailbox tools** — `send_message`, `read_inbox`, `wait_for_reply`, and
+  `approval_status`,
+- **memory tools** — search and write the Team's [shared memory](/docs/concepts/#shared-usermd-and-memory),
+- **guarded Team context tools** — `user_md_get` and concurrency-checked
+  `user_md_write`,
 - **home-file tools** — read and update its own `IDENTITY.md` and notes.
 
-Because a group's root can be a symlink to a real project (see
-[Core concepts](/docs/concepts/#groups)), agents work on actual code rather than
+Because a Team root can be a symlink to a real project (see
+[Core concepts](/docs/concepts/#teams)), Agents work on actual code rather than
 a throwaway sandbox.
 
 ## Browser automation

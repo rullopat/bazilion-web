@@ -1,6 +1,6 @@
 ---
 title: Bazilion documentation
-description: An MIT-licensed, local-first multi-agent runtime built on Pi's coding agent — profiles, profile groups, shared memory, and a mailbox between agents.
+description: An MIT-licensed, local-first multi-agent runtime built on Pi's coding agent — Agent templates, revisioned Team Templates, live Team Policy, shared memory, and a mailbox.
 ---
 
 import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
@@ -12,11 +12,16 @@ handles replay and compaction, executes providers and tools, and supplies the
 coding tools.
 
 Bazilion wraps that engine with a small daemon on your own machine, a workspace
-under `~/.bazilion`, agent templates, team templates, shared files, memory, and
-messages — all under your own control, with your own provider keys.
+under `~/.bazilion`, Agent templates, revisioned Team Templates, Teams, live
+communication policy, shared files, memory, and messages — all under your own
+control, with your own provider keys.
 
 It is not a hosted platform. It is a daemon, a CLI, and a web UI you run
 yourself, published under the MIT license.
+
+**Bazilion 0.9.0 makes Teams canonical.** Profile Groups, Groups, the Harness
+prototype, and all compatibility APIs/URLs are gone. Read
+[what changed and how to reset an older alpha install](/docs/whats-new-0-9/).
 
 <CardGrid>
   <LinkCard
@@ -27,7 +32,7 @@ yourself, published under the MIT license.
   <LinkCard
     title="Core concepts"
     href="/docs/concepts/"
-    description="Profiles, profile groups, groups, memory, and the mailbox."
+    description="Agent templates, Team Templates, Teams, policy, approvals, and memory."
   />
   <LinkCard
     title="Tools & integrations"
@@ -44,24 +49,28 @@ yourself, published under the MIT license.
 ## How the pieces fit
 
 <CardGrid stagger>
-  <Card title="Profiles become agents" icon="seti:config">
-    A profile is an agent template — SOUL.md, IDENTITY.md, tools, skills mode,
-    and a default model. Spawning a profile creates a live agent.
+  <Card title="Agent templates become agents" icon="seti:config">
+    A Profile is an Agent template — SOUL.md, IDENTITY.md, tools, skills mode,
+    and a default model. Spawning it creates a permanent live Agent.
   </Card>
   <Card title="Pi runs the agent loop" icon="settings">
     Bazilion is based on Pi's coding agent for the session loop, transcript,
     compaction, provider/tool execution, and coding tools.
   </Card>
-  <Card title="Profile groups spawn teams" icon="rocket">
-    An ordered set of profile-backed members spawned transactionally into one
-    collaboration group, with per-member names, models, and reasoning levels.
+  <Card title="One reusable Team roster" icon="rocket">
+    A Team Template owns revisioned stable slots and directed communication
+    edges. Spawning a reviewed revision materializes its Agents atomically.
+  </Card>
+  <Card title="One effective live policy" icon="lock">
+    Every Team owns exactly one revisioned policy. Edges allow directly or hold
+    one typed attempt for approval; a missing edge denies during enforcement.
   </Card>
   <Card title="A mailbox between them" icon="email">
     Agents coordinate through a durable mailbox: `send_message`, `read_inbox`,
     and `wait_for_reply` in the loop, plus CLI, API, and web surfaces.
   </Card>
   <Card title="Shared memory, indexed" icon="magnifier">
-    Each group has one memory rooted at `<group>/memory`, indexed with qmd
-    (BM25 over markdown) so every agent in the group can search it.
+    Each Team has one memory rooted at `<team>/memory`, indexed with qmd
+    (BM25 over markdown) so every member can search it.
   </Card>
 </CardGrid>

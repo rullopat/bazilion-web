@@ -4,53 +4,63 @@ import '../styles/global.css';
 const features = [
   {
     n: '01',
-    title: 'Profiles become agents',
+    title: 'Agent templates become agents',
     body: 'A profile is an agent template: SOUL.md, IDENTITY.md, AGENTS.md, tools, skills mode, default model, and the notes that shape how that agent behaves when spawned.',
   },
   {
     n: '02',
-    title: 'Profile groups spawn teams',
-    body: 'Profile groups are reusable team templates. One spawn materializes an ordered set of agents into a target group, with per-member names, models, and reasoning levels.',
+    title: 'One canonical Team Template roster',
+    body: 'A Team Template owns a revisioned roster of stable slots. Each slot points to an Agent template and can override the live name, model, or reasoning level without inventing a second roster model.',
   },
   {
     n: '03',
-    title: 'A mailbox between them',
-    body: 'Agents coordinate through a durable mailbox: send_message, read_inbox, and wait_for_reply in the loop, plus CLI, API, and web inbox surfaces outside it.',
+    title: 'One live policy per Team',
+    body: 'Every Team owns exactly one effective revisioned communication policy. When enforcement is enabled, one authorizer covers user, peer, cross-Team, scheduler, inbox, worker, and Telegram boundaries; missing edges deny.',
   },
   {
     n: '04',
-    title: 'Shared memory, indexed by qmd',
-    body: 'Every group has one memory rooted at <group>/memory. Bazilion uses qmd for BM25 over markdown, so project facts, decisions, and discoveries are searchable by every agent in the group.',
+    title: 'Approval means approve once',
+    body: 'An approval_required edge holds one typed communication attempt before its side effect. Inspect it in the web queue or CLI, then approve once, deny, or cancel; approval revalidates current membership and policy.',
   },
   {
     n: '05',
-    title: 'The user context is explicit',
-    body: 'A group has one USER.md for the person, project, preferences, and standing instructions. It is injected into prompts, and agents can update it through guarded user_md tools.',
+    title: 'A mailbox between agents',
+    body: 'Agents coordinate through a durable mailbox: send_message, read_inbox, and wait_for_reply in the loop, plus CLI, API, and web inbox surfaces outside it.',
   },
   {
     n: '06',
-    title: 'Pi is the engine underneath',
-    body: "Bazilion is built on Pi's coding agent. Pi runs the per-turn loop, stores the JSONL transcript, handles replay and compaction, executes providers and tools, and supplies the coding tools.",
+    title: 'Shared memory, indexed by qmd',
+    body: 'Every Team has one memory rooted at <team>/memory. Bazilion uses qmd for BM25 over markdown, so project facts, decisions, and discoveries are searchable by every member.',
   },
   {
     n: '07',
-    title: 'State is mostly files',
-    body: 'Agent homes, group roots, templates, Pi sessions, skills, and memory live under ~/.bazilion. The daemon owns SQLite; the useful material stays inspectable on disk.',
+    title: 'The user context is explicit',
+    body: 'A Team has one USER.md for the person, project, preferences, and standing instructions. It is injected into every member prompt; generic coding tools cannot clobber it, and guarded USER.md updates use concurrency checks.',
   },
   {
     n: '08',
+    title: 'Pi is the engine underneath',
+    body: "Bazilion 0.9.0 bundles Pi 0.80.6. Pi runs the per-turn loop, stores the JSONL transcript, handles replay and compaction, executes providers and tools, and supplies the coding tools.",
+  },
+  {
+    n: '09',
     title: 'Tools live in the workspace',
     body: 'Agents get coding tools, web search, a hardened web fetch, a Playwright browser, mailbox and memory tools, and can deliver files back. Connect MCP servers and their tools join the loop too. They work in a linked project folder, not a toy sandbox.',
   },
   {
-    n: '09',
-    title: 'Heartbeats and crons',
-    body: 'Interval and cron triggers can wake an agent with a stored message, so an agent can check inboxes, review notes, or run a recurring research task without a chat window open.',
+    n: '10',
+    title: 'State is inspectable',
+    body: 'Agent homes, Team roots, Agent-template files, Pi sessions, skills, and memory live under ~/.bazilion. The daemon keeps Team Templates, policies, approvals, and config in one clean-install SQLite schema.',
   },
   {
-    n: '10',
+    n: '11',
+    title: 'Heartbeats, crons, and Telegram',
+    body: 'Triggers can wake an agent on a schedule, while one Telegram forum supergroup gives every bound agent its own topic. The same Team policy authorizes every ingress and egress when enforcement is on.',
+  },
+  {
+    n: '12',
     title: 'MIT, local-first, provider-flexible',
-    body: 'Bazilion is a personal open source project published under the MIT license. Use hosted providers, ChatGPT OAuth, Ollama, LM Studio, or other supported backends.',
+    body: 'Bazilion is a personal open source project published under the MIT license. Use hosted providers, ChatGPT OAuth, Ollama, LM Studio, or other supported backends—including the refreshed GPT-5.6 catalog.',
   },
 ];
 ---
@@ -66,14 +76,14 @@ const features = [
     <title>Bazilion — personal open source multi-agent runtime</title>
     <meta
       name="description"
-      content="Bazilion is Patrizio Rullo's MIT-licensed local-first multi-agent runtime, built on Pi's coding agent as its core engine. Build agent templates, spawn teams, and let agents share messages, USER.md, and qmd memory."
+      content="Bazilion is Patrizio Rullo's MIT-licensed local-first multi-agent runtime, built on Pi's coding agent. Build revisioned Team Templates, run agents under one live Team Policy, and share messages, USER.md, and qmd memory."
     />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Bazilion — personal open source multi-agent runtime" />
     <meta
       property="og:description"
-      content="MIT-licensed, local-first, built on Pi's coding agent, and wrapped with profiles, profile groups, agent messaging, shared USER.md, and qmd memory."
+      content="MIT-licensed, local-first, built on Pi's coding agent, and wrapped with Agent templates, revisioned Team Templates, live Team Policy, approvals, shared memory, and messaging."
     />
     <meta property="og:url" content="https://bazilion.com" />
     <meta property="og:image" content="https://bazilion.com/baziu.svg" />
@@ -103,11 +113,20 @@ const features = [
         </ul>
       </nav>
 
+      <a class="release-note" href="/docs/whats-new-0-9/" data-reveal="2">
+        <span class="release-note__badge">v0.9.0</span>
+        <span>
+          Teams are now canonical: one Team Template roster, one effective live policy, and no
+          legacy Group or Harness surfaces.
+        </span>
+        <span class="release-note__arrow" aria-hidden="true">read what changed →</span>
+      </a>
+
       <!-- ───────────── hero ───────────── -->
       <header class="hero">
         <div>
           <div class="hero__supra" data-reveal="2">
-            built on Pi · your machine, your keys
+            built on Pi 0.80.6 · your machine, your keys
           </div>
           <h1 class="hero__wordmark" data-reveal="3">
             Baz<span class="ink-eye">i</span>lion
@@ -238,16 +257,18 @@ const features = [
               Pi runs the per-turn loop, stores the JSONL transcript, handles
               replay and compaction, executes providers and tools, and supplies
               the coding tools. Bazilion adds the local daemon, CLI, bundled web
-              UI, profiles, groups, shared memory, and mailbox around that
+              UI, Agent templates, Team Templates, live Team Policy, approvals,
+              shared memory, and mailbox around that
               engine.
             </p>
             <p>
               Bazilion is especially about templates. A profile defines one
-              kind of agent. A profile group defines a whole team: several
-              profile-backed agents, ordered, named, optionally model-overridden,
-              and spawned transactionally into one collaboration group. Once
-              there, they share a USER.md, a qmd-indexed markdown memory, and a
-              durable mailbox.
+              kind of agent. A Team Template defines the only reusable Team
+              roster: stable slots, profile-backed roles, optional overrides,
+              and directed communication edges, saved as immutable revisions.
+              Spawning a reviewed revision creates permanent Agents in one Team,
+              with exactly one effective live policy, one USER.md, one qmd-indexed
+              memory, and a durable mailbox.
             </p>
           </div>
 
@@ -284,21 +305,22 @@ const features = [
       <section class="section" id="agents">
         <div class="section__label">Templates</div>
         <h2 class="section__title">
-          Profiles describe agents. Profile groups describe <em>teams</em>.
+          Profiles describe agents. Team Templates describe a <em>reviewed team</em>.
         </h2>
 
         <div class="showcase">
           <div class="showcase__left">
             <p class="showcase__lead">
               Draft the roles once.<br />
-              Spawn the whole working group.<br />
-              Let them coordinate in the open.
+              Review the communication edges.<br />
+              Spawn one revision into a Team.
             </p>
             <p class="showcase__copy">
-              A profile is the reusable agent shape. A profile group is the
-              reusable collaboration shape. The CLI, HTTP API, and web
-              UI can all create profile groups, edit their members, and spawn an
-              entire team into a target group in one call.
+              An Agent template is the reusable role. A Team Template is the
+              sole reusable roster and policy source. The web editor, HTTP API,
+              and CLI interchange tools all work with the same stable slots and
+              immutable revisions; a live Team retains its source lineage without
+              becoming a second template.
             </p>
           </div>
 
@@ -308,28 +330,32 @@ const features = [
                 <span>team template</span>
                 <span class="pill">cli</span>
               </div>
-<pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">profile-group</span> <span class="c-cmd">spawn</span> <span class="c-flag">release-review</span> \
-    <span class="c-flag">--group</span> bazilion-020
-<span class="c-ok">*</span> group <span class="c-rose">bazilion-020</span> created
-<span class="c-ok">*</span> spawned <span class="c-flag">reader</span> from profile docs-reviewer
-<span class="c-ok">*</span> spawned <span class="c-flag">tester</span> from profile cli-tester
-<span class="c-ok">*</span> spawned <span class="c-flag">maintainer</span> from profile release-captain
-<span class="c-dim">  -></span> one USER.md · one qmd memory · one mailbox</pre>
+<pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">team-template</span> <span class="c-cmd">show</span> <span class="c-flag">release-review</span>
+<span class="c-comment"># release-review — Release review</span>
+revision: <span class="c-ok">3</span>
+slots:    <span class="c-flag">3</span>
+edges:    <span class="c-flag">8</span>
+
+slot  profile          Agent name   model  reasoning
+1     docs-reviewer    reader       -      high
+2     cli-tester       tester       -      medium
+3     release-captain  maintainer   -      high</pre>
             </div>
 
             <div class="card-code">
               <div class="card-code__head">
-                <span>agent messaging</span>
-                <span class="pill">mailbox</span>
+                <span>effective live policy</span>
+                <span class="pill">team</span>
               </div>
-<pre><span class="c-comment"># reader leaves a note for maintainer</span>
-<span class="c-cmd">to:</span>   maintainer
-<span class="c-cmd">re:</span>   changelog summary for the release
-<span class="c-cmd">body:</span>
-  profile groups are the headline.
-  web, CLI, and API paths are in parity.
-  wrote notes to <span class="c-flag">memory/releases.md</span>.
-  please check install docs before publishing.</pre>
+<pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">team</span> <span class="c-cmd">policy</span> <span class="c-cmd">show</span> <span class="c-flag">bazilion-090</span>
+<span class="c-comment"># Team bazilion-090 policy</span>
+revision: <span class="c-ok">2</span>
+baseline: <span class="c-rose">release-review@3</span>
+members:  <span class="c-flag">3</span>
+edges:    <span class="c-flag">8</span>
+
+<span class="c-dim">  -></span> one effective policy · retained source lineage
+<span class="c-dim">  -></span> allow · approval required · missing edge denies</pre>
             </div>
           </div>
         </div>
@@ -339,33 +365,33 @@ const features = [
       <section class="section">
         <div class="section__label">How shared context works</div>
         <h2 class="section__title">
-          USER.md, memory, and messages make the group <em>coherent</em>.
+          USER.md, memory, and policy make the Team <em>coherent</em>.
         </h2>
 
         <div class="rail">
           <div class="rail__cell">
             <h4>USER.md is shared</h4>
             <p>
-              Each group has one USER.md for stable context about the user,
+              Each Team has one USER.md for stable context about the user,
               project, preferences, and standing instructions. Agents share that
-              briefing, and updates go through guarded tools with concurrency
-              checks instead of ad hoc prompt drift.
+              protected briefing; Agent updates use guarded tools with concurrency
+              checks instead of clobbering the Team context through file writes.
             </p>
           </div>
           <div class="rail__cell">
             <h4>Memory is searchable markdown</h4>
             <p>
-              Group memory is backed by qmd: BM25 over markdown under the group
+              Team memory is backed by qmd: BM25 over markdown under the Team
               memory folder. Agents can write decisions once and later retrieve
               them by search instead of relying on chat history.
             </p>
           </div>
           <div class="rail__cell">
-            <h4>Messages are first-class</h4>
+            <h4>Communication is explicit</h4>
             <p>
-              The mailbox is not just UI chat. It is a coordination primitive:
-              agents can send, read, wait for replies, and pick up work left by
-              another member of the group.
+              Directed edges define who may reach whom. A protected edge can hold
+              exactly one attempt for operator approval, and durable denial records
+              retain policy evidence without storing the message payload.
             </p>
           </div>
         </div>
