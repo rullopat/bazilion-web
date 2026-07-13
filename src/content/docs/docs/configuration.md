@@ -1,46 +1,66 @@
 ---
 title: Configuration
-description: Providers, secrets, access tokens, and the ~/.bazilion on-disk layout.
+description: Providers, Team Policy enforcement, secrets, access tokens, the clean-install schema, and the ~/.bazilion on-disk layout.
 ---
 
-The daemon is the single owner of `~/.bazilion` and all configuration. Clients
-(CLI, web, mobile) are stateless and talk to it over HTTP.
+The daemon is the single owner of `~/.bazilion`, SQLite, configuration,
+secrets, scheduler state, and Agent turns. CLI, web, and mobile clients are
+stateless and talk to it over HTTP.
 
-## Providers
+## Providers and models
 
-Models are addressed as `provider:model`, for example
-`anthropic:claude-opus-4-6`, `openai-codex:gpt-5.3-codex`, or
-`lmstudio:my-loaded-model`. Supported providers:
+Models use `provider:model`, for example `anthropic:claude-opus-4-8`,
+`openai-codex:gpt-5.6-luna`, or `lmstudio:my-loaded-model`. The provider list is
+data-driven from Pi's catalog; Bazilion 0.9.0 updates Pi to 0.80.6 and refreshes
+the catalog, including GPT-5.6 Luna, Terra, and Sol.
 
-| Provider      | Credential                                  |
-| ------------- | ------------------------------------------- |
-| Anthropic     | `ANTHROPIC_API_KEY`                         |
-| OpenAI        | `OPENAI_API_KEY`                            |
-| Google Gemini | `GEMINI_API_KEY`                            |
-| ChatGPT OAuth | Connect via `/config` or `bazilion login`   |
-| LM Studio     | `LMSTUDIO_URL` / `LMSTUDIO_API_KEY`         |
-| Ollama        | `OLLAMA_URL`                                |
+Common providers include:
 
-Plain API-key providers read from the environment. The ChatGPT (`openai-codex`)
-provider stores an OAuth credential blob in the database and refreshes it
-lazily.
+| Provider | Credential |
+| --- | --- |
+| ChatGPT OAuth (`openai-codex`) | Connect on `/config` or run `bazilion auth openai login` |
+| OpenAI | `OPENAI_API_KEY` |
+| Anthropic | `ANTHROPIC_API_KEY` |
+| Google Gemini | `GEMINI_API_KEY` |
+| LM Studio | `LMSTUDIO_URL` / `LMSTUDIO_API_KEY` |
+| Ollama | `OLLAMA_URL` |
+
+Credentials alone do not clear first-run setup. Enable the provider and save at
+least one curated model in `/config` or with `bazilion provider`.
+
+ChatGPT OAuth credentials live encrypted in the database and refresh lazily.
+After connecting, enable `openai-codex` and curate a model such as
+`gpt-5.6-luna`, `gpt-5.6-terra`, or `gpt-5.6-sol`.
+
+## Team Policy enforcement
+
+The Team Policy management surfaces are always available. Runtime enforcement
+is opt-in in 0.9.0:
+
+```sh
+BAZILION_TEAM_POLICY_ENFORCEMENT=on bazilion dashboard
+```
+
+Set the variable in the daemon environment and restart it. When active, one
+shared authorizer gates user, peer, cross-Team, scheduler, inbox, HTTP/worker,
+and Telegram boundaries. A missing edge denies. Durable denial records keep
+policy evidence but never the attempted message payload.
 
 ## Secrets and config
 
-Credentials and settings live in the database, not in loose files:
+Credentials and settings live in `bazilion.db`, not loose `config.json` or
+`secrets.enc` files:
 
-- **`secrets`** — AES-256-GCM envelopes, one row per env-var-shaped key. The
-  encryption key is derived from the bootstrap token in `auth.json`. This guards
-  against accidental exposure (a `cat`'d dump, a screenshare), not against a
-  full filesystem read.
-- **`config`** — plaintext for non-confidential, env-var-shaped values (server
-  URLs, region slugs, project IDs).
+- **`secrets`** stores AES-256-GCM envelopes, one row per env-var-shaped key.
+  The key is derived from the bootstrap token in `auth.json`. This protects
+  against accidental exposure, not an attacker who can read both files.
+- **`config`** stores non-confidential values such as URLs, region slugs, and
+  project IDs in plaintext.
 
 ## Access tokens
 
-The daemon gates every route with a single bearer-token check. The bootstrap
-token in `auth.json` is minted on first run and cannot be revoked. Mint and
-manage additional tokens with:
+Every protected route uses the same token table. The bootstrap token in
+`auth.json` is minted on first run and cannot be revoked. Additional tokens:
 
 ```sh
 bazilion token create <label>
@@ -48,32 +68,53 @@ bazilion token list
 bazilion token revoke <id>
 ```
 
-Add `--qr` to `token create` to emit a `bazilion://pair?...` URL and a terminal
-QR code for pairing a mobile client.
+Add `--qr` to create a `bazilion://pair?...` URL and terminal QR code for a
+mobile client.
 
 ## On-disk layout
 
-```
+```text
 ~/.bazilion/
-  bazilion.db          # all DB state: entities + secrets + config + tokens
+  bazilion.db          # entities + policy + approvals + secrets + config + tokens
   auth.json            # bootstrap bearer token (+ optional remote target)
-  groups/<slug>/       # collaboration root (may be a symlink); memory/ + work
-  agents/<id>/         # an agent's private home: SOUL.md, sessions/, agent.json
-  profiles/<id>/       # profile templates
-  skills/<name>/       # installed skills (SKILL.md)
+  teams/<slug>/        # Team root (real directory or symlink); memory/ + work
+  agents/<id>/         # private Agent home, prompt/identity files, sessions/, agent.json
+  profiles/<id>/       # Agent template files
+  skills/<name>/       # installed prompt-only skills (SKILL.md)
   logs/
 ```
 
-Override the workspace location with the `$BAZILION_HOME` environment variable.
+Override the root with `$BAZILION_HOME`. A Team registered with `--link` gets a
+symlink under `teams/`; uninstalling Bazilion removes that link, never the
+external project directory.
+
+## Alpha clean-install contract
+
+Bazilion 0.9.0 intentionally has one canonical schema in `0001_init.sql`. There
+are no incremental Group/Profile Group/Harness migrations and no database, API,
+URL, CLI, or filesystem compatibility adapters.
+
+For an older alpha install, export anything you need first, then recreate the
+state rather than attempting an in-place upgrade:
+
+```sh
+bazilion uninstall --yes --all
+npx bazilion dashboard
+```
+
+The full wipe removes the database, bootstrap token, logs, and local skill
+library, so provider and integration credentials—including Telegram—must be
+entered again. Linked Team targets remain untouched.
 
 ## LAN and mobile
 
-By default the daemon binds `127.0.0.1:4321`. To reach it from a phone on your
-network:
+The daemon binds `127.0.0.1:4321` by default. To reach it from a phone or other
+trusted device:
 
 ```sh
 bazilion serve --host 0.0.0.0
 ```
 
-The API is admin-level, so TLS is your responsibility — Tailscale handles it
-for a personal network, or put it behind a reverse proxy with TLS.
+The API is admin-level and the daemon does not provide TLS. Use Tailscale for a
+personal network or a correctly configured TLS reverse proxy; do not expose the
+raw port to the public internet.

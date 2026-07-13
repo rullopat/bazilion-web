@@ -214,10 +214,10 @@ In the **⚙ bazilion** topic:
 
 - `/spawn` — pick a profile from the buttons, then send a name (or `-` to
   auto-name). The new agent is created and its topic is bound automatically.
-- `/spawn <profile> <name>` — spawn immediately. Add `in <group-slug>` to target
-  a non-default group.
-- `/spawn_team` — spawn a whole [profile group](/docs/concepts/#profile-groups)
-  at once, one topic per member.
+- `/spawn <profile> <name>` — spawn immediately. Add `in <team-slug>` to target
+  a non-default Team.
+- `/spawn_team` — spawn a whole [Team Template](/docs/concepts/#team-templates)
+  at once, one topic per member. Add `in <team-slug>` to target a named Team.
 - `/talk <agent>` — open or create the topic for an agent that already exists.
 
 </TabItem>
@@ -242,6 +242,17 @@ Once an agent is bound, just **type in its topic** to talk to it. While it works
 you'll see a "typing…" indicator and a 👀 reaction on your message that clears
 when the reply lands. Messages you send while it's busy are queued and answered
 together.
+
+### Team Policy and Telegram
+
+With `BAZILION_TEAM_POLICY_ENFORCEMENT=on`, Telegram uses the same live Team
+Policy as every other communication surface. Human ingress requires the Team's
+`user → Agent` edge; the reply requires `Agent → user`. A missing edge denies,
+and an `approval_required` edge holds that one attempt in the communication
+approval queue. Configure and preview the Team policy before enabling
+enforcement so a missing edge does not look like a Telegram connectivity issue.
+The Telegram allowlist and Team Policy are independent, cumulative gates:
+allowlisting a human never bypasses the Team's communication policy.
 
 ---
 
@@ -276,10 +287,10 @@ menu:
 | Command | What it does |
 | --- | --- |
 | `/spawn` | Create an agent from a profile (interactive or `/spawn <profile> <name>`). |
-| `/spawn_team` | Spawn a whole profile-group team at once. (Typed `/spawn-team` also works.) |
-| `/talk <agent>` | Open or create an agent's topic. Accepts `<group>/<agent>`. |
-| `/list` (alias `/agents`) | List all agents grouped by bazilion group. |
-| `/groups` | List bazilion groups with agent counts. |
+| `/spawn_team` | Spawn a whole Team Template at once. Accepts `[in <team>]`; typed `/spawn-team` also works. |
+| `/talk <agent>` | Open or create an agent's topic. Accepts `<team>/<agent>`. |
+| `/list` (alias `/agents`) | List all Agents grouped by Bazilion Team. |
+| `/teams` | List Bazilion Teams with Agent counts. |
 | `/whoami` | Show your numeric Telegram user id. |
 | `/allowed` | List allowlisted users. |
 | `/allow <id> [label]` | Allow a user (owner only). |
@@ -299,16 +310,16 @@ These run **inside an agent's topic** (hidden from the menu, shown in `/help`):
 
 ## Topic names and icons
 
-- In the **default** group, a topic is named after the agent (e.g. `researcher`).
-  In any other group it's `group-slug › agent-name`.
-- A group can override the format with a template using the tokens
-  `{agent.name}`, `{group.name}`, and `{group.slug}` (it must include
-  `{agent.name}`). Set it on the group's detail page (**Telegram topic names**
-  card) or with `bazilion group topic-format set <group> "<template>"`. Saving a
+- In the **default** Team, a topic is named after the Agent (e.g. `researcher`).
+  In any other Team it is `team-slug › agent-name`.
+- A Team can override the format with a template using the tokens
+  `{agent.name}`, `{team.name}`, and `{team.slug}` (it must include
+  `{agent.name}`). Set it on the Team's detail page (**Telegram topic names**
+  card) or with `bazilion team topic-format set <team> "<template>"`. Saving a
   new template renames existing topics you haven't manually renamed in Telegram.
 - Each agent gets an icon. You can override it per agent (the **topic icon**
   field in the agent's Telegram section); otherwise bazilion picks a default
-  from the profile name and a per-group color.
+  from the Agent template name and a per-Team color.
 
 ---
 
@@ -344,6 +355,11 @@ from the list. Desktop, web, and Android work as expected.
 **Someone deleted an agent's topic.** Bazilion notices on the next send, clears
 the binding, and stops mirroring there. Re-bind with `/talk`, the web **bind a
 topic** button, or `bazilion telegram bind`.
+
+**The bot is healthy and the user is allowed, but a message is denied or held.**
+When Team Policy enforcement is on, inspect the Team's **Activity** tab for a
+durable denial or `/approvals` (or `bazilion approval list`) for a pending
+attempt. Telegram access control does not override policy.
 
 **A media file was rejected.** Inbound photos/documents/voice are downloaded and
 referenced by path for the agent, up to **20 MB** (Telegram's bot download

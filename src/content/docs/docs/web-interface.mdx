@@ -1,141 +1,172 @@
 ---
 title: The web interface
-description: A tour of the bazilion web UI — logging in, first-run setup, the chat workspace, agents, templates, groups, memory, skills, and configuration.
+description: A tour of the Bazilion web UI — setup, chat, Agent and Team templates, live Teams, policy, approvals, memory, skills, and configuration.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-The web UI is the canonical way to use bazilion. `bazilion dashboard` runs it on
-`http://127.0.0.1:4322` and talks to the daemon on `127.0.0.1:4321`. This page
-is a tour of every screen.
+The web UI is the canonical visual surface for Bazilion. `bazilion dashboard`
+runs it on `http://127.0.0.1:4322` and connects it to the daemon on
+`127.0.0.1:4321`.
 
 ## Logging in
 
-Open the web UI and you'll land on **`/login`**. Paste your **bootstrap token**
-— it's the `token` value in `~/.bazilion/auth.json`, created the first time you
-ran `bazilion dashboard` or `bazilion serve` — and click **log in**. The token
-is stored in a cookie, so you stay logged in.
+Open the web UI and paste the **bootstrap token** on `/login`. It is the `token`
+value in `~/.bazilion/auth.json`, created on the first `bazilion dashboard` or
+`bazilion serve`. The UI keeps it in a cookie.
 
 <Aside type="tip">
-Need extra tokens for a phone or another machine? Mint them on
-**config → Tokens**. The bootstrap token itself can't be revoked.
+Need another credential for a phone or remote client? Mint one under
+**config → Tokens**. The bootstrap token itself cannot be revoked.
 </Aside>
 
 ## First-run setup
 
-Until at least one model provider is configured, the app redirects to
-**`/welcome`**, which walks you to **`/config`**. There you:
-
-1. Enable a provider (Anthropic, OpenAI, Google, a local backend, or ChatGPT
-   OAuth).
-2. Add credentials and curate at least one model.
-
-The moment one enabled provider has a model, setup is complete: bazilion seeds a
-**`default` profile** and a **`default` group**, and the rest of the app unlocks.
+Until at least one enabled provider has a curated model, the app redirects to
+`/welcome` and `/config`. Choose a provider, add credentials, enable it, and
+save at least one model. Crossing that threshold seeds the `default` Agent
+template and `default` Team, then unlocks the rest of the app.
 
 ## Navigation
 
-The top nav has **templates**, **agents**, **groups**, **skills**, and
-**config**, plus a light/dark theme toggle. The home page also has a sidebar with
-a **+ new ▾** dropdown — the main place you spawn things.
+The current top navigation is **Templates · Agents · Teams · Approvals · Skills
+· Config**, plus a light/dark theme toggle. The home route remains the two-pane
+chat workspace.
 
-## Home — the chat workspace (`/`)
+## Home — chat workspace (`/`)
 
-The home page is a two-pane workspace: a sidebar of agents (grouped by their
-group) on the left, and a chat pane on the right. Pick an agent to start talking.
+The sidebar groups Agents by Team; the main pane streams the selected Agent's
+conversation. The **+ new ▾** menu can:
 
-The **+ new ▾** dropdown offers three actions:
+- spawn one Agent from an Agent template,
+- spawn a reviewed Team Template revision,
+- create a Team.
 
-- **spawn agent from template** — create one agent from a profile.
-- **spawn group from template** — spawn a whole team from a profile group.
-- **+ create group** — make a new collaboration group.
+Each Agent row shows status, a Telegram binding marker when present, and
+rename/archive controls. Chat renders markdown and tool details, accepts
+attachments (including pasted or dropped images), surfaces delivered files,
+and shows a cancel control while a turn is active.
 
-Each agent row shows its status, a ✈ marker if it's bound to a Telegram topic,
-and rename/archive controls on hover.
+The composer also recognizes:
 
-The **chat pane** streams the agent's response live, renders markdown, and shows
-collapsible tool-call details. You can **attach files** to a message — images go
-to the model as vision input, other files are stored for the agent to open — and
-files the agent sends back with `deliver_file` surface inline (images as a
-standalone image block). A **cancel** button appears while the agent is working.
-It also understands a few slash commands typed into the message box:
+- `/context` — inspect the prompt/tool/skill/history budget,
+- `/compact [N]` — summarize older history while retaining recent turns,
+- `/reset` — clear the conversation.
 
-- `/context` — a token/character breakdown of the prompt, tools, skills, and
-  history.
-- `/compact [N]` — summarize older history, keeping the last N turns verbatim.
-- `/reset` — wipe the conversation.
+If Telegram or a trigger advances the same session, the page offers to reload.
 
-If another source (a trigger or Telegram) advances the conversation while you're
-looking at it, a banner offers to reload.
+## Agent templates (`/templates/agents`)
+
+The product calls these **Agent templates**; their technical entity and HTTP
+resource remain `Profile` and `/api/profiles`.
+
+- `/templates/agents` lists and creates templates.
+- `/templates/agents/:id` edits the default model, skills policy, creation-time
+  communication defaults, and
+  `SOUL.md`, `IDENTITY.md`, optional `BOOTSTRAP.md`, `AGENTS.md`, `TOOLS.md`, and
+  `HEARTBEAT.md` seed files.
+
+Edits affect future spawns, not Agents already created from the template.
+
+## Team Templates (`/templates/teams`)
+
+A Team Template is the **only reusable Team roster**. It owns stable ordered
+slots, directed communication edges, and immutable revisions.
+
+- `/templates/teams` lists and creates Team Templates.
+- `/templates/teams/:id` opens the production editor. Add profile-backed slots,
+  set optional name/model/reasoning overrides, and define directed edges in the
+  **Flow** or **Matrix** projection of the same draft.
+
+The editor offers Open Team, Coordinator, Review Pipeline, and Blank starting
+presets. A preset only replaces the current draft; nothing becomes effective
+until you save. Every successful save creates a new immutable revision.
 
 ## Agents
 
-- **`/agents`** — a table of all agents with a spawn form (profile, name,
-  optional model override, group). Archived agents are hidden behind a toggle.
-- **`/agents/:id`** — the agent's detail page, with tabs for **chat**, **inbox**,
-  and **triggers**. Here you can change the model override and reasoning level,
-  move the agent to another group, attach or detach skills, and — if Telegram is
-  configured — bind a topic, set its icon, and choose the mirror verbosity.
-- **`/agents/:id/inbox`** — messages other agents have sent this one via the
-  `send_message` tool. Read them, see who sent what, and track unread mail.
-- **`/agents/:id/triggers`** — scheduled wake-ups. Add an **interval** (every N
-  seconds) or **cron** (5-field) trigger with a stored message; enable, disable,
-  or delete them.
+- `/agents` lists active and archived Agents and provides a single-Agent spawn
+  form with an explicit destination Team.
+- `/agents/:id` contains **chat**, **inbox**, and **triggers** tabs. It also
+  exposes model/reasoning settings, Team movement, Agent-specific skills, and
+  Telegram topic controls.
+- `/agents/:id/inbox` shows durable peer messages and unread state.
+- `/agents/:id/triggers` manages interval and 5-field cron wake-ups.
 
-## Templates
+Moving an Agent preserves its ID, private home, and transcript while both Team
+memberships/policies update atomically. Archiving also preserves Team membership
+and policy.
 
-Templates are the **profiles** and **profile groups** you spawn agents from.
+## Teams (`/teams`)
 
-- **`/profiles`** — list and create profiles. The create/edit form has a
-  **basics** tab (id, name, default model, and the `SOUL.md` / `IDENTITY.md` /
-  optional `BOOTSTRAP.md`, `AGENTS.md`, `TOOLS.md`, `HEARTBEAT.md` editors) and a
-  **skills** tab (allow all skills, or pick a subset).
-- **`/profiles/:id`** — edit a profile's files and settings. Edits don't affect
-  already-spawned agents.
-- **`/profile-groups`** — list and create team templates. A profile group is an
-  ordered list of members, each pointing at a profile with optional per-member
-  name/model/reasoning overrides.
-- **`/profile-groups/:id`** — edit the team's members and starter `USER.md`.
+`/teams` lists and registers live Teams. A Team gets a daemon-owned slot at
+`~/.bazilion/teams/<slug>/`; optionally point that slot at an existing project
+directory with a link target.
 
-See [Core concepts](/docs/concepts/) for how profiles, profile groups, and
-groups relate.
+Every Team owns exactly one effective revisioned policy and has six tabs:
 
-## Groups
+- **Overview** — `USER.md`, Telegram topic naming, and Team Template spawn for
+  an empty Team.
+- **Members** — the live Agent roster and retained source-slot projection.
+- **Policy** — the effective communication graph and source-lineage operations.
+- **Memory** — BM25 search and markdown CRUD for Team-shared qmd memory.
+- **Context** — the resolved Team context presented to members.
+- **Activity** — durable blocked-communication evidence. This is denial history,
+  not general policy-change history.
 
-- **`/groups`** — list and register groups. A group can be a fresh directory or a
-  symlink to an existing project folder (give a link target). You can only remove
-  a group with no members.
-- **`/groups/:id`** — the group's detail page: edit its **`USER.md`** (shared,
-  read-only context for every agent in the group), set the **Telegram topic name**
-  template, spawn a team into an empty group, and see the member roster.
-- **`/groups/:id/memory`** — the group's [shared memory](/docs/concepts/#shared-memory).
-  Search it (BM25), browse entries, and create or edit markdown notes that every
-  agent in the group can read.
+Normal coding tools cannot overwrite `USER.md`; Agents can update it only via
+the guarded USER.md tools, and the operator can edit it here.
+
+## Live Team Policy (`/teams/:id/policy`)
+
+The live editor uses the same Flow and Matrix projections as Team Templates,
+but operates on the Team's sole effective policy. It supports:
+
+- preview/evaluation without sending a message,
+- optimistic revision conflict recovery,
+- comparison with the retained Team Template baseline,
+- explicit adoption/rebaseline from a source template,
+- reviewed update-source operations when lineage is aligned,
+- saving a live policy as a new Team Template,
+- durable block details with cross-Team component evidence.
+
+Source changes never auto-propagate. The live Team and the source revision remain
+independent until you explicitly compare and reconcile them.
+
+<Aside type="caution">
+Policy management ships in 0.9.0, but runtime enforcement is opt-in. Set
+`BAZILION_TEAM_POLICY_ENFORCEMENT=on` and restart the daemon. When enforcement
+is active, missing edges deny across user, peer, scheduler, inbox, worker, and
+Telegram boundaries.
+</Aside>
+
+## Communication approvals (`/approvals`)
+
+An `approval_required` edge holds one typed attempt before its side effect. The
+queue lets you filter history, inspect the path, policy revisions, expiration,
+sensitive payload, and audit events, then **Approve once** or **Deny**. The CLI
+also supports cancellation.
+
+Approval revalidates current membership/policy and dispatches at most once. It
+does not create a multi-stage workflow.
 
 ## Skills
 
-**`/skills`** — install and manage skills. Import from a local OpenClaw install,
-from a server directory path, or by uploading a zip. Installed skills show their
-description, source, and import date, and can be removed. Skills are attached to
-agents through profiles or per-agent on the agent detail page.
+`/skills` imports and manages prompt-only Agent skills from a local OpenClaw
+install, a server directory, or a zip. Skills show their source and metadata and
+can be attached by an Agent template or directly to one live Agent.
 
 ## Configuration
 
-The **config** area covers:
+The config area covers:
 
-- **`/config`** (Providers) — enable model providers, add credentials, and curate
-  models. This is also the first-run setup gate. ChatGPT OAuth has its own
-  **Connect ChatGPT** card, and **Browser Automation** is enabled here too.
-- **`/config/services`** — credentials for non-LLM services (web search,
-  crawlers, etc.).
-- **`/config/mcp`** — register and manage [MCP servers](/docs/tools/#mcp-servers)
-  (stdio, HTTP, or SSE); their tools are injected into every agent.
-- **`/config/integrations/telegram`** — the Telegram integration: credentials,
-  preflight checks, and access control. See [Connecting Telegram](/docs/telegram/).
-- **`/config/tokens`** — mint and revoke API tokens for additional clients. The
-  token value is shown once at creation.
+- `/config` — providers, model curation, ChatGPT OAuth, and Browser Automation,
+- `/config/services` — non-LLM service credentials and URLs,
+- `/config/mcp` — stdio, Streamable-HTTP, and SSE MCP servers,
+- `/config/integrations/telegram` — credentials, preflight, and access control,
+- `/config/tokens` — additional API/client tokens.
 
 <Aside type="note">
-Everything in the web UI is also available from the CLI and the HTTP API — the
-web UI is just the friendliest surface over the same daemon.
+Canonical HTTP surfaces are `/api/profiles`, `/api/team-templates`, `/api/teams`,
+`/api/teams/:id/policy`, and `/api/approvals`. There are no Group, Profile
+Group, or Harness compatibility URLs in 0.9.0.
 </Aside>
