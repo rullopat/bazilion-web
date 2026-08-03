@@ -26,6 +26,32 @@ Because a Team root can be a symlink to a real project (see
 [Core concepts](/docs/concepts/#teams)), Agents work on actual code rather than
 a throwaway sandbox.
 
+## Shell isolation and dangerous-command approval
+
+By default, Pi's host-backed `read`, `bash`, `edit`, `write`, `grep`, `find`,
+and `ls` tools operate from the Team root. This is convenient, but the working
+directory is not a security boundary.
+
+Set `BAZILION_BASH_SANDBOX=docker` to replace the host-backed coding surface
+with a containerized `bash`. Every invocation uses a fresh container with no
+network, a read-only root, a temporary `/tmp`, a scrubbed environment, and the
+Team workspace as its only writable mount. Team memory, Agent inputs, and
+attached skills are mounted read-only. Bazilion accepts only a local Unix-socket
+Docker context and a pre-existing compatible image; a missing or invalid setup
+fails closed instead of falling back to the host.
+
+`BAZILION_BASH_APPROVAL=dangerous` is a separate control. Commands classified
+as dangerous pause for approval inline in web chat or at an interactive CLI
+prompt. Decisions are scoped to that turn; cancellation and timeouts clean up
+the request, and non-interactive turns deny automatically. This is independent
+of durable Team Policy communication approvals.
+
+```sh
+BAZILION_BASH_SANDBOX=docker \
+BAZILION_BASH_APPROVAL=dangerous \
+bazilion dashboard
+```
+
 ## Browser automation
 
 Agents can drive a real **Playwright** browser. Perception is

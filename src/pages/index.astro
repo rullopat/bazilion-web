@@ -40,7 +40,7 @@ const features = [
   {
     n: '08',
     title: 'Pi is the engine underneath',
-    body: "Bazilion 0.9.0 bundles Pi 0.80.6. Pi runs the per-turn loop, stores the JSONL transcript, handles replay and compaction, executes providers and tools, and supplies the coding tools.",
+    body: 'Pi runs the per-turn loop, stores the JSONL transcript, handles replay and compaction, executes providers and tools, and supplies the coding tools. Bazilion 0.11.0 bundles Pi 0.80.6.',
   },
   {
     n: '09',
@@ -54,8 +54,8 @@ const features = [
   },
   {
     n: '11',
-    title: 'Heartbeats, crons, and Telegram',
-    body: 'Triggers can wake an agent on a schedule, while one Telegram forum supergroup gives every bound agent its own topic. The same Team policy authorizes every ingress and egress when enforcement is on.',
+    title: 'Durable schedules and Telegram',
+    body: 'Interval and cron triggers survive busy Agents, bounded retries, and daemon restarts. A Telegram forum supergroup gives every bound Agent its own topic under the same Team policy.',
   },
   {
     n: '12',
@@ -113,11 +113,11 @@ const features = [
         </ul>
       </nav>
 
-      <a class="release-note" href="/docs/whats-new-0-9/" data-reveal="2">
-        <span class="release-note__badge">v0.9.0</span>
+      <a class="release-note" href="/docs/whats-new-0-11/" data-reveal="2">
+        <span class="release-note__badge">v0.11.0</span>
         <span>
-          Teams are now canonical: one Team Template roster, one effective live policy, and no
-          legacy Group or Harness surfaces.
+          Safer agent execution, durable scheduled work, verified online backups, and reliable
+          ChatGPT OAuth refresh.
         </span>
         <span class="release-note__arrow" aria-hidden="true">read what changed →</span>
       </a>

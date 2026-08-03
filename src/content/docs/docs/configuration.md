@@ -11,8 +11,8 @@ stateless and talk to it over HTTP.
 
 Models use `provider:model`, for example `anthropic:claude-opus-4-8`,
 `openai-codex:gpt-5.6-luna`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog; Bazilion 0.9.0 updates Pi to 0.80.6 and refreshes
-the catalog, including GPT-5.6 Luna, Terra, and Sol.
+data-driven from Pi's catalog. Bazilion 0.11.0 bundles Pi 0.80.6, including
+GPT-5.6 Luna, Terra, and Sol.
 
 Common providers include:
 
@@ -29,13 +29,15 @@ Credentials alone do not clear first-run setup. Enable the provider and save at
 least one curated model in `/config` or with `bazilion provider`.
 
 ChatGPT OAuth credentials live encrypted in the database and refresh lazily.
+During worker turns, expiring access tokens refresh through provider-, Agent-,
+and turn-bound daemon IPC; refresh credentials never enter the worker.
 After connecting, enable `openai-codex` and curate a model such as
 `gpt-5.6-luna`, `gpt-5.6-terra`, or `gpt-5.6-sol`.
 
 ## Team Policy enforcement
 
 The Team Policy management surfaces are always available. Runtime enforcement
-is opt-in in 0.9.0:
+is opt-in:
 
 ```sh
 BAZILION_TEAM_POLICY_ENFORCEMENT=on bazilion dashboard
@@ -71,6 +73,46 @@ bazilion token revoke <id>
 Add `--qr` to create a `bazilion://pair?...` URL and terminal QR code for a
 mobile client.
 
+## Shell isolation and command approval
+
+The default `BAZILION_BASH_SANDBOX=off` keeps Pi's host-backed coding tools.
+Opt into a fresh, network-disabled Docker container for each shell command:
+
+```sh
+BAZILION_BASH_SANDBOX=docker bazilion dashboard
+```
+
+Docker mode exposes the Team workspace as the only writable mount, keeps
+memory, skills, and Agent inputs read-only, uses a read-only root and temporary
+`/tmp`, and refuses remote Docker contexts or images with implicit volumes. It
+fails closed if Docker or the configured local image is unavailable.
+
+Independently, `BAZILION_BASH_APPROVAL=dangerous` pauses commands classified as
+dangerous for a turn-scoped decision in the web UI or an interactive TTY. A
+non-interactive turn denies them automatically. Run `bazilion doctor` to inspect
+the active posture.
+
+## Backup and restore
+
+Create an online backup while the daemon is running:
+
+```sh
+bazilion backup create bazilion-backup.tar.gz
+```
+
+The archive contains a verified SQLite snapshot rather than live WAL state.
+Restore is deliberately offline and staged:
+
+```sh
+bazilion backup restore bazilion-backup.tar.gz
+```
+
+Restore validates paths and links, the auth/database pair, SQLite integrity,
+foreign keys, and the exact schema before an atomic install. It rebases stored
+Profile and Agent directories to the destination home, preserves contained
+relative work-product links, rejects escaping targets, and leaves recovery
+markers if a swap is interrupted.
+
 ## On-disk layout
 
 ```text
@@ -90,7 +132,7 @@ external project directory.
 
 ## Alpha clean-install contract
 
-Bazilion 0.9.0 intentionally has one canonical schema in `0001_init.sql`. There
+Bazilion intentionally has one canonical schema in `0001_init.sql`. There
 are no incremental Group/Profile Group/Harness migrations and no database, API,
 URL, CLI, or filesystem compatibility adapters.
 

@@ -19,9 +19,11 @@ control, with your own provider keys.
 It is not a hosted platform. It is a daemon, a CLI, and a web UI you run
 yourself, published under the MIT license.
 
-**Bazilion 0.9.0 makes Teams canonical.** Profile Groups, Groups, the Harness
-prototype, and all compatibility APIs/URLs are gone. Read
-[what changed and how to reset an older alpha install](/docs/whats-new-0-9/).
+**Bazilion 0.11.0 hardens unattended work.** Agent shell commands can run in an
+opt-in, network-disabled Docker sandbox; scheduled dispatches survive contention
+and restarts; backups use verified SQLite snapshots; and ChatGPT OAuth refreshes
+mid-turn without exposing refresh credentials to workers. Read
+[what changed in 0.11](/docs/whats-new-0-11/).
 
 <CardGrid>
   <LinkCard
@@ -37,7 +39,7 @@ prototype, and all compatibility APIs/URLs are gone. Read
   <LinkCard
     title="Tools & integrations"
     href="/docs/tools/"
-    description="Browser automation, MCP servers, file handling, and built-in tools."
+    description="Shell isolation, command approval, browser automation, MCP, and files."
   />
   <LinkCard
     title="Configuration"

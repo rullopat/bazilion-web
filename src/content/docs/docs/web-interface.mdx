@@ -90,7 +90,8 @@ until you save. Every successful save creates a new immutable revision.
   exposes model/reasoning settings, Team movement, Agent-specific skills, and
   Telegram topic controls.
 - `/agents/:id/inbox` shows durable peer messages and unread state.
-- `/agents/:id/triggers` manages interval and 5-field cron wake-ups.
+- `/agents/:id/triggers` manages interval and 5-field cron wake-ups and shows
+  recent durable dispatch status, retries, and terminal failures.
 
 Moving an Agent preserves its ID, private home, and transcript while both Team
 memberships/policies update atomically. Archiving also preserves Team membership
@@ -133,7 +134,7 @@ Source changes never auto-propagate. The live Team and the source revision remai
 independent until you explicitly compare and reconcile them.
 
 <Aside type="caution">
-Policy management ships in 0.9.0, but runtime enforcement is opt-in. Set
+Runtime policy enforcement is opt-in. Set
 `BAZILION_TEAM_POLICY_ENFORCEMENT=on` and restart the daemon. When enforcement
 is active, missing edges deny across user, peer, scheduler, inbox, worker, and
 Telegram boundaries.
@@ -165,8 +166,13 @@ The config area covers:
 - `/config/integrations/telegram` — credentials, preflight, and access control,
 - `/config/tokens` — additional API/client tokens.
 
+When `BAZILION_BASH_APPROVAL=dangerous` is active, classified shell commands
+appear inline in chat with approve and deny controls. These ephemeral shell
+decisions are intentionally separate from the durable communication queue at
+`/approvals`.
+
 <Aside type="note">
 Canonical HTTP surfaces are `/api/profiles`, `/api/team-templates`, `/api/teams`,
 `/api/teams/:id/policy`, and `/api/approvals`. There are no Group, Profile
-Group, or Harness compatibility URLs in 0.9.0.
+Group, or Harness compatibility URLs.
 </Aside>

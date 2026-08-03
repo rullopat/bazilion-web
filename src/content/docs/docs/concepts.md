@@ -16,7 +16,7 @@ providers and tools, and supplies the coding tools.
 
 Bazilion adds the multi-agent shell around that engine: templates, Teams,
 policy, shared context, mailbox, triggers, browser/MCP integrations, the daemon,
-CLI, and web UI. Version 0.9.0 bundles Pi 0.80.6.
+CLI, and web UI. Version 0.11.0 bundles Pi 0.80.6.
 
 ## Agent templates (Profiles)
 
@@ -90,7 +90,7 @@ The shared authorizer covers:
 - cross-Team Agent communication (both Teams must allow their side),
 - scheduler, inbox, HTTP/worker-turn, and Telegram ingress/egress boundaries.
 
-Production enforcement is opt-in in 0.9.0. Set
+Production enforcement remains opt-in. Set
 `BAZILION_TEAM_POLICY_ENFORCEMENT=on` and restart the daemon. When enabled,
 there is no alternate authorization path. Durable block records retain the
 policy evidence and reason, never the message payload.
@@ -123,8 +123,14 @@ Agents coordinate through a durable mailbox. In-loop tools are `send_message`,
 `read_inbox`, and `wait_for_reply`; outside the loop the same messages are
 available through `bazilion inbox`, the HTTP API, and the Agent inbox page.
 
-Interval and cron **triggers** can wake an Agent with a stored message. Alongside
-the coding, web, mailbox, and memory tools, the daemon can provide a persistent
+Interval and cron **triggers** can wake an Agent with a stored message. Due
+occurrences are durably materialized, coalesced while an earlier dispatch is
+open, leased across daemon restarts, and retried to a bounded terminal state.
+Inspect delivery with `bazilion trigger history <id>` or the Agent's Triggers
+tab.
+
+Alongside the coding, web, mailbox, and memory tools, the daemon can provide an
+opt-in Docker-isolated shell, dangerous-command approval, a persistent
 Playwright browser, tools from connected MCP servers, and bidirectional file
 delivery. See [Tools & integrations](/docs/tools/).
 
