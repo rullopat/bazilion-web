@@ -9,10 +9,10 @@ stateless and talk to it over HTTP.
 
 ## Providers and models
 
-Models use `provider:model`, for example `anthropic:claude-opus-4-8`,
+Models use `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-5.6-luna`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog. Bazilion 0.11.0 bundles Pi 0.80.6, including
-GPT-5.6 Luna, Terra, and Sol.
+data-driven from Pi's catalog. Bazilion 0.12.2 bundles Pi 0.83.0, including
+current GPT-5.6, Claude 5, Gemini 3.6, Kimi K3, Grok 4.5, and Qwen 3.8 models.
 
 Common providers include:
 
@@ -22,6 +22,8 @@ Common providers include:
 | OpenAI | `OPENAI_API_KEY` |
 | Anthropic | `ANTHROPIC_API_KEY` |
 | Google Gemini | `GEMINI_API_KEY` |
+| Qwen Token Plan | `QWEN_TOKEN_PLAN_API_KEY` |
+| Qwen Token Plan CN | `QWEN_TOKEN_PLAN_CN_API_KEY` |
 | LM Studio | `LMSTUDIO_URL` / `LMSTUDIO_API_KEY` |
 | Ollama | `OLLAMA_URL` |
 

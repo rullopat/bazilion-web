@@ -73,8 +73,8 @@ export default defineConfig({
           items: [
             { label: 'Overview', slug: 'docs' },
             { label: 'Getting started', slug: 'docs/getting-started' },
+            { label: "What's new in 0.12", slug: 'docs/whats-new-0-12' },
             { label: "What's new in 0.11", slug: 'docs/whats-new-0-11' },
-            { label: "What's new in 0.9", slug: 'docs/whats-new-0-9' },
             { label: 'How Bazilion is different', slug: 'docs/why-bazilion' },
           ],
         },
