@@ -11,7 +11,7 @@ stateless and talk to it over HTTP.
 
 Models use `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-5.6-luna`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog. Bazilion 0.12.2 bundles Pi 0.83.0, including
+data-driven from Pi's catalog. Bazilion 0.13.0 bundles Pi 0.84.3, including
 current GPT-5.6, Claude 5, Gemini 3.6, Kimi K3, Grok 4.5, and Qwen 3.8 models.
 
 Common providers include:
@@ -22,8 +22,10 @@ Common providers include:
 | OpenAI | `OPENAI_API_KEY` |
 | Anthropic | `ANTHROPIC_API_KEY` |
 | Google Gemini | `GEMINI_API_KEY` |
+| Baseten | `BASETEN_API_KEY` |
 | Qwen Token Plan | `QWEN_TOKEN_PLAN_API_KEY` |
 | Qwen Token Plan CN | `QWEN_TOKEN_PLAN_CN_API_KEY` |
+| Qwen Token Plan Individual | `QWEN_TOKEN_PLAN_API_KEY` |
 | LM Studio | `LMSTUDIO_URL` / `LMSTUDIO_API_KEY` |
 | Ollama | `OLLAMA_URL` |
 
@@ -96,19 +98,21 @@ the active posture.
 
 ## Backup and restore
 
-Create an online backup while the daemon is running:
+Create a recipient-encrypted online backup while the daemon is running:
 
 ```sh
-bazilion backup create bazilion-backup.tar.gz
+bazilion backup create bazilion-backup.tar.gz.age --recipient age1...
 ```
 
 The archive contains a verified SQLite snapshot rather than live WAL state.
-Restore is deliberately offline and staged:
+Restore is deliberately offline and staged. Keep the age identity in an
+owner-only file (`chmod 600`) and pass it explicitly:
 
 ```sh
-bazilion backup restore bazilion-backup.tar.gz
+bazilion backup restore bazilion-backup.tar.gz.age --identity ./age-identity.txt
 ```
 
+Plaintext archives remain available only with an explicit `--plaintext` flag.
 Restore validates paths and links, the auth/database pair, SQLite integrity,
 foreign keys, and the exact schema before an atomic install. It rebases stored
 Profile and Agent directories to the destination home, preserves contained
@@ -149,6 +153,40 @@ npx bazilion dashboard
 The full wipe removes the database, bootstrap token, logs, and local skill
 library, so provider and integration credentials—including Telegram—must be
 entered again. Linked Team targets remain untouched.
+
+## Private web gateway
+
+The supported remote-access profile uses Tailscale Serve for tailnet-only HTTPS
+while both Bazilion listeners remain on loopback. Set one exact public origin in
+the daemon and web environments:
+
+```sh
+BAZILION_PUBLIC_ORIGIN=https://bazilion.example.ts.net
+HOST=127.0.0.1
+PORT=4321
+WEB_HOST=127.0.0.1
+WEB_PORT=4322
+```
+
+After starting both services, configure Serve and run the read-only preflight:
+
+```sh
+tailscale serve --bg --https=443 http://127.0.0.1:4322
+bazilion gateway preflight
+```
+
+Funnel and direct daemon exposure are unsupported. Mint a different expiring
+device credential for each browser or phone; the plaintext is shown once:
+
+```sh
+bazilion token create personal-laptop --expires-days 90 --qr
+bazilion token list
+bazilion session list
+```
+
+Browser login exchanges the device credential for a bounded server session.
+Revoking or expiring the credential also invalidates its derived sessions. The
+local bootstrap token is not accepted by browser login.
 
 ## LAN and mobile
 

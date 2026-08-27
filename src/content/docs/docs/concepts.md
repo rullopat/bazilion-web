@@ -16,7 +16,7 @@ providers and tools, and supplies the coding tools.
 
 Bazilion adds the multi-agent shell around that engine: templates, Teams,
 policy, shared context, mailbox, triggers, browser/MCP integrations, the daemon,
-CLI, and web UI. Version 0.12.2 bundles Pi 0.83.0 and constructs provider,
+CLI, and web UI. Version 0.13.0 bundles Pi 0.84.3 and constructs provider,
 catalog, authentication, and session state through Pi's public `ModelRuntime`
 and `DefaultResourceLoader` APIs.
 

@@ -4,7 +4,7 @@ description: Bazilion 0.12 adds an Operator Attention Center, reviewed Agent lea
 ---
 
 Bazilion 0.12 makes long-lived Agent teams easier to supervise and safer to
-leave running. Version 0.12.2 is the current release. The three public packages
+leave running. In that release, the three public packages
 move together: `bazilion@0.12.2`, `@bazilion/client@0.12.2`, and
 `@bazilion/api-types@0.12.2`.
 

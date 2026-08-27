@@ -258,10 +258,17 @@ allowlisting a human never bypasses the Team's communication policy.
 
 ## Access control
 
-The bot uses **trust-on-first-use**. While the allowlist is empty, the bot is
-open and the **first person to message it becomes the owner**. So: have the
-intended owner message the bot first — they'll get a one-time "you're now the
-bazilion owner" confirmation.
+The bot fails closed while the allowlist is empty. Generate a short-lived,
+single-use pairing code from the local CLI, then send it from the intended
+owner's Telegram account:
+
+```sh
+bazilion telegram pairing create
+```
+
+In Telegram, send `/pair <code>` to the bot. The code is bound to the configured
+bot and supergroup, expires quickly, and cannot be reused. Ordinary messages do
+not claim ownership.
 
 After that, everyone else is blocked until an owner allows them. Telegram bots
 can't look users up by username, so you add people by **numeric user id**:
@@ -292,6 +299,7 @@ menu:
 | `/list` (alias `/agents`) | List all Agents grouped by Bazilion Team. |
 | `/teams` | List Bazilion Teams with Agent counts. |
 | `/whoami` | Show your numeric Telegram user id. |
+| `/pair <code>` | Claim initial ownership with a locally generated one-use code. |
 | `/allowed` | List allowlisted users. |
 | `/allow <id> [label]` | Allow a user (owner only). |
 | `/deny <id>` | Remove a user (owner only). |
