@@ -40,7 +40,10 @@ On first boot `bazilion dashboard`:
 
 - creates `~/.bazilion/` (profiles, agents, teams, skills, logs),
 - opens the SQLite database and applies the clean-install schema,
-- mints a bootstrap token and writes it to `~/.bazilion/auth.json`,
+- mints a bootstrap token, stores its row, and writes it to
+  `~/.bazilion/auth.json`,
+- on later starts, requires the database and auth file to be present together
+  and the bootstrap token to match its active database row,
 - binds the HTTP API on `127.0.0.1:4321`,
 - opens the bundled web UI on `http://127.0.0.1:4322`.
 
@@ -77,7 +80,41 @@ After setup, the first-run browser session remains valid until its normal
 expiry. Subsequent browser logins and native pairing use separately named,
 expiring device credentials rather than the bootstrap token.
 
+For ChatGPT OAuth, the normal CLI flow opens a browser and receives its callback
+on local port 1455. Use device-code login when the browser is remote or that
+callback is unavailable:
+
+```sh
+bazilion auth openai login --device-code
+
+# Source checkout: run from the Bazilion repository root.
+pnpm tsx apps/cli/src/index.ts auth openai login --device-code
+```
+
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
+
+## Recover an alpha install
+
+Bazilion's alpha database is clean-install-only. Version 0.14.1 checks the exact
+schema and the database/bootstrap identity pair before background work or the
+HTTP listener starts. If startup reports an incompatible or mismatched home,
+back up the complete `~/.bazilion` directory first, then reset and bootstrap it:
+
+```sh
+bazilion uninstall --yes
+bazilion dashboard
+```
+
+The standard reset removes the database, `auth.json`, Agent templates, Agents,
+and Teams while preserving logs and installed skills. Linked Team targets are
+never deleted. Add `--all` only for an intentional full wipe.
+
+When developing from source, run this from the Bazilion repository root after
+changing Node versions, using the same Node runtime that starts Bazilion:
+
+```sh
+pnpm rebuild better-sqlite3
+```
 
 ## First agent
 

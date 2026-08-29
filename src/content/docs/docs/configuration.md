@@ -11,14 +11,14 @@ stateless and talk to it over HTTP.
 
 Models use `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-5.6-luna`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog. Bazilion 0.14.0 bundles Pi 0.84.3, including
+data-driven from Pi's catalog. Bazilion 0.14.1 bundles Pi 0.84.3, including
 current GPT-5.6, Claude 5, Gemini 3.6, Kimi K3, Grok 4.5, and Qwen 3.8 models.
 
 Common providers include:
 
 | Provider | Credential |
 | --- | --- |
-| ChatGPT OAuth (`openai-codex`) | Connect on `/config` or run `bazilion auth openai login` |
+| ChatGPT OAuth (`openai-codex`) | Connect on `/config` or run `bazilion auth openai login`; add `--device-code` for headless or remote setup |
 | OpenAI | `OPENAI_API_KEY` |
 | Anthropic | `ANTHROPIC_API_KEY` |
 | Google Gemini | `GEMINI_API_KEY` |
@@ -37,6 +37,16 @@ During worker turns, expiring access tokens refresh through provider-, Agent-,
 and turn-bound daemon IPC; refresh credentials never enter the worker.
 After connecting, enable `openai-codex` and curate a model such as
 `gpt-5.6-luna`, `gpt-5.6-terra`, or `gpt-5.6-sol`.
+
+The normal CLI flow opens a browser and listens for the loopback callback on
+port 1455. Use the device-code flow when that callback cannot reach the client:
+
+```sh
+bazilion auth openai login --device-code
+
+# From a source checkout, run the same command at the repository root.
+pnpm tsx apps/cli/src/index.ts auth openai login --device-code
+```
 
 ## Team Policy enforcement
 
@@ -146,17 +156,24 @@ Bazilion intentionally has one canonical schema in `0001_init.sql`. There
 are no incremental Group/Profile Group/Harness migrations and no database, API,
 URL, CLI, or filesystem compatibility adapters.
 
+Startup verifies the exact schema and checks that `bazilion.db` and `auth.json`
+form one valid bootstrap identity before the scheduler or HTTP listener starts.
+An older schema, a missing half of the pair, or a mismatched bootstrap token
+fails closed with recovery guidance instead of partially starting.
+
 For an older alpha install, export anything you need first, then recreate the
 state rather than attempting an in-place upgrade:
 
 ```sh
-bazilion uninstall --yes --all
+bazilion uninstall --yes
 npx bazilion dashboard
 ```
 
-The full wipe removes the database, bootstrap token, logs, and local skill
-library, so provider and integration credentials—including Telegram—must be
-entered again. Linked Team targets remain untouched.
+The standard reset removes the database and bootstrap token together, plus
+Agent templates, Agents, Teams, and obsolete alpha state. It preserves logs and
+the local skill library; add `--all` only when you intend to remove those too.
+Provider and integration credentials—including Telegram—must be entered again.
+Linked Team targets remain untouched.
 
 ## Private web gateway
 

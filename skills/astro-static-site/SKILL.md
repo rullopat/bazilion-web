@@ -37,15 +37,21 @@ metadata:
 3. Follow the existing class naming style, such as `hero__wordmark`, `library__item`, and `card-code__head`.
 4. Reuse existing CSS custom properties from `:root` before adding new colors, fonts, or shadows.
 5. Run `pnpm build` after code or config changes.
+6. Production deployment is Git-driven: merge and push `main`, wait for Cloudflare Workers Builds,
+   then verify the active Worker version and live content separately.
 
 ## Commands
 
 - `pnpm dev`: run the Astro development server.
 - `pnpm build`: generate the static site in `dist/`.
 - `pnpm preview`: preview the generated build.
-- `pnpm deploy`: build and deploy with Wrangler.
-- `pnpm cf:dev`: build and run the Cloudflare local dev server.
+
+There is no local deploy command. `wrangler.jsonc` describes the assets-only Worker, while
+Cloudflare Workers Builds owns the production deployment triggered from GitHub `main`.
 
 ## Checks
 
 For visual changes, inspect desktop and mobile widths. Pay particular attention to the hero, feature grid, code cards, dedication section, and footer. Preserve the existing reduced-motion behavior when adding or changing animations.
+
+After a production push, do not infer deployment from Git alone. Confirm the new Cloudflare Worker
+version is active, then require repeated cache-busted checks of the changed routes and static assets.

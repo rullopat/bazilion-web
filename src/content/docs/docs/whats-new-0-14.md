@@ -1,12 +1,44 @@
 ---
-title: What's new in 0.14.0
-description: Bazilion 0.14 connects first-run setup, reliable mobile chat, protected editing, clearer provider and navigation flows, and responsive accessible management.
+title: What's new in 0.14.1
+description: Bazilion 0.14.1 adds fail-fast alpha-upgrade recovery, reliable ChatGPT OAuth, paired resets, and actionable native-module diagnostics to the 0.14 experience.
 ---
 
-Bazilion 0.14 makes the path from a clean install to daily Agent operation more
-predictable and safer. The three public packages move together:
-`bazilion@0.14.0`, `@bazilion/client@0.14.0`, and
-`@bazilion/api-types@0.14.0`.
+Bazilion 0.14.1 makes the path from a clean install to daily Agent operation
+more predictable and safer. The three public packages move together:
+`bazilion@0.14.1`, `@bazilion/client@0.14.1`, and
+`@bazilion/api-types@0.14.1`.
+
+## Safer recovery and clearer failures in 0.14.1
+
+The daemon now validates the exact alpha schema and the pairing between
+`bazilion.db` and `auth.json` before the scheduler, HTTP listener, or any other
+runtime work starts. An older database therefore produces one actionable reset
+error instead of repeated missing-table messages. A missing or mismatched
+bootstrap identity also fails closed rather than minting a new credential that
+could strand encrypted secrets.
+
+The standard `bazilion uninstall --yes` reset removes the database and
+`auth.json` together, plus Agent templates, Agents, Teams, and obsolete alpha
+state. Logs and installed skills remain unless `--all` is explicitly added.
+Cleanup is guarded against a running daemon, survives interruption, and unlinks
+Team slots without deleting their external targets. Back up the complete
+`~/.bazilion` directory before resetting anything you need to preserve.
+
+ChatGPT OAuth no longer treats Pi's raced manual prompt as a failed web flow.
+Browser login preflights the loopback callback on port 1455, bounds and cleans
+up abandoned flows, and propagates client cancellation through the web gateway.
+For headless, remote, or occupied-port setups, the CLI now offers:
+
+```sh
+bazilion auth openai login --device-code
+```
+
+Native Node module ABI mismatches in Agent turns and qmd-backed Team memory now
+produce sanitized recovery guidance without exposing checkout paths. If a
+source checkout changes Node versions, rebuild `better-sqlite3` with the same
+runtime used to start Bazilion and restart the daemon.
+
+The sections below cover the broader 0.14 feature release included in 0.14.1.
 
 ## From first boot to the first conversation
 
@@ -87,9 +119,9 @@ Mobile pairing supports the private HTTPS web gateway published through
 tailnet-only Tailscale Serve. Direct daemon exposure, public reverse proxies,
 and Tailscale Funnel remain unsupported.
 
-Node.js 24 or newer is still required. This release does not change the
-canonical database schema; Bazilion's alpha compatibility contract remains
-clean-install-only.
+Node.js 24 or newer is still required. Bazilion's alpha compatibility contract
+remains clean-install-only; 0.14.1 detects incompatible state before startup
+instead of attempting an in-place migration.
 
-See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.14.0)
+See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.14.1)
 for the published artifacts and package-level changelog.
