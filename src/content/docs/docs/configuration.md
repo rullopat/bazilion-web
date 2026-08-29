@@ -11,7 +11,7 @@ stateless and talk to it over HTTP.
 
 Models use `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-5.6-luna`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog. Bazilion 0.13.0 bundles Pi 0.84.3, including
+data-driven from Pi's catalog. Bazilion 0.14.0 bundles Pi 0.84.3, including
 current GPT-5.6, Claude 5, Gemini 3.6, Kimi K3, Grok 4.5, and Qwen 3.8 models.
 
 Common providers include:
@@ -66,7 +66,11 @@ Credentials and settings live in `bazilion.db`, not loose `config.json` or
 ## Access tokens
 
 Every protected route uses the same token table. The bootstrap token in
-`auth.json` is minted on first run and cannot be revoked. Additional tokens:
+`auth.json` is minted on first run and cannot be revoked. On a clean install,
+browser login accepts it only while provider setup is incomplete and exchanges
+it for an internal expiring device identity plus a bounded session. The browser
+never retains the bootstrap bearer. After setup, use a named device credential.
+Additional tokens:
 
 ```sh
 bazilion token create <label>
@@ -179,24 +183,32 @@ Funnel and direct daemon exposure are unsupported. Mint a different expiring
 device credential for each browser or phone; the plaintext is shown once:
 
 ```sh
-bazilion token create personal-laptop --expires-days 90 --qr
+bazilion token create personal-laptop --expires-days 90
 bazilion token list
 bazilion session list
 ```
 
 Browser login exchanges the device credential for a bounded server session.
 Revoking or expiring the credential also invalidates its derived sessions. The
-local bootstrap token is not accepted by browser login.
+clean-install bootstrap login exception ends as soon as provider setup is
+complete; the first-run browser session remains valid until its normal expiry.
 
-## LAN and mobile
+## Mobile pairing
 
-The daemon binds `127.0.0.1:4321` by default. To reach it from a phone or other
-trusted device:
+Keep both Bazilion listeners on loopback. A phone talks to the private HTTPS web
+gateway published by Tailscale Serve, never to the daemon port directly. After
+the gateway preflight succeeds, mint a separate expiring phone credential with
+the exact configured origin:
 
 ```sh
-bazilion serve --host 0.0.0.0
+bazilion token create phone --expires-days 90 --qr \
+  --server "$BAZILION_PUBLIC_ORIGIN"
 ```
 
-The API is admin-level and the daemon does not provide TLS. Use Tailscale for a
-personal network or a correctly configured TLS reverse proxy; do not expose the
-raw port to the public internet.
+The QR contains a `bazilion://pair?...` URL. The mobile app verifies the token
+and canonical origin before saving them. Camera scans, manual paste, and custom
+scheme deep links all use the same flow. Pairing requires HTTPS except for
+loopback development.
+
+Direct LAN/daemon exposure, public reverse proxies, and Tailscale Funnel are
+unsupported.

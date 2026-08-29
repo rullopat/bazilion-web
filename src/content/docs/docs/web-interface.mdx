@@ -11,27 +11,42 @@ runs it on `http://127.0.0.1:4322` and connects it to the daemon on
 
 ## Logging in
 
-Open the web UI and paste the **bootstrap token** on `/login`. It is the `token`
-value in `~/.bazilion/auth.json`, created on the first `bazilion dashboard` or
-`bazilion serve`. The UI keeps it in a cookie.
+On a clean install, open the web UI and paste the **bootstrap token** on
+`/login`. It is the `token` value in `~/.bazilion/auth.json`, created on the
+first `bazilion dashboard` or `bazilion serve`.
+
+Browser login accepts that bootstrap secret only while provider setup is
+incomplete. Bazilion exchanges it for an internal expiring, revocable device
+identity and a bounded browser session; browser cookies never retain the
+bootstrap bearer. After setup, log in with a separately named device
+credential.
 
 <Aside type="tip">
-Need another credential for a phone or remote client? Mint one under
-**config → Tokens**. The bootstrap token itself cannot be revoked.
+Mint browser and phone credentials under **Manage → Setup → Tokens**. Revoking
+or expiring one also invalidates the browser sessions derived from it. The
+bootstrap token itself cannot be revoked.
 </Aside>
 
 ## First-run setup
 
 Until at least one enabled provider has a curated model, the app redirects to
-`/welcome` and `/config`. Choose a provider, add credentials, enable it, and
-save at least one model. Crossing that threshold seeds the `default` Agent
-template and `default` Team, then unlocks the rest of the app.
+`/welcome` and `/config`. The guided path connects provider search, credentials
+or a local endpoint, provider enablement, model selection, and an optional real
+connection test. Crossing the setup threshold seeds the `default` Agent
+template and `default` Team, unlocks the app, and offers a direct action to
+spawn the first Agent.
 
 ## Navigation
 
-The current top navigation is **Templates · Agents · Teams · Approvals · Skills
-· Config**, plus a light/dark theme toggle. The home route remains the two-pane
-chat workspace.
+The primary destinations are **Chat · Agents · Teams**. Two menus keep less
+frequent work understandable without overcrowding narrow screens:
+
+- **Operations** — **Approvals** for one captured action awaiting a decision,
+  and **Attention** for failures, warnings, lessons, and other open signals.
+- **Manage** — **Templates**, **Skills**, and **Setup**.
+
+The theme and logout controls remain directly available. The home route is the
+two-pane chat workspace.
 
 ## Home — chat workspace (`/`)
 
@@ -46,6 +61,10 @@ Each Agent row shows status, a Telegram binding marker when present, and
 rename/archive controls. Chat renders markdown and tool details, accepts
 attachments (including pasted or dropped images), surfaces delivered files,
 and shows a cancel control while a turn is active.
+
+Conversation stays focused here. Open **Manage agent** or the **Agents** page
+for settings and lifecycle actions instead of mixing administration into the
+chat workspace.
 
 The composer also recognizes:
 
@@ -63,8 +82,8 @@ resource remain `Profile` and `/api/profiles`.
 - `/templates/agents` lists and creates templates.
 - `/templates/agents/:id` edits the default model, skills policy, creation-time
   communication defaults, and
-  `SOUL.md`, `IDENTITY.md`, optional `BOOTSTRAP.md`, `AGENTS.md`, `TOOLS.md`, and
-  `HEARTBEAT.md` seed files.
+  `SOUL.md`, `IDENTITY.md`, optional `BOOTSTRAP.md`, `AGENTS.md`, and `TOOLS.md`
+  seed files.
 
 Edits affect future spawns, not Agents already created from the template.
 
@@ -86,12 +105,15 @@ until you save. Every successful save creates a new immutable revision.
 
 - `/agents` lists active and archived Agents and provides a single-Agent spawn
   form with an explicit destination Team.
-- `/agents/:id` contains **chat**, **inbox**, and **triggers** tabs. It also
-  exposes model/reasoning settings, Team movement, Agent-specific skills, and
-  Telegram topic controls.
+- `/agents/:id` contains **Chat**, **Inbox**, **Triggers**, **Learning**, and
+  **Settings** sections. Settings keeps model/reasoning, Team movement,
+  Agent-specific skills, Telegram controls, archive, and permanent deletion
+  separate from the conversation.
 - `/agents/:id/inbox` shows durable peer messages and unread state.
 - `/agents/:id/triggers` manages interval and 5-field cron wake-ups and shows
   recent durable dispatch status, retries, and terminal failures.
+- `/agents/:id/learning` configures reviewed learning and lets you inspect,
+  decide, edit, and revoke lessons.
 
 Moving an Agent preserves its ID, private home, and transcript while both Team
 memberships/policies update atomically. Archiving also preserves Team membership
@@ -103,14 +125,13 @@ and policy.
 `~/.bazilion/teams/<slug>/`; optionally point that slot at an existing project
 directory with a link target.
 
-Every Team owns exactly one effective revisioned policy and has six tabs:
+Every Team owns exactly one effective revisioned policy and has five sections:
 
-- **Overview** — `USER.md`, Telegram topic naming, and Team Template spawn for
-  an empty Team.
+- **Context** — `USER.md`, resolved Team context, Telegram topic naming, and
+  Team Template spawn for an empty Team.
 - **Members** — the live Agent roster and retained source-slot projection.
 - **Policy** — the effective communication graph and source-lineage operations.
 - **Memory** — BM25 search and markdown CRUD for Team-shared qmd memory.
-- **Context** — the resolved Team context presented to members.
 - **Activity** — durable blocked-communication evidence. This is denial history,
   not general policy-change history.
 
@@ -150,6 +171,25 @@ also supports cancellation.
 Approval revalidates current membership/policy and dispatches at most once. It
 does not create a multi-stage workflow.
 
+## Safe editing and destructive actions
+
+Durable editors protect unsaved Team context, Team memory, Agent-template, and
+Team-policy changes before selection switches or internal navigation can
+discard them. You can stay and keep editing or explicitly discard the draft.
+
+Archive, delete, disconnect, credential removal, and similar actions use named
+confirmation dialogs that explain the target and consequences, keep failures
+visible, and return keyboard focus to the invoking control. Blank secret fields
+preserve the stored credential; removal is a separate action.
+
+## Responsive and accessible operation
+
+Agents, Teams, Approvals, members, and trigger history switch from wide tables
+to task-focused cards on narrow screens. Navigation keeps text labels, menus
+support keyboard operation, status changes use live regions, and dialogs trap
+and restore focus. Both themes meet the same contrast target, and decorative
+motion follows the operating system's reduced-motion preference.
+
 ## Skills
 
 `/skills` imports and manages prompt-only Agent skills from a local OpenClaw
@@ -158,7 +198,12 @@ can be attached by an Agent template or directly to one live Agent.
 
 ## Configuration
 
-The config area covers:
+Provider setup starts with search and groups the catalog as **Configured**,
+**Recommended starting points**, **Local models**, and **More providers**. Each
+provider shows readable credential labels, status, model curation, and a real
+connection test while retaining technical keys as supporting detail.
+
+The rest of the setup area covers:
 
 - `/config` — providers, model curation, ChatGPT OAuth, and Browser Automation,
 - `/config/services` — non-LLM service credentials and URLs,

@@ -12,8 +12,9 @@ Agent skills live in `skills/<skill-name>/SKILL.md`; `skills/index.json` is the 
 - `pnpm start`: alias for `pnpm dev`.
 - `pnpm build`: create the static production build in `dist/`.
 - `pnpm preview`: preview the built site locally.
-- `pnpm deploy`: run `astro build`, then deploy `dist/` with Wrangler.
-- `pnpm cf:dev`: build, then run the Cloudflare Workers local dev server.
+
+Production deployment is Git-driven: Cloudflare Workers Builds publishes the
+assets-only Worker after a push to `main`. There is no local deploy script.
 
 No automated test command is currently defined.
 

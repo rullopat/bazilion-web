@@ -57,12 +57,25 @@ pnpm tsx apps/cli/src/index.ts serve
 cd apps/web && pnpm dev
 ```
 
-Open `http://127.0.0.1:4322` and log in with your **bootstrap token** — the
-`token` value in `~/.bazilion/auth.json`, written on first
-`bazilion dashboard` or `bazilion serve`. Then finish first-run setup on the
-`/config` page: enable at least one provider and pick a model. Crossing that
-threshold seeds a `default` Agent template and a `default` Team so you can spawn your
-first agent.
+Open `http://127.0.0.1:4322`. On a clean install, log in with the **bootstrap
+token** — the `token` value in `~/.bazilion/auth.json`, written on first
+`bazilion dashboard` or `bazilion serve`. It is accepted by browser login only
+until provider setup is complete. Bazilion exchanges it for an internal
+expiring device identity and a bounded browser session; the bootstrap bearer is
+never retained in browser cookies.
+
+The guided first-run path then takes you through three steps:
+
+1. Search or browse configured, recommended, local, and additional providers.
+2. Add credentials or a local endpoint, enable the provider, and save at least
+   one model. A connection test sends a real model request, so the provider may
+   charge its normal token cost.
+3. Crossing the setup threshold seeds the `default` Agent template and
+   `default` Team, then offers a direct action to spawn the first Agent.
+
+After setup, the first-run browser session remains valid until its normal
+expiry. Subsequent browser logins and native pairing use separately named,
+expiring device credentials rather than the bootstrap token.
 
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
 
