@@ -30,6 +30,10 @@ binding agents is a single command.
 ## Before you start
 
 - A working bazilion daemon (see [Getting started](/docs/getting-started/)).
+- A private forum supergroup intended for you and your bot. Keep the paired
+  owner account distinct from anonymous/channel identities.
+- A local Docker engine and compatible image on the daemon host. Telegram
+  turns always require [protected runtime readiness](/docs/tools/#prepare-docker-for-protected-work).
 - The Telegram app, signed in to the account that will **own** the supergroup.
 - About ten minutes.
 
@@ -53,7 +57,7 @@ If you ever lose the token, get a new one from **@BotFather → `/token`**.
 
 ### Step 2. Turn OFF the bot's Privacy Mode
 
-This is the single most common reason a setup looks broken, so don't skip it.
+Bazilion's preflight checks that Privacy Mode is off; configure it explicitly.
 
 <Steps>
 
@@ -63,11 +67,11 @@ This is the single most common reason a setup looks broken, so don't skip it.
 
 </Steps>
 
-<Aside type="danger" title="Why this matters">
-With Privacy Mode **on**, a bot in a group only receives messages that
-explicitly `@mention` it. It will **not** see plain text typed into a topic, so
-your agent conversations will silently do nothing. Privacy Mode must be off for
-bazilion to read topic messages.
+<Aside type="note" title="Telegram behavior and Bazilion preflight">
+Telegram administrator bots receive group messages even with Privacy Mode on.
+For non-admin bots, Privacy Mode limits which messages arrive. Bazilion still
+checks the explicit Privacy Mode setting during preflight, so turn it off as
+shown. See the [Telegram Bots FAQ](https://core.telegram.org/bots/faq#what-messages-will-my-bot-get).
 </Aside>
 
 ### Step 3. Create a forum supergroup with Topics enabled
@@ -192,7 +196,8 @@ automatically. The first time it activates, it:
    focus.
 4. Registers the bot's slash-command menu.
 
-There's nothing for you to do here.
+Activation creates the service topic, but does not authorize a human. Pair the
+owner there before trying to spawn or talk to an Agent.
 
 <Aside type="note" title="“bazilion closed the topic”">
 The first time the bot hides *General*, Telegram posts a one-off
@@ -202,7 +207,38 @@ happens once — not on every restart.
 
 ---
 
-## Part 4 — Spawn and bind agents
+## Part 4 — Pair the owner and check readiness
+
+From the authenticated CLI on the Bazilion host:
+
+```sh
+bazilion telegram pairing create
+```
+
+In the configured supergroup, open **⚙ bazilion** and send `/pair <code>`
+from your intended owner account. Do not send it in a direct message to the
+bot, General, or an Agent topic: initial pairing only accepts the service topic.
+The code is short-lived, single-use, and bound to the configured bot/group.
+
+Check the result locally:
+
+```sh
+bazilion telegram pairing status
+bazilion telegram health
+bazilion doctor
+```
+
+Confirm the intended owner, bot/group checks, and protected-work readiness.
+Health also reports membership and owner presence; the supported personal
+setup is one owner plus the bot. If a code expired, generate a fresh one.
+Use `bazilion telegram pairing cancel` to cancel an unused code.
+
+Telegram turns cannot use host coding tools, browser automation, or MCP.
+If Docker is unavailable, pairing may succeed but Agent work will fail. Follow
+[Docker preparation](/docs/tools/#prepare-docker-for-protected-work) before
+sending work.
+
+## Part 5 — Spawn and bind agents
 
 An agent gets a Telegram topic when you **bind** it. The easiest way is from the
 **⚙ bazilion** topic itself:
@@ -258,31 +294,23 @@ allowlisting a human never bypasses the Team's communication policy.
 
 ## Access control
 
-The bot fails closed while the allowlist is empty. Generate a short-lived,
-single-use pairing code from the local CLI, then send it from the intended
-owner's Telegram account:
+Initial access comes only from the pairing step above. Ordinary messages do
+not claim ownership, and DMs to the bot are ignored. Send commands from an
+identified human account in the configured supergroup; anonymous admin and
+channel-attributed messages are rejected.
 
-```sh
-bazilion telegram pairing create
-```
+The CLI/API retain member allowlist management for existing setups. These
+controls do not turn the personal owner-plus-bot profile into a supported
+multi-user deployment, and they do not bypass Team Policy. `/allowed` lists
+entries; an owner can manage member IDs with `/allow` and `/deny` in the service
+topic. The API rejects creating an owner through `allow --owner`: owner
+creation uses pairing. Do not depend on an unpaired user's `/whoami` reaching
+the command handler; the identity gate runs first.
 
-In Telegram, send `/pair <code>` to the bot. The code is bound to the configured
-bot and supergroup, expires quickly, and cannot be reused. Ordinary messages do
-not claim ownership.
-
-After that, everyone else is blocked until an owner allows them. Telegram bots
-can't look users up by username, so you add people by **numeric user id**:
-
-<Steps>
-
-1. The new person sends **`/whoami`** to the bot to get their numeric id.
-2. An owner runs **`/allow <user_id> [label]`** (in the ⚙ bazilion topic).
-
-</Steps>
-
-Remove someone with **`/deny <user_id>`**. The last owner can't be removed. The
-same controls live in the web **Access control** card and the CLI
-(`bazilion telegram allow <userId> [--label …] [--owner]`, `… deny <userId>`).
+To change the owner, first review `bazilion telegram pairing status`. The
+explicit `bazilion telegram pairing reset --yes` operation clears ownership
+and closes ingress until you pair again. The last owner cannot be removed
+through ordinary member deletion.
 
 ---
 
@@ -298,8 +326,8 @@ menu:
 | `/talk <agent>` | Open or create an agent's topic. Accepts `<team>/<agent>`. |
 | `/list` (alias `/agents`) | List all Agents grouped by Bazilion Team. |
 | `/teams` | List Bazilion Teams with Agent counts. |
-| `/whoami` | Show your numeric Telegram user id. |
-| `/pair <code>` | Claim initial ownership with a locally generated one-use code. |
+| `/whoami` | Show the already-authorized sender's numeric Telegram user id in the service topic. |
+| `/pair <code>` | Claim initial ownership in the service topic with a locally generated one-use code. |
 | `/allowed` | List allowlisted users. |
 | `/allow <id> [label]` | Allow a user (owner only). |
 | `/deny <id>` | Remove a user (owner only). |
@@ -346,9 +374,18 @@ These tune Telegram behavior (set them in the daemon's environment):
 
 ## Troubleshooting
 
-**The agent doesn't respond to plain messages.** Almost always Privacy Mode is
-still on — redo [Step 2](#step-2-turn-off-the-bots-privacy-mode) and confirm the
-**Privacy Mode is OFF** preflight check is green.
+**The agent doesn't respond to plain messages.** Confirm the configured group
+and bound Agent topic, then check pairing status, `telegram health`, and
+`bazilion doctor`. A failed Docker/provider preflight, policy hold, or unpaired
+sender can prevent a turn even when Telegram is connected. Also check the
+Privacy Mode setting from Step 2.
+
+**Pairing never succeeds.** Send a fresh code in **⚙ bazilion** inside the
+configured group, from a non-anonymous human account. DMs and other topics
+cannot complete pairing.
+
+**Browser or MCP tools are missing.** This is expected in Telegram protected
+turns. See the [capability table](/docs/tools/#which-tools-can-this-turn-use).
 
 **Preflight fails on "Forum topics enabled".** The group isn't a forum. The
 owner must enable **Topics** in group settings ([Step 3](#step-3-create-a-forum-supergroup-with-topics-enabled)).
@@ -369,9 +406,9 @@ When Team Policy enforcement is on, inspect the Team's **Activity** tab for a
 durable denial or `/approvals` (or `bazilion approval list`) for a pending
 attempt. Telegram access control does not override policy.
 
-**A media file was rejected.** Inbound photos/documents/voice are downloaded and
-referenced by path for the agent, up to **20 MB** (Telegram's bot download
-limit). Larger files are rejected.
+**A media file was rejected.** Bazilion downloads inbound media up to **20 MB**.
+Images become model vision input; documents, audio, and video become saved
+files. Audio/video are not native multimodal input. Larger downloads are rejected.
 
 **"Supergroup chat id changed" banner.** Telegram migrated your group to a new
 id. Click **Reconnect** in the web UI (or run `bazilion telegram reconnect`) to

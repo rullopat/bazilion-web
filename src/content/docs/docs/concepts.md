@@ -131,10 +131,11 @@ open, leased across daemon restarts, and retried to a bounded terminal state.
 Inspect delivery with `bazilion trigger history <id>` or the Agent's Triggers
 tab.
 
-Alongside the coding, web, mailbox, and memory tools, the daemon can provide an
-opt-in Docker-isolated shell, dangerous-command approval, a persistent
-Playwright browser, tools from connected MCP servers, and bidirectional file
-delivery. See [Tools & integrations](/docs/tools/).
+Tool availability depends on the turn's origin. Local operator chat can use
+configured host coding, browser, and MCP tools. Background, Telegram, and
+private-gateway turns require protected Docker execution and exclude browser
+and MCP. Both normal surfaces have scoped mailbox, memory, and file delivery.
+See [Tools & integrations](/docs/tools/) before moving a local workflow to a schedule.
 
 ## State on disk
 

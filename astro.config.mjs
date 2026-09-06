@@ -84,6 +84,9 @@ export default defineConfig({
             { label: 'The web interface', slug: 'docs/web-interface' },
             { label: 'Tools & integrations', slug: 'docs/tools' },
             { label: 'Connecting Telegram', slug: 'docs/telegram' },
+            { label: 'Daily operations', slug: 'docs/operations' },
+            { label: 'Backup and recovery', slug: 'docs/backup-recovery' },
+            { label: 'Private access & mobile', slug: 'docs/private-access' },
           ],
         },
         {

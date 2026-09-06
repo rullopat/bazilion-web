@@ -4,7 +4,32 @@ Reviewed 2026-09-06 against Bazilion commit
 `13c3a639643eabc09b19df5e119d5ca159433f47`. Scope: all ten website documentation
 pages, homepage release copy, navigation, and installer version selection.
 
-## Assessment
+## Resolution
+
+Implemented in the documentation overhaul following this audit:
+
+- Tools now begin with a turn-capability table and Docker preparation.
+- Telegram pairs the owner in the service topic before spawning; invalid owner
+  creation instructions and the Privacy Mode explanation are corrected.
+- Dedicated backup/recovery, private access/mobile, and daily operations guides
+  cover the previously missing procedures.
+- Configuration links to those canonical guides; navigation, the homepage,
+  concepts, and the UI tour use consistent capability/access guidance.
+- `pnpm check:docs` builds and checks generated links/anchors, current release
+  references, sidebar discoverability, and LLM-readable guide output.
+
+The original findings below describe the pre-overhaul baseline and are retained
+as the rationale for these changes. Command contracts were checked against the
+0.14.2 source. No live Telegram messages, private-gateway reconfiguration, or
+restore of operator data is part of this documentation update.
+
+Validation: production build and 723 internal links/anchors passed. All five
+operational guides rendered at 1365px and 390px without page-wide overflow.
+CLI help and argument parsing confirmed the backup, pairing, trigger, approval,
+token, Attention, and gateway examples. Telegram privacy behavior and Tailscale
+Serve syntax were checked against their official references, linked in the guides.
+
+## Original assessment
 
 The operational guides need a focused overhaul. The concepts, Team Template
 and live-policy model, first-run browser identity, and 0.14 interface tour are
@@ -15,7 +40,8 @@ The 0.14.2 update refreshes the homepage, sidebar, overview, concepts, provider
 configuration, upgrade instructions, and release page. It adds the exact Astra
 selection path and distinguishes this schema-preserving patch from incompatible
 alpha upgrades. Historical 0.13 and 0.14.1 descriptions remain historical.
-The findings below are follow-up work, not fixes included in that update.
+The findings below were follow-up work to that initial release-content update;
+they are addressed by the resolution above.
 
 ## Findings, in priority order
 

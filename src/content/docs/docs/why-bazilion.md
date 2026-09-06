@@ -83,8 +83,9 @@ long-lived browser/MCP resources remain in the daemon and are reached over IPC.
 
 Bazilion is a personal, MIT-licensed project. It runs on your machine, with your
 provider keys, and stores state under `~/.bazilion`. There is no hosted account.
-The daemon binds localhost by default; LAN access is an explicit opt-in and
-requires your own TLS/VPN boundary.
+Both listeners stay on loopback. Supported remote access uses the web listener
+through [private Tailscale Serve](/docs/private-access/); direct daemon/LAN
+exposure, public reverse proxies, and Funnel are unsupported.
 
 ## What Bazilion deliberately leaves out
 

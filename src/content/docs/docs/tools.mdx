@@ -3,18 +3,69 @@ title: Tools & integrations
 description: The agent toolset — browser automation with Playwright, MCP servers, file handling, and the built-in coding, web, mailbox, and memory tools.
 ---
 
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
-Every agent runs with a toolset that the daemon assembles for it. Some tools are
-built in; others — a real browser, and any [MCP](#mcp-servers) server you
-connect — are opt-in capabilities you enable once and every agent can then use.
+The tools an Agent can use depend on how its turn starts. Check this before
+moving a workflow from local chat to Telegram, a schedule, or remote access.
+
+## Which tools can this turn use?
+
+A **local operator turn** is a direct web or CLI chat while
+`BAZILION_PUBLIC_ORIGIN` is unset. It uses your configured tools and shell mode.
+A **protected turn** is started by Telegram, a trigger, inbox delivery, or an
+approved delivery. Setting `BAZILION_PUBLIC_ORIGIN` also makes HTTP chat use
+protected execution, including requests made from the same machine.
+
+On a narrow screen, scroll the table sideways to compare both turn types.
+
+| Capability | Local operator turn | Protected normal turn |
+| --- | --- | --- |
+| Coding | Pi host tools by default; Docker `bash` when selected | Docker `bash`; no host coding tools |
+| Docker required | Only when configured | Always, even if `BAZILION_BASH_SANDBOX=off` |
+| Web fetch | Configured fetch integrations | Uncredentialed, SSRF-guarded fetch |
+| Credentialed web search / Firecrawl | When configured | Unavailable |
+| Playwright browser / MCP | When enabled | Unavailable |
+| Team memory, mailbox, guarded context, Agent home tools | Available | Available through scoped tools |
+| File delivery | Available | Available from the Team workspace |
+| Provider credentials | Configured runtime | Only the selected provider's validated credential fields |
+
+Reviewed learning uses a separate restricted review surface; it does not get
+the normal Agent toolset. See [Daily operations](/docs/operations/#review-and-apply-a-lesson).
+
+Enabling a browser or MCP server does not add it to protected turns. A failed
+protected preflight stops the turn; it never falls back to host execution.
+
+## Prepare Docker for protected work
+
+On the daemon host, install and start a local Docker engine and ensure the user
+running Bazilion can access its Unix socket. Prepare the default image yourself:
+
+```sh
+docker context show
+docker info
+docker pull debian:bookworm-slim
+docker image inspect debian:bookworm-slim
+bazilion doctor
+```
+
+Bazilion uses `--pull never`: it will not download a missing image during a
+turn. Use `BAZILION_BASH_SANDBOX_IMAGE` in the daemon environment to select a
+different locally installed compatible image, then restart. Images with
+declared volumes and remote Docker endpoints are rejected. The default image
+is minimal; prepare a compatible image with any project tools you need because
+shell commands run without network access.
+
+Confirm the protected-work readiness reported by `bazilion doctor`, then test
+the intended Agent/provider through its actual Telegram, trigger, or remote
+path. General readiness does not prove every provider credential or project
+command works. Docker setup is required before those workflows can run.
 
 ## The built-in tools
 
-By default an agent gets:
+Within the capability limits above, normal turns have:
 
-- **coding tools** — read, write, and edit files in its Team's filesystem root,
-- **web search** and a **hardened web fetch** (SSRF-guarded),
+- **coding tools** — host tools or Docker `bash` for Team project files,
+- **web tools** — fetch, with configured search available only in local operator turns,
 - **mailbox tools** — `send_message`, `read_inbox`, `wait_for_reply`, and
   `approval_status`,
 - **memory tools** — search and write the Team's [shared memory](/docs/concepts/#shared-usermd-and-memory),
@@ -28,7 +79,7 @@ a throwaway sandbox.
 
 ## Shell isolation and dangerous-command approval
 
-By default, Pi's host-backed `read`, `bash`, `edit`, `write`, `grep`, `find`,
+For local operator turns, Pi's host-backed `read`, `bash`, `edit`, `write`, `grep`, `find`,
 and `ls` tools operate from the Team root. This is convenient, but the working
 directory is not a security boundary.
 
@@ -54,7 +105,7 @@ bazilion dashboard
 
 ## Browser automation
 
-Agents can drive a real **Playwright** browser. Perception is
+Local operator turns can drive an enabled **Playwright** browser. Perception is
 **accessibility-tree-first**: the agent reads an aria snapshot with stable
 element references and acts on those references, so it doesn't depend on a vision
 model to see the page.
@@ -65,14 +116,16 @@ The suite covers navigation and interaction — `browser_navigate`,
 `browser_tabs`, `browser_take_screenshot`, `browser_console`, and
 `browser_network`.
 
-Install the browser binary once after upgrading:
+For a source checkout, install the matching browser from the repository root:
 
 ```sh
 pnpm exec playwright install chromium
 ```
 
 Then enable browser automation on **config → Browser Automation** (or via
-environment variables).
+environment variables). Published Bazilion includes a Chromium browser package;
+if browser startup fails, inspect the installation error and browser system
+dependencies. The repository `pnpm exec` command is for source checkouts.
 
 <Aside type="caution">
 A network-layer **SSRF guard** blocks loopback and private-network targets by
@@ -84,7 +137,7 @@ variable.
 ## MCP servers
 
 The daemon is a **Model Context Protocol** client. Connect an MCP server and its
-tools are discovered automatically and injected into every agent's turn,
+tools are discovered automatically and injected into configured local operator turns,
 namespaced as `mcp__<server>__<tool>` so they never collide with built-ins.
 
 Three transports are supported:
@@ -122,11 +175,12 @@ bazilion agent chat <agent-id> --file ./report.pdf
 ```
 
 **Outbound.** Agents send files back with the **`deliver_file`** tool (up to
-**25 MB** per file). A delivered image appears as a standalone image block in the
-web chat and as a photo on Telegram; other files arrive as downloads.
+**25 MB** per file). These deliveries arrive as downloadable files, including
+Telegram documents. Images returned by tools such as browser screenshots are
+displayed separately in web chat and sent as Telegram photos when supported.
 
 <Aside type="note">
-File handling, the browser, and MCP tools are all available the same way from the
-CLI, the HTTP API, and the web UI — they're capabilities of the daemon, not of
-any one surface.
+Audio and video files are stored as attachments; they are not native audio/video
+model input. Browser and MCP availability follows the turn boundary above,
+regardless of which client displays the conversation.
 </Aside>

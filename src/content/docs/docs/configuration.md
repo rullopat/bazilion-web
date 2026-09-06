@@ -108,45 +108,30 @@ mobile client.
 
 ## Shell isolation and command approval
 
-The default `BAZILION_BASH_SANDBOX=off` keeps Pi's host-backed coding tools.
-Opt into a fresh, network-disabled Docker container for each shell command:
+Local operator chat uses host-backed coding tools when
+`BAZILION_BASH_SANDBOX=off`. Setting it to `docker` replaces those coding
+tools with containerized `bash`. Background, Telegram, approved-delivery, and
+private-gateway turns always require protected Docker execution regardless of
+that setting.
 
-```sh
-BAZILION_BASH_SANDBOX=docker bazilion dashboard
-```
+`BAZILION_BASH_SANDBOX_IMAGE` selects a compatible locally installed image
+(default `debian:bookworm-slim`). Bazilion never pulls it during a turn.
+`BAZILION_BASH_APPROVAL=dangerous` independently gates classified shell commands;
+non-interactive clients auto-deny them. Set these in the daemon environment and
+restart after changes.
 
-Docker mode exposes the Team workspace as the only writable mount, keeps
-memory, skills, and Agent inputs read-only, uses a read-only root and temporary
-`/tmp`, and refuses remote Docker contexts or images with implicit volumes. It
-fails closed if Docker or the configured local image is unavailable.
-
-Independently, `BAZILION_BASH_APPROVAL=dangerous` pauses commands classified as
-dangerous for a turn-scoped decision in the web UI or an interactive TTY. A
-non-interactive turn denies them automatically. Run `bazilion doctor` to inspect
-the active posture.
+See [Tools & integrations](/docs/tools/) for the capability table, Docker
+preparation, and approval behavior. Run `bazilion doctor` to inspect readiness.
 
 ## Backup and restore
 
-Create a recipient-encrypted online backup while the daemon is running:
+Create encrypted backups with `bazilion backup create` and restore offline
+with `bazilion backup restore`. The database is snapshotted consistently;
+linked external Team projects and their memory require separate backups.
 
-```sh
-bazilion backup create bazilion-backup.tar.gz.age --recipient age1...
-```
-
-The archive contains a verified SQLite snapshot rather than live WAL state.
-Restore is deliberately offline and staged. Keep the age identity in an
-owner-only file (`chmod 600`) and pass it explicitly:
-
-```sh
-bazilion backup restore bazilion-backup.tar.gz.age --identity ./age-identity.txt
-```
-
-Plaintext archives remain available only with an explicit `--plaintext` flag.
-Restore validates paths and links, the auth/database pair, SQLite integrity,
-foreign keys, and the exact schema before an atomic install. It rebases stored
-Profile and Agent directories to the destination home, preserves contained
-relative work-product links, rejects escaping targets, and leaves recovery
-markers if a swap is interrupted.
+Follow [Backup and recovery](/docs/backup-recovery/) for archive scope, identity
+storage, an empty-destination rehearsal, restore validation, and recovery from
+credential exposure. Do not use destructive alpha resets as a normal upgrade step.
 
 ## On-disk layout
 
@@ -192,55 +177,21 @@ Linked Team targets remain untouched.
 
 ## Private web gateway
 
-The supported remote-access profile uses Tailscale Serve for tailnet-only HTTPS
-while both Bazilion listeners remain on loopback. Set one exact public origin in
-the daemon and web environments:
+Set the same exact `BAZILION_PUBLIC_ORIGIN` in the daemon and web environments.
+Keep both listeners on loopback and publish only the web listener through
+private Tailscale Serve. Direct daemon exposure, public reverse proxies, and
+Funnel are unsupported. The origin setting activates protected execution for
+HTTP Agent turns.
 
-```sh
-BAZILION_PUBLIC_ORIGIN=https://bazilion.example.ts.net
-HOST=127.0.0.1
-PORT=4321
-WEB_HOST=127.0.0.1
-WEB_PORT=4322
-```
-
-After starting both services, configure Serve and run the read-only preflight:
-
-```sh
-tailscale serve --bg --https=443 http://127.0.0.1:4322
-bazilion gateway preflight
-```
-
-Funnel and direct daemon exposure are unsupported. Mint a different expiring
-device credential for each browser or phone; the plaintext is shown once:
-
-```sh
-bazilion token create personal-laptop --expires-days 90
-bazilion token list
-bazilion session list
-```
-
-Browser login exchanges the device credential for a bounded server session.
-Revoking or expiring the credential also invalidates its derived sessions. The
-clean-install bootstrap login exception ends as soon as provider setup is
-complete; the first-run browser session remains valid until its normal expiry.
+Follow [Private access and mobile pairing](/docs/private-access/) for the full
+setup and host-side `bazilion gateway preflight` checks.
 
 ## Mobile pairing
 
-Keep both Bazilion listeners on loopback. A phone talks to the private HTTPS web
-gateway published by Tailscale Serve, never to the daemon port directly. After
-the gateway preflight succeeds, mint a separate expiring phone credential with
-the exact configured origin:
+Mint a separate expiring device credential for each phone and pair it with the
+exact private HTTPS origin. The app accepts QR scans, manual URLs, and
+`bazilion://pair` deep links; it verifies the origin and credential before saving.
 
-```sh
-bazilion token create phone --expires-days 90 --qr \
-  --server "$BAZILION_PUBLIC_ORIGIN"
-```
-
-The QR contains a `bazilion://pair?...` URL. The mobile app verifies the token
-and canonical origin before saving them. Camera scans, manual paste, and custom
-scheme deep links all use the same flow. Pairing requires HTTPS except for
-loopback development.
-
-Direct LAN/daemon exposure, public reverse proxies, and Tailscale Funnel are
-unsupported.
+Use the [phone pairing steps](/docs/private-access/#pair-the-mobile-app).
+Revoking a device credential invalidates its derived sessions. Mobile cannot
+approve dangerous shell commands interactively.

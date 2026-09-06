@@ -4,19 +4,20 @@
 
 This is a small static Astro marketing site. The main page lives in `src/pages/index.astro`; shared styling lives in `src/styles/global.css`. Static assets belong in `public/`. Build output goes to `dist/` and should not be edited by hand.
 
-Agent skills live in `skills/<skill-name>/SKILL.md`; `skills/index.json` is the searchable catalog. Claude Code discovers them through `.claude/skills/`. There is no test directory or component hierarchy yet.
+Agent skills live in `skills/<skill-name>/SKILL.md`; `skills/index.json` is the searchable catalog. Claude Code discovers them through `.claude/skills/`. Operational guides live in `src/content/docs/docs/`; `scripts/check-docs.mjs` validates the generated documentation.
 
 ## Build, Test, and Development Commands
 
 - `pnpm dev`: start the Astro development server.
 - `pnpm start`: alias for `pnpm dev`.
-- `pnpm build`: create the static production build in `dist/`.
+- `pnpm build`: create the static production build in `dist/` and validate documentation (also enforced during deployment).
+- `pnpm check:docs`: build, then verify internal links, anchors, current release references, navigation, and LLM-readable guides.
 - `pnpm preview`: preview the built site locally.
 
 Production deployment is Git-driven: Cloudflare Workers Builds publishes the
 assets-only Worker after a push to `main`. There is no local deploy script.
 
-No automated test command is currently defined.
+Run `pnpm check:docs` for documentation changes. There is no application test framework.
 
 ## Coding Style & Naming Conventions
 
@@ -26,7 +27,7 @@ Prefer CSS custom properties from `:root` before adding raw colors, fonts, spaci
 
 ## Testing Guidelines
 
-There is no configured testing framework. For changes, run `pnpm build` at minimum and inspect the page with `pnpm preview` or `pnpm dev`. For visual edits, check desktop and mobile widths.
+For documentation changes, run `pnpm check:docs` and inspect the affected pages with `pnpm preview` or `pnpm dev`. For visual edits, check desktop and mobile widths. Match command examples to the released CLI and distinguish local operator tools from protected turns.
 
 ## Commit & Pull Request Guidelines
 
