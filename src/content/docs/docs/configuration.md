@@ -10,9 +10,9 @@ stateless and talk to it over HTTP.
 ## Providers and models
 
 Models use `provider:model`, for example `anthropic:claude-opus-5`,
-`openai-codex:gpt-5.6-luna`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog. Bazilion 0.14.1 bundles Pi 0.84.3, including
-current GPT-5.6, Claude 5, Gemini 3.6, Kimi K3, Grok 4.5, and Qwen 3.8 models.
+`openai-codex:gpt-6-astra`, or `lmstudio:my-loaded-model`. The provider list is
+data-driven from Pi's catalog. Bazilion 0.14.2 bundles Pi 0.85.1, including
+GPT-6 Astra, GPT-5.6, Claude 5, Gemini 3.6, Kimi K3, Grok 4.5, and Qwen 3.8 models.
 
 Common providers include:
 
@@ -36,7 +36,22 @@ ChatGPT OAuth credentials live encrypted in the database and refresh lazily.
 During worker turns, expiring access tokens refresh through provider-, Agent-,
 and turn-bound daemon IPC; refresh credentials never enter the worker.
 After connecting, enable `openai-codex` and curate a model such as
-`gpt-5.6-luna`, `gpt-5.6-terra`, or `gpt-5.6-sol`.
+`gpt-6-astra`, `gpt-5.6-terra`, or `gpt-5.6-sol`.
+
+### Select GPT-6 Astra
+
+1. Upgrade to Bazilion 0.14.2 and restart the daemon and web UI.
+2. Open `/config` and connect **OpenAI Codex** with ChatGPT OAuth, or configure
+   **OpenAI** with an API key. Enable the provider.
+3. Add the `gpt-6-astra` catalog chip to its curated models and save, keeping
+   any existing models you still use.
+4. Select `openai-codex:gpt-6-astra` or `openai:gpt-6-astra` in the Agent's
+   Settings or an Agent template's model selector.
+
+Catalog availability does not automatically change existing Agents. Agent
+template edits apply to future spawns; update an existing Agent separately.
+Models appear in selectors only when their provider is enabled and they are
+in its saved curated list.
 
 The normal CLI flow opens a browser and listens for the loopback callback on
 port 1455. Use the device-code flow when that callback cannot reach the client:

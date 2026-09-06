@@ -1,12 +1,29 @@
 ---
-title: What's new in 0.14.1
-description: Bazilion 0.14.1 adds fail-fast alpha-upgrade recovery, reliable ChatGPT OAuth, paired resets, and actionable native-module diagnostics to the 0.14 experience.
+title: What's new in 0.14.2
+description: Bazilion 0.14.2 upgrades Pi to 0.85.1 and adds GPT-6 Astra selection through OpenAI API keys and ChatGPT OAuth.
 ---
 
-Bazilion 0.14.1 makes the path from a clean install to daily Agent operation
-more predictable and safer. The three public packages move together:
-`bazilion@0.14.1`, `@bazilion/client@0.14.1`, and
-`@bazilion/api-types@0.14.1`.
+Bazilion 0.14.2 upgrades the bundled Pi engine from 0.84.3 to 0.85.1 and adds
+**GPT-6 Astra** to the OpenAI and OpenAI Codex model catalogs. The three public
+packages move together: `bazilion@0.14.2`, `@bazilion/client@0.14.2`, and
+`@bazilion/api-types@0.14.2`.
+
+## GPT-6 Astra in 0.14.2
+
+Use the exact model ID `gpt-6-astra` through an OpenAI API key or ChatGPT OAuth.
+After [upgrading and restarting](/docs/getting-started/#upgrade-to-0142), open
+Config, add Astra to the provider's curated models, and select it for an Agent
+or Agent template. Existing model selections stay as they are.
+
+The release updates setup examples and adds catalog regression coverage for
+both providers. Missing-Docker integration tests now use an explicit unavailable
+endpoint so they behave consistently on machines with Docker installed.
+
+This patch has no database schema change. A working 0.14.1 installation can
+upgrade without resetting its home. Local validation passed 1,181 tests with
+3 skipped, the provider catalog audit, root and web TypeScript checks, lint,
+and the production build. The release workflow and published CLI smoke test
+also passed.
 
 ## Safer recovery and clearer failures in 0.14.1
 
@@ -38,7 +55,7 @@ produce sanitized recovery guidance without exposing checkout paths. If a
 source checkout changes Node versions, rebuild `better-sqlite3` with the same
 runtime used to start Bazilion and restart the daemon.
 
-The sections below cover the broader 0.14 feature release included in 0.14.1.
+The sections below cover the broader 0.14 feature release included in 0.14.2.
 
 ## From first boot to the first conversation
 
@@ -123,5 +140,5 @@ Node.js 24 or newer is still required. Bazilion's alpha compatibility contract
 remains clean-install-only; 0.14.1 detects incompatible state before startup
 instead of attempting an in-place migration.
 
-See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.14.1)
+See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.14.2)
 for the published artifacts and package-level changelog.

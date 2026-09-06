@@ -93,6 +93,26 @@ pnpm tsx apps/cli/src/index.ts auth openai login --device-code
 
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
 
+## Upgrade to 0.14.2
+
+Stop the running dashboard (Ctrl+C in its terminal), or stop your managed
+daemon and web services. For an npm installation:
+
+```sh
+npm install -g bazilion@0.14.2
+bazilion --version
+bazilion dashboard
+```
+
+If you run managed services, restart them through your service manager instead
+of starting a second dashboard. Version 0.14.2 changes the bundled Pi engine
+and model catalog; it does not change the database schema. A working 0.14.1
+installation does not need a reset for this update.
+
+To use Astra, follow [Select GPT-6 Astra](/docs/configuration/#select-gpt-6-astra).
+If you also change Node versions, reinstall native dependencies using the same
+runtime that starts Bazilion.
+
 ## Recover an alpha install
 
 Bazilion's alpha database is clean-install-only. Version 0.14.1 checks the exact
