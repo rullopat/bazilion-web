@@ -110,6 +110,18 @@ Stable information about the human or project belongs in Team Context
 ## Before an upgrade or recovery
 
 Use [Backup and recovery](/docs/backup-recovery/) and the
-[version-specific upgrade steps](/docs/getting-started/#upgrade-to-0142).
+[version-specific upgrade steps](/docs/getting-started/#upgrade-to-0150).
 If Node changes, reinstall native dependencies with the runtime used by the
 daemon. Do not reset a healthy home just to update the model catalog.
+
+## Follow up, answer and inspect retained work
+
+Use [Conversations](/docs/conversations/) to inspect prior work and start a new conversation safely.
+[Saved results](/docs/results/) are immutable outputs, independent of later workspace edits.
+When the Agent is busy, [queue a follow-up](/docs/follow-up-queue/) rather than assuming the current
+turn has consumed a new instruction. Stop pauses future claims before cancelling the active turn.
+
+An [Agent question](/docs/questions/) is live clarification; its accepted and consumed states are
+separate from task completion and from communication approval. Optional
+[Attention notifications](/docs/attention-notifications/) report existing sources without resolving
+them. An uncertain delivery needs an explicit retry and may duplicate a Telegram message.

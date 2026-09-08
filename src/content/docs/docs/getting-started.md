@@ -93,21 +93,25 @@ pnpm tsx apps/cli/src/index.ts auth openai login --device-code
 
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
 
-## Upgrade to 0.14.2
+## Upgrade to 0.15.0
+
+**0.15.0 changes the alpha schema. Back up and export work using your current release first.**
+Older-schema homes and backups cannot migrate in place. A reset is destructive; review
+[what it removes](#recover-an-alpha-install) before choosing a fresh setup.
 
 Stop the running dashboard (Ctrl+C in its terminal), or stop your managed
 daemon and web services. For an npm installation:
 
 ```sh
-npm install -g bazilion@0.14.2
+npm install -g bazilion@0.15.0
 bazilion --version
 bazilion dashboard
 ```
 
 If you run managed services, restart them through your service manager instead
-of starting a second dashboard. Version 0.14.2 changes the bundled Pi engine
-and model catalog; it does not change the database schema. A working 0.14.1
-installation does not need a reset for this update.
+of starting a second dashboard. For an older home, startup will stop with incompatible-schema
+guidance. After preserving needed work, follow the explicit reset procedure below or choose a new
+empty `BAZILION_HOME`. Retain the original home with its matching release for recovery.
 
 To use Astra, follow [Select GPT-6 Astra](/docs/configuration/#select-gpt-6-astra).
 If you also change Node versions, reinstall native dependencies using the same
@@ -115,7 +119,7 @@ runtime that starts Bazilion.
 
 ## Recover an alpha install
 
-Bazilion's alpha database is clean-install-only. Version 0.14.1 checks the exact
+Bazilion's alpha database is clean-install-only. Bazilion checks the exact
 schema and the database/bootstrap identity pair before background work or the
 HTTP listener starts. If startup reports an incompatible or mismatched home,
 back up the complete `~/.bazilion` directory first, then reset and bootstrap it:

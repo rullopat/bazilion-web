@@ -11,7 +11,7 @@ stateless and talk to it over HTTP.
 
 Models use `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-6-astra`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog. Bazilion 0.14.2 bundles Pi 0.85.1, including
+data-driven from Pi's catalog. Bazilion 0.15.0 bundles Pi 0.85.1, including
 GPT-6 Astra, GPT-5.6, Claude 5, Gemini 3.6, Kimi K3, Grok 4.5, and Qwen 3.8 models.
 
 Common providers include:
@@ -40,7 +40,7 @@ After connecting, enable `openai-codex` and curate a model such as
 
 ### Select GPT-6 Astra
 
-1. Upgrade to Bazilion 0.14.2 and restart the daemon and web UI.
+1. Upgrade to Bazilion 0.15.0 and restart the daemon and web UI.
 2. Open `/config` and connect **OpenAI Codex** with ChatGPT OAuth, or configure
    **OpenAI** with an API key. Enable the provider.
 3. Add the `gpt-6-astra` catalog chip to its curated models and save, keeping

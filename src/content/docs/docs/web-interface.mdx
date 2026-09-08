@@ -69,8 +69,14 @@ chat workspace.
 The composer also recognizes:
 
 - `/context` — inspect the prompt/tool/skill/history budget,
-- `/compact [N]` — summarize older history while retaining recent turns,
-- `/reset` — clear the conversation.
+- `/compact [N]` — summarize older history while retaining recent turns.
+
+Use **Conversations → New conversation** to retain old history and start fresh. The ordinary
+`/reset` command is removed. Read [Conversations](/docs/conversations/) for rename and stale-draft recovery.
+
+**Follow-ups** supports pending edits/removal, pause/resume and Stop-and-pause.
+[Live questions](/docs/questions/) use explicit choices, Other or Skip; answering is separate from
+communication approval. [Saved files](/docs/results/) remain in each Team’s **Results** library.
 
 If Telegram or a trigger advances the same session, the page offers to reload.
 

@@ -184,3 +184,13 @@ Audio and video files are stored as attachments; they are not native audio/video
 model input. Browser and MCP availability follows the turn boundary above,
 regardless of which client displays the conversation.
 </Aside>
+
+## Durable files and live clarification in 0.15.0
+
+`deliver_file` captures an immutable Team-owned result, rather than relying on transient stream
+bytes. Saved chat cards and the Team Results library survive reload and restart; downloads retain
+the original filename. See [Saved results](/docs/results/) for authorization, previews and limits.
+
+`ask_user` is available only on eligible live human routes. It offers bounded choices, Other or
+Skip and waits for a correlated answer in the originating conversation. Scheduled, inbox and review
+turns do not inherit this capability. See [Agent questions](/docs/questions/).

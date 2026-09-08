@@ -276,8 +276,14 @@ bazilion telegram unbind <agent>
 
 Once an agent is bound, just **type in its topic** to talk to it. While it works
 you'll see a "typing…" indicator and a 👀 reaction on your message that clears
-when the reply lands. Messages you send while it's busy are queued and answered
-together.
+when the reply lands. Accepted messages are stored individually in the durable FIFO
+[follow-up queue](/docs/follow-up-queue/), retaining their conversation and attachments.
+Use `/queue` for status and explicit pause/resume controls.
+
+[Live questions](/docs/questions/) require a button response, a reply to the exact prompt, or
+`/answer <question-id> <text>`. Correlated answers bypass the follow-up queue.
+[Attention notifications](/docs/attention-notifications/) are separate, default-off notices sent
+to the paired group’s Bazilion service topic, with quiet hours and inspectable delivery receipts.
 
 ### Team Policy and Telegram
 

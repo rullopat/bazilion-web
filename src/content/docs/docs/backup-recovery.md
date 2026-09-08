@@ -90,8 +90,8 @@ Do not manually delete recovery markers or edit database tables to force
 startup. Follow the reported recovery guidance before retrying a swap.
 
 An older alpha schema cannot be migrated by restoring it into a newer schema.
-Use the matching old release to recover/export work first. A working 0.14.1
-home needs no reset for 0.14.2; see [upgrading](/docs/getting-started/#upgrade-to-0142).
+Use the matching old release to recover/export work first. Version 0.15.0 changes the schema;
+an older-schema backup cannot migrate into it. See [upgrading](/docs/getting-started/#upgrade-to-0150).
 If a reset is necessary, it removes Agents, Teams, templates, credentials, and
 the paired database/auth identity. Review the
 [reset consequences](/docs/getting-started/#recover-an-alpha-install) first.
@@ -108,3 +108,15 @@ guide explains local token recovery and external credential rotation. Rotating
 Bazilion's bootstrap identity does not revoke Telegram, provider, OpenAI OAuth,
 or MCP credentials at their issuers. After recovery, create and rehearse a new
 encrypted backup.
+
+## Results, queues, questions and notifications after restore
+
+Current-schema backups include immutable result bytes, result receipts, conversation routing metadata
+and canonical transcripts. Restoring unresolved queued inputs pauses them as uncertain: inspect
+possible prior effects and reconcile before resubmitting. Previous live questions are closed, so
+answers cannot resume a lost worker. Notifications are paused because the restored snapshot may
+lack later Telegram receipts. Fresh enablement sends future items only; old-item inclusion requires
+an explicit preview warning about possible duplicates.
+
+See [queue recovery](/docs/follow-up-queue/#interrupted-and-restored-work) and
+[notification recovery](/docs/attention-notifications/) before resuming work.

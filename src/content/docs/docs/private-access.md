@@ -115,3 +115,11 @@ requires pairing again with a newly minted credential.
   back to host tools.
 - **Phone cannot connect:** confirm both devices are in the tailnet and its
   access rules permit the connection, then check `tailscale serve status`.
+
+## Retained work and question handoff
+
+In 0.15.0, mobile sends carry the observed conversation selection so stale input fails before it
+can reach a different conversation. Native conversation management remains deferred; use the web
+[conversation library](/docs/conversations/). [Saved results](/docs/results/) and eligible
+[question controls](/docs/questions/) open the authenticated web UI. These handoffs never place the
+native device credential in the URL; the browser uses its own sign-in.

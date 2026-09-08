@@ -16,7 +16,7 @@ const announcementSlug = read('src/pages/index.astro')
 if (!announcementSlug) throw new Error('Homepage must link to the current release page.');
 const announcement = read(`src/content/docs/docs/${announcementSlug}.md`);
 const version = announcement.match(/^title: What's new in (\d+\.\d+\.\d+)$/m)?.[1];
-const pi = announcement.match(/^description: .*Pi to (\d+\.\d+\.\d+)/m)?.[1];
+const pi = announcement.match(/^description: .*Pi(?: to)? (\d+\.\d+\.\d+)/m)?.[1];
 if (!version || !pi) throw new Error('Current release page must declare Bazilion and Pi versions.');
 
 requireText('astro.config.mjs', `What's new in ${version}`);
@@ -54,7 +54,7 @@ for (const file of files) {
 }
 
 requireText('dist/llms.txt', 'https://bazilion.com/llms-full.txt');
-for (const slug of ['operations', 'backup-recovery', 'private-access']) {
+for (const slug of ['operations', 'backup-recovery', 'private-access', 'results', 'conversations', 'follow-up-queue', 'questions', 'attention-notifications']) {
   requireText('astro.config.mjs', `slug: 'docs/${slug}'`);
   requireText('dist/llms-full.txt', `/docs/${slug}`);
   const title = read(`src/content/docs/docs/${slug}.md`).match(/^title: (.+)$/m)?.[1];
