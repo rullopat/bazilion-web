@@ -5,5 +5,12 @@
     "path": "skills/astro-static-site/SKILL.md",
     "tags": ["astro", "static-site", "cloudflare", "marketing-site"],
     "version": "1.0.0"
+  },
+  {
+    "name": "release-notes",
+    "description": "Use when publishing a new Bazilion release on the Bazilion website — writing the \"What's new\" page, moving current-release version stamps, repointing the versioned upgrade anchor, and syncing navigation and LLM-readable docs.",
+    "path": "skills/release-notes/SKILL.md",
+    "tags": ["bazilion", "release", "documentation", "starlight"],
+    "version": "1.0.0"
   }
 ]
