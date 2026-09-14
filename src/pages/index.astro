@@ -5,62 +5,72 @@ const features = [
   {
     n: '01',
     title: 'Agent templates become agents',
-    body: 'A profile is an agent template: SOUL.md, IDENTITY.md, AGENTS.md, tools, skills mode, default model, and the notes that shape how that agent behaves when spawned.',
+    body: 'A profile is a template — identity docs, tools, model, and behavior notes. Spawning makes it a permanent Agent in one Team.',
   },
   {
     n: '02',
     title: 'One canonical Team Template roster',
-    body: 'A Team Template owns a revisioned roster of stable slots. Each slot points to an Agent template and can override the live name, model, or reasoning level without inventing a second roster model.',
+    body: 'A Team Template owns one revisioned roster of stable slots, each pointing at a template with optional name, model, or reasoning overrides.',
   },
   {
     n: '03',
     title: 'One live policy per Team',
-    body: 'Every Team owns exactly one effective revisioned communication policy. When enforcement is enabled, one authorizer covers user, peer, cross-Team, scheduler, inbox, worker, and Telegram boundaries; missing edges deny.',
+    body: 'One effective revisioned policy per Team. One authorizer covers user, peer, cross-Team, scheduler, inbox, worker, and Telegram boundaries; missing edges deny.',
   },
   {
     n: '04',
     title: 'Approval means approve once',
-    body: 'An approval_required edge holds one typed communication attempt before its side effect. Inspect it in the web queue or CLI, then approve once, deny, or cancel; approval revalidates current membership and policy.',
+    body: 'An approval_required edge holds one typed attempt before its side effect. Approve, deny, or cancel once; approval revalidates membership and policy.',
   },
   {
     n: '05',
     title: 'A mailbox between agents',
-    body: 'Agents coordinate through a durable mailbox: send_message, read_inbox, and wait_for_reply in the loop, plus CLI, API, and web inbox surfaces outside it.',
+    body: 'Durable messaging inside the loop, plus CLI, API, and web inbox outside it. Coding work can hand a scoped request to a teammate and release the workspace.',
   },
   {
     n: '06',
     title: 'Shared memory, indexed by qmd',
-    body: 'Every Team has one memory rooted at <team>/memory. Bazilion uses qmd for BM25 over markdown, so project facts, decisions, and discoveries are searchable by every member.',
+    body: 'One <team>/memory per Team, searched with qmd BM25 over markdown, so decisions outlive the chat that produced them.',
   },
   {
     n: '07',
-    title: 'The user context is explicit',
-    body: 'A Team has one USER.md for the person, project, preferences, and standing instructions. It is injected into every member prompt; generic coding tools cannot clobber it, and guarded USER.md updates use concurrency checks.',
+    title: 'USER.md stays explicit',
+    body: 'One USER.md per Team for the person, project, preferences, and standing instructions — injected into every prompt, never clobbered by file writes.',
   },
   {
     n: '08',
-    title: 'Pi is the engine underneath',
-    body: 'Pi runs the per-turn loop, stores the JSONL transcript, handles replay and compaction, executes providers and tools, and supplies the coding tools. Bazilion 0.16.0 bundles Pi 0.85.1 through its public runtime APIs.',
+    title: 'Everything stays on disk',
+    body: 'Agent homes, Team roots, sessions, skills, and memory live under ~/.bazilion, beside one clean-install SQLite schema.',
   },
   {
     n: '09',
-    title: 'Tools live in the workspace',
-    body: 'Agents share project files, memory, and a mailbox and can deliver files back. Local operator chat can use configured coding, browser, and MCP tools. Background, Telegram, and private-gateway turns use protected Docker execution with a restricted toolset.',
+    title: 'Pi is the engine underneath',
+    body: 'Pi runs the per-turn loop, the JSONL transcript, replay and compaction, and the coding tools. Bazilion 0.16.0 bundles Pi 0.85.1.',
   },
   {
     n: '10',
-    title: 'State is inspectable',
-    body: 'Agent homes, Team roots, Agent-template files, Pi sessions, skills, and memory live under ~/.bazilion. The daemon keeps Team Templates, policies, approvals, and config in one clean-install SQLite schema.',
+    title: 'Ask for the work, not a checklist',
+    body: 'Give an Agent a coding task: it discovers repository instructions, inspects its runtime, runs scoped commands, and reports bounded evidence in chat.',
   },
   {
     n: '11',
-    title: 'Durable schedules and Telegram',
-    body: 'Interval and cron triggers survive busy Agents, bounded retries, and daemon restarts. A Telegram forum supergroup gives every bound Agent its own topic under the same Team policy.',
+    title: 'Results and conversations persist',
+    body: 'Delivered files become immutable Team results tied to their source conversation. Conversations list, read, rename, and start fresh.',
   },
   {
     n: '12',
-    title: 'MIT, local-first, provider-flexible',
-    body: 'Bazilion is a personal open source project published under the MIT license. Use hosted providers, ChatGPT OAuth, Ollama, LM Studio, or other supported backends—including GPT-6 Astra through OpenAI API keys or ChatGPT OAuth.',
+    title: 'Follow-ups, questions, and notices',
+    body: 'Queue instructions with attachments and edit them before dispatch. Answer an Agent mid-task from web, terminal, or paired Telegram, or opt into Attention notices.',
+  },
+  {
+    n: '13',
+    title: 'Protected outside your terminal',
+    body: 'Local operator chat can use configured coding, browser, and MCP tools. Background, Telegram, and gateway turns run network-disabled with a restricted toolset.',
+  },
+  {
+    n: '14',
+    title: 'Remote, recoverable, provider-flexible',
+    body: 'A paired phone reaches the same private-HTTPS gateway. Encrypted backups restore in place, and you can bring any provider, including GPT-6 Astra.',
   },
 ];
 ---
@@ -76,14 +86,14 @@ const features = [
     <title>Bazilion — personal open source multi-agent runtime</title>
     <meta
       name="description"
-      content="Bazilion is Patrizio Rullo's MIT-licensed local-first multi-agent runtime, built on Pi's coding agent. Build revisioned Team Templates, run agents under one live Team Policy, and share messages, USER.md, and qmd memory."
+      content="Bazilion is Patrizio Rullo's MIT-licensed, local-first multi-agent runtime built on Pi's coding agent — Team Templates, one live Team Policy, agent-led coding, durable results, and shared memory."
     />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Bazilion — personal open source multi-agent runtime" />
     <meta
       property="og:description"
-      content="MIT-licensed, local-first, built on Pi's coding agent, and wrapped with Agent templates, revisioned Team Templates, live Team Policy, approvals, shared memory, and messaging."
+      content="MIT-licensed and local-first, built on Pi's coding agent. Agent templates, one live Team Policy, agent-led coding, durable results, shared memory, and messaging."
     />
     <meta property="og:url" content="https://bazilion.com" />
     <meta property="og:image" content="https://bazilion.com/baziu.svg" />
@@ -253,30 +263,24 @@ const features = [
           <div class="manifesto__body">
             <p class="dropcap">
               Bazilion is my personal open source attempt at a local-first
-              multi-agent runtime. Its core engine is Pi's coding agent:
-              Pi runs the per-turn loop, stores the JSONL transcript, handles
-              replay and compaction, executes providers and tools, and supplies
-              the coding tools. Bazilion adds the local daemon, CLI, bundled web
-              UI, Agent templates, Team Templates, live Team Policy, approvals,
-              shared memory, and mailbox around that
-              engine.
+              multi-agent runtime. The engine is Pi's coding agent; Bazilion wraps
+              it in a daemon, CLI, and web UI with templates, live policy,
+              approvals, shared memory, and a mailbox.
             </p>
             <p>
-              Bazilion is especially about templates. A profile defines one
-              kind of agent. A Team Template defines the only reusable Team
-              roster: stable slots, profile-backed roles, optional overrides,
-              and directed communication edges, saved as immutable revisions.
-              Spawning a reviewed revision creates permanent Agents in one Team,
-              with exactly one effective live policy, one USER.md, one qmd-indexed
-              memory, and a durable mailbox.
+              It is mostly about templates. A profile defines one kind of agent; a
+              Team Template defines the only reusable roster — stable slots, roles,
+              optional overrides, and directed edges — saved as immutable revisions.
+              Spawning one creates permanent Agents in a single Team with one policy,
+              one USER.md, one memory, and one mailbox.
             </p>
           </div>
 
           <aside class="manifesto__aside">
             <strong>Engine credit</strong>
-            Bazilion is based on <code>@earendil-works/pi-coding-agent</code>,
-            with Bazilion-specific orchestration layered around Pi's agent
-            session, transcript, tool loop, and coding tools.
+            Built on <code>@earendil-works/pi-coding-agent</code>, with
+            Bazilion orchestration around Pi's session, transcript, tool loop,
+            and coding tools.
           </aside>
         </div>
       </section>
@@ -316,11 +320,10 @@ const features = [
               Spawn one revision into a Team.
             </p>
             <p class="showcase__copy">
-              An Agent template is the reusable role. A Team Template is the
-              sole reusable roster and policy source. The web editor, HTTP API,
-              and CLI interchange tools all work with the same stable slots and
-              immutable revisions; a live Team retains its source lineage without
-              becoming a second template.
+              An Agent template is the reusable role; a Team Template is the
+              reusable roster and policy source. The web editor, HTTP API, and CLI
+              share the same stable slots and immutable revisions, and a live Team
+              keeps its source lineage without becoming a second template.
             </p>
           </div>
 
@@ -372,26 +375,26 @@ edges:    <span class="c-flag">8</span>
           <div class="rail__cell">
             <h4>USER.md is shared</h4>
             <p>
-              Each Team has one USER.md for stable context about the user,
-              project, preferences, and standing instructions. Agents share that
-              protected briefing; Agent updates use guarded tools with concurrency
-              checks instead of clobbering the Team context through file writes.
+              Each Team has one USER.md for the user, project, preferences, and
+              standing instructions. Agents share that briefing, and guarded
+              updates with concurrency checks replace clobbering it through file
+              writes.
             </p>
           </div>
           <div class="rail__cell">
             <h4>Memory is searchable markdown</h4>
             <p>
-              Team memory is backed by qmd: BM25 over markdown under the Team
-              memory folder. Agents can write decisions once and later retrieve
-              them by search instead of relying on chat history.
+              Team memory is qmd-backed: BM25 over markdown under the Team memory
+              folder. Agents write a decision once and retrieve it by search
+              instead of relying on chat history.
             </p>
           </div>
           <div class="rail__cell">
             <h4>Communication is explicit</h4>
             <p>
-              Directed edges define who may reach whom. A protected edge can hold
-              exactly one attempt for operator approval, and durable denial records
-              retain policy evidence without storing the message payload.
+              Directed edges define who may reach whom. A protected edge holds
+              exactly one attempt for approval, and denials keep policy evidence
+              without storing the payload.
             </p>
           </div>
         </div>
@@ -407,17 +410,16 @@ edges:    <span class="c-flag">8</span>
             left in 2025.
           </p>
           <p>
-            He was sweet. He was cuddly. He was sharper than he had any right
-            to be — and he had a temper, especially at the vet, and especially
-            when we had been gone too long. He met us at the door when we came
-            home, and he let us hear about it when we had kept him waiting.
-            He had opinions, and he kept them.
+            He was sweet, cuddly, and sharper than he had any right to be — with
+            a temper, especially at the vet and especially when we had been gone
+            too long. He met us at the door, and let us hear about it when we had
+            kept him waiting.
           </p>
           <p>
-            I wanted a runtime that worked a little like that: living on its
-            own machine, doing small useful things in the background, keeping
-            track of who was home and who was not. So I named it after him,
-            and put his portrait on the box.
+            I wanted a runtime that worked a little like that: living on its own
+            machine, doing small useful things in the background, keeping track
+            of who was home. So I named it after him and put his portrait on the
+            box.
           </p>
           <div class="sig">in memoriam · Baziu · the original local agent</div>
         </div>
