@@ -71,7 +71,7 @@ change against the capture. Read that as a statement of what is checked, not a s
 This release adds four tables. **A 0.17.x home cannot be upgraded in place.** Keep a complete backup and
 use the matching old release to export work you need before a deliberate reset and fresh setup. An
 older-schema backup is not a migration into 0.18.0. Read
-[the upgrade procedure](/docs/getting-started/#upgrade-to-0180) and
+[the upgrade procedure](/docs/getting-started/#upgrade-to-0190) and
 [backup and recovery](/docs/backup-recovery/) before proceeding.
 
 See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.18.0) for publication and
