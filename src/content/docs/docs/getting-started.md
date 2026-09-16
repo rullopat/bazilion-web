@@ -93,9 +93,9 @@ pnpm tsx apps/cli/src/index.ts auth openai login --device-code
 
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
 
-## Upgrade to 0.17.0
+## Upgrade to 0.18.0
 
-**0.17.0 changes the alpha schema. Back up and export work using your current release first.**
+**0.18.0 changes the alpha schema. Back up and export work using your current release first.**
 Older-schema homes and backups cannot migrate in place. A reset is destructive; review
 [what it removes](#recover-an-alpha-install) before choosing a fresh setup.
 
@@ -103,7 +103,7 @@ Stop the running dashboard (Ctrl+C in its terminal), or stop your managed
 daemon and web services. For an npm installation:
 
 ```sh
-npm install -g bazilion@0.17.0
+npm install -g bazilion@0.18.0
 bazilion --version
 bazilion dashboard
 ```

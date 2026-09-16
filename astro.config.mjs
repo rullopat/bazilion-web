@@ -73,6 +73,7 @@ export default defineConfig({
           items: [
             { label: 'Overview', slug: 'docs' },
             { label: 'Getting started', slug: 'docs/getting-started' },
+            { label: "What's new in 0.18.0", slug: 'docs/whats-new-0-18' },
             { label: "What's new in 0.17.0", slug: 'docs/whats-new-0-17' },
             { label: "What's new in 0.16.0", slug: 'docs/whats-new-0-16' },
             { label: "What's new in 0.15.0", slug: 'docs/whats-new-0-15' },
@@ -88,6 +89,7 @@ export default defineConfig({
             { label: 'Tools & integrations', slug: 'docs/tools' },
             { label: 'Coding during an Agent task', slug: 'docs/coding-environment' },
             { label: 'Reviewing what changed', slug: 'docs/coding-review' },
+            { label: 'Requesting verification', slug: 'docs/coding-verification' },
             { label: 'Connecting Telegram', slug: 'docs/telegram' },
             { label: 'Saved Agent results', slug: 'docs/results' },
             { label: 'Conversations', slug: 'docs/conversations' },
