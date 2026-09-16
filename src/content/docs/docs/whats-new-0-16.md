@@ -83,7 +83,7 @@ This release changes the canonical database schema. **A 0.15.x home cannot be up
 Keep a complete backup and use the matching old release to export work you need before a deliberate
 reset and fresh setup. An older-schema backup is not a migration into 0.16.0. Reset removes Agents,
 Teams, templates, credentials and stored results; linked external Team directories remain untouched.
-Read [the upgrade procedure](/docs/getting-started/#upgrade-to-0160) and
+Read [the upgrade procedure](/docs/getting-started/#upgrade-to-0170) and
 [backup and recovery](/docs/backup-recovery/) before proceeding.
 
 See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.16.0) for publication
