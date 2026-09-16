@@ -86,7 +86,7 @@ This release adds two evidence tables to the canonical database schema. **A 0.16
 upgraded in place.** Keep a complete backup and use the matching old release to export work you need
 before a deliberate reset and fresh setup. An older-schema backup is not a migration into 0.17.0. Reset
 removes Agents, Teams, templates, credentials and stored results; linked external Team directories
-remain untouched. Read [the upgrade procedure](/docs/getting-started/#upgrade-to-0180) and
+remain untouched. Read [the upgrade procedure](/docs/getting-started/#upgrade-to-0190) and
 [backup and recovery](/docs/backup-recovery/) before proceeding.
 
 See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.17.0) for publication

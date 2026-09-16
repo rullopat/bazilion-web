@@ -9,12 +9,12 @@ packages move together: `bazilion@0.14.2`, `@bazilion/client@0.14.2`, and
 `@bazilion/api-types@0.14.2`.
 
 This page records the 0.14 series. For the current schema-changing release, see
-[0.18.0](/docs/whats-new-0-18/).
+[0.19.0](/docs/whats-new-0-19/).
 
 ## GPT-6 Astra in 0.14.2
 
 Use the exact model ID `gpt-6-astra` through an OpenAI API key or ChatGPT OAuth.
-After [upgrading and restarting](/docs/getting-started/#upgrade-to-0180), open
+After [upgrading and restarting](/docs/getting-started/#upgrade-to-0190), open
 Config, add Astra to the provider's curated models, and select it for an Agent
 or Agent template. Existing model selections stay as they are.
 

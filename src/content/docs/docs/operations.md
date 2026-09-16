@@ -110,7 +110,7 @@ Stable information about the human or project belongs in Team Context
 ## Before an upgrade or recovery
 
 Use [Backup and recovery](/docs/backup-recovery/) and the
-[version-specific upgrade steps](/docs/getting-started/#upgrade-to-0180).
+[version-specific upgrade steps](/docs/getting-started/#upgrade-to-0190).
 If Node changes, reinstall native dependencies with the runtime used by the
 daemon. Do not reset a healthy home just to update the model catalog.
 
