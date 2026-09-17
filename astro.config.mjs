@@ -73,9 +73,9 @@ export default defineConfig({
           items: [
             { label: 'Overview', slug: 'docs' },
             { label: 'Getting started', slug: 'docs/getting-started' },
+            { label: "What's new in 0.20.0", slug: 'docs/whats-new-0-20' },
             { label: "What's new in 0.19.1", slug: 'docs/whats-new-0-19-1' },
             { label: "What's new in 0.19.0", slug: 'docs/whats-new-0-19' },
-            { label: "What's new in 0.18.0", slug: 'docs/whats-new-0-18' },
             { label: 'Previous changes', slug: 'docs/previous-changes' },
             { label: 'How Bazilion is different', slug: 'docs/why-bazilion' },
           ],
@@ -89,6 +89,7 @@ export default defineConfig({
             { label: 'Reviewing what changed', slug: 'docs/coding-review' },
             { label: 'Requesting verification', slug: 'docs/coding-verification' },
             { label: 'Requesting review from a teammate', slug: 'docs/coding-review-packets' },
+            { label: 'Publishing a reviewed change', slug: 'docs/publication' },
             { label: 'Connecting Telegram', slug: 'docs/telegram' },
             { label: 'Saved Agent results', slug: 'docs/results' },
             { label: 'Conversations', slug: 'docs/conversations' },

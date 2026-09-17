@@ -81,4 +81,4 @@ automatic retries, changing source to fix a failing check, and any automatic com
 deployment. Verification produces evidence; what you do with it stays yours.
 
 Read more in [reviewing what changed](/docs/coding-review/) and
-[what changed in 0.18.0](/docs/whats-new-0-18/).
+[what changed in 0.18.0](/docs/previous-changes/).

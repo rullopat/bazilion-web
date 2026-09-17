@@ -58,7 +58,7 @@ cannot read as a turn that succeeded.
 
 A 0.19.0 home upgrades in place — this release changes no schema. Homes from **0.18.x or earlier still
 cannot** be upgraded in place; keep a backup and set up fresh. Read
-[the upgrade procedure](/docs/getting-started/#upgrade-to-0191) and
+[the upgrade procedure](/docs/getting-started/#upgrade-to-0200) and
 [backup and recovery](/docs/backup-recovery/).
 
 See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.19.1) for publication and
