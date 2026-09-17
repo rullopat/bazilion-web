@@ -93,9 +93,9 @@ pnpm tsx apps/cli/src/index.ts auth openai login --device-code
 
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
 
-## Upgrade to 0.19.1
+## Upgrade to 0.20.0
 
-**0.19.1 does not change the schema, so a 0.19.0 home upgrades in place. Older releases do change it: Back up and export work using your current release first.**
+**0.20.0 changes the schema (it adds the `publications` table), so a 0.19.x home cannot be upgraded in place.** The same was true of earlier releases: Back up and export work using your current release first.**
 Older-schema homes and backups cannot migrate in place. A reset is destructive; review
 [what it removes](#recover-an-alpha-install) before choosing a fresh setup.
 
@@ -103,7 +103,7 @@ Stop the running dashboard (Ctrl+C in its terminal), or stop your managed
 daemon and web services. For an npm installation:
 
 ```sh
-npm install -g bazilion@0.19.1
+npm install -g bazilion@0.20.0
 bazilion --version
 bazilion dashboard
 ```

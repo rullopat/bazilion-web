@@ -6,6 +6,37 @@ description: Summarised release history for Bazilion 0.13 through 0.17, before t
 Release notes for the three most recent releases live in their own pages. Everything older is summarised
 here, newest first, with a link to the full GitHub release for each.
 
+## 0.19.1 — a model newer than the catalogue
+
+A patch release that fixed the endpoint used for a model id newer than the bundled catalogue. An uncatalogued
+id is built for the OpenAI-compatible adapter, and its base URL needed a version segment the provider's own
+catalogue base does not: the call became a 404 instead of answering. The provider registry also never carried
+the endpoint, so `bazilion provider test` failed closed for exactly the models that endpoint was meant to
+admit. Verified against a real model newer than the catalogue, through both the verification and review
+loops. No schema change.
+
+[GitHub release for 0.19.1](https://github.com/rullopat/bazilion/releases/tag/v0.19.1)
+
+## 0.19.0 — a teammate can review a fixed revision
+
+A coder can ask a teammate to **read** one captured change. The reviewer's entire capability is four read-only
+tools — no execution, no editing, no browsing, no publication — findings are append-only and resolution needs
+explicit proof, and an export is a publication held until policy releases it. The same release added
+`request_verification`, so a coding Agent can ask for specialist verification at all, and closed three gaps in
+specialist verification: a check now runs with the posture its receipt claims, declared output paths are
+*checked* rather than trusted, and a check can no longer write the Team's shared memory. Schema change.
+
+[GitHub release for 0.19.0](https://github.com/rullopat/bazilion/releases/tag/v0.19.0)
+
+## 0.18.0 — hand a captured change to a specialist
+
+A coder hands one captured change to an existing member of its Team and gets back evidence naming the code, the
+commands, the environment and the outcomes. The specialist's capability is two tools — read the request, and
+run one declared check once — and it cannot widen them. Results are tied to the exact captured revision.
+Schema change.
+
+[GitHub release for 0.18.0](https://github.com/rullopat/bazilion/releases/tag/v0.18.0)
+
 ## 0.17.0 — coding work becomes reviewable
 
 Live command progress, retained diagnostics, and read-only Git change review with source-bound evidence.
