@@ -83,7 +83,7 @@ the live file, and run a configured editor as argv **without a shell**: a file n
 
 This release adds four review tables and widens result provenance, so **a 0.18.x home cannot be upgraded in
 place**. Keep a complete backup and export work with your current release before a deliberate reset and
-fresh setup. Read [the upgrade procedure](/docs/getting-started/#upgrade-to-0190) and
+fresh setup. Read [the upgrade procedure](/docs/getting-started/#upgrade-to-0191) and
 [backup and recovery](/docs/backup-recovery/) before proceeding.
 
 See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.19.0) for publication and

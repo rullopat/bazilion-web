@@ -90,8 +90,8 @@ Do not manually delete recovery markers or edit database tables to force
 startup. Follow the reported recovery guidance before retrying a swap.
 
 An older alpha schema cannot be migrated by restoring it into a newer schema.
-Use the matching old release to recover/export work first. Version 0.19.0 changes the schema;
-an older-schema backup cannot migrate into it. See [upgrading](/docs/getting-started/#upgrade-to-0190).
+Use the matching old release to recover/export work first. Version 0.19.0 changed the schema;
+an older-schema backup cannot migrate into it. See [upgrading](/docs/getting-started/#upgrade-to-0191).
 If a reset is necessary, it removes Agents, Teams, templates, credentials, and
 the paired database/auth identity. Review the
 [reset consequences](/docs/getting-started/#recover-an-alpha-install) first.
