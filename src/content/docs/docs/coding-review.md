@@ -73,4 +73,4 @@ A result with no captured source reads **Not checked**. Nothing here is a pass o
 successful command still never certifies the whole repository — an exit code is not coverage.
 
 Read more in [coding during an Agent task](/docs/coding-environment/) and
-[what changed in 0.17.0](/docs/whats-new-0-17/).
+[the release it arrived in](/docs/previous-changes/#0170--coding-work-becomes-reviewable).
