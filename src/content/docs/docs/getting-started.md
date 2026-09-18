@@ -29,6 +29,15 @@ irm https://bazilion.com/install.ps1 | iex
 bazilion dashboard
 ```
 
+:::note[Platform boundary]
+**Linux is the validated platform.** On macOS and Windows the installer sets
+everything up — daemon, dashboard, first-run setup — and the refusal is clean and
+explicit if you hit the edge: **agent turns (chat) currently require Linux**,
+because every turn resolves repository context through safe reads that pin
+ancestry with Linux-only primitives rather than read with a weaker guarantee.
+Portability is tracked in the repository backlog (BAZ-057).
+:::
+
 Already have Node 24+? Use npm directly:
 
 ```sh
