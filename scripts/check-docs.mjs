@@ -15,7 +15,9 @@ const announcementSlug = read('src/pages/index.astro')
   .match(/class="release-note" href="\/docs\/([^/]+)\//)?.[1];
 if (!announcementSlug) throw new Error('Homepage must link to the current release page.');
 const announcement = read(`src/content/docs/docs/${announcementSlug}.md`);
-const version = announcement.match(/^title: What's new in (\d+\.\d+\.\d+)$/m)?.[1];
+// Accepts stable and pre-release versions (`0.21.0-beta.1`): the docs gate should
+// not force a prerelease to masquerade as its eventual stable number.
+const version = announcement.match(/^title: What's new in (\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)$/m)?.[1];
 const pi = announcement.match(/^description: .*Pi(?: to)? (\d+\.\d+\.\d+)/m)?.[1];
 if (!version || !pi) throw new Error('Current release page must declare Bazilion and Pi versions.');
 

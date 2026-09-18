@@ -1,6 +1,6 @@
 ---
 title: Configuration
-description: Providers, Team Policy enforcement, secrets, access tokens, the clean-install schema, and the ~/.bazilion on-disk layout.
+description: Providers, Team Policy enforcement, secrets, access tokens, the schema contract, and the ~/.bazilion on-disk layout.
 ---
 
 The daemon is the single owner of `~/.bazilion`, SQLite, configuration,
@@ -11,7 +11,7 @@ stateless and talk to it over HTTP.
 
 Models use `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-6-astra`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog. Bazilion 0.20.0 bundles Pi 0.85.1, including
+data-driven from Pi's catalog. Bazilion 0.21.0-beta.1 bundles Pi 0.85.1, including
 GPT-6 Astra, GPT-5.6, Claude 5, Gemini 3.6, Kimi K3, Grok 4.5, and Qwen 3.8 models.
 
 Common providers include:
@@ -40,7 +40,7 @@ After connecting, enable `openai-codex` and curate a model such as
 
 ### Select GPT-6 Astra
 
-1. Upgrade to Bazilion 0.20.0 and restart the daemon and web UI.
+1. Upgrade to Bazilion 0.21.0-beta.1 and restart the daemon and web UI.
 2. Open `/config` and connect **OpenAI Codex** with ChatGPT OAuth, or configure
    **OpenAI** with an API key. Enable the provider.
 3. Add the `gpt-6-astra` catalog chip to its curated models and save, keeping
@@ -150,19 +150,25 @@ Override the root with `$BAZILION_HOME`. A Team registered with `--link` gets a
 symlink under `teams/`; uninstalling Bazilion removes that link, never the
 external project directory.
 
-## Alpha clean-install contract
+## Schema contract
 
-Bazilion intentionally has one canonical schema in `0001_init.sql`. There
-are no incremental Group/Profile Group/Harness migrations and no database, API,
-URL, CLI, or filesystem compatibility adapters.
+Migrations are **forward-only and append-only**: startup applies any pending migration inside a
+transaction and records each applied version in a `schema_migrations` receipt ledger. Before the
+first migration touches an existing home, the daemon copies the live database to
+`bazilion.pre-migration-<timestamp>.db` beside it and verifies the copy; a failed migration leaves
+the home on its previous schema.
 
-Startup verifies the exact schema and checks that `bazilion.db` and `auth.json`
-form one valid bootstrap identity before the scheduler or HTTP listener starts.
-An older schema, a missing half of the pair, or a mismatched bootstrap token
-fails closed with recovery guidance instead of partially starting.
+The database also carries a numeric schema version (`PRAGMA user_version`). A database written by a
+newer release is refused with upgrade guidance and never mutated — downgrades are unsupported, so
+recovery from an accidental downgrade means restoring the pre-migration snapshot.
 
-For an older alpha install, export anything you need first, then recreate the
-state rather than attempting an in-place upgrade:
+Startup additionally checks that `bazilion.db` and `auth.json` form one valid bootstrap identity
+before the scheduler or HTTP listener starts. A home from before this contract (0.19.x and earlier),
+a missing half of the identity pair, or a mismatched bootstrap token fails closed with recovery
+guidance instead of partially starting.
+
+For such an older home, export anything you need with its matching release first, then recreate the
+state:
 
 ```sh
 bazilion uninstall --yes

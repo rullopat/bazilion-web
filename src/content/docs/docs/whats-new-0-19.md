@@ -83,8 +83,48 @@ the live file, and run a configured editor as argv **without a shell**: a file n
 
 This release adds four review tables and widens result provenance, so **a 0.18.x home cannot be upgraded in
 place**. Keep a complete backup and export work with your current release before a deliberate reset and
-fresh setup. Read [the upgrade procedure](/docs/getting-started/#upgrade-to-0200) and
+fresh setup. Read [the upgrade procedure](/docs/getting-started/#upgrade-to-0210-beta1) and
 [backup and recovery](/docs/backup-recovery/) before proceeding.
 
+## 0.19.1 — a patch, two fixes and a correction
+
+Bazilion **0.19.1** is a patch release, covered here because it shares this minor. It fixes the endpoint
+used for a model newer than the bundled catalogue — and it corrects a misdiagnosis that followed, which is
+worth stating plainly because the fix and the mistaken conclusion came from the same place. **No schema
+change: a 0.19.0 home upgrades in place.**
+
+### What was broken
+
+Two defects, both introduced with the Fireworks endpoint in 0.19.0.
+
+**A model newer than the catalogue was called at the wrong URL.** An id absent from the bundled catalogue
+is built for the OpenAI-compatible adapter, and the OpenAI SDK appends only `/chat/completions` to the base
+URL it is given. The pinned endpoint was the provider's own catalogue base (`…/inference`) — correct for
+its other entries, which add their own version segment — so the fallback requested
+`…/inference/chat/completions` and got a **404**, where Fireworks serves
+`…/inference/v1/chat/completions`. Catalogue models were never affected, which is exactly why only an
+upstream model broke.
+
+**One caller never received the endpoint at all.** The session paths resolve it through the provider base
+URL helper, while the provider registry built from the loaded config, which carried only the API key. So
+`bazilion provider test` failed closed with *"it is not in that provider's catalog, and no endpoint is
+configured for it … configure an endpoint for a custom one"* — for precisely the models that endpoint was
+meant to admit. The remedy the error recommended did nothing.
+
+Both are fixed. The version-segment translation applies **only** to the fallback, explicitly per provider
+and idempotently, so catalogue models keep their own endpoint and API type; and the default endpoint
+travels in the provider config from the same single source, with an explicit `FIREWORKS_BASE_URL` still
+winning.
+
+### A correction
+
+An earlier report from this work said the model *"produced no assistant content"* and that uncatalogued
+models were unusable through Bazilion. **That was wrong.** The turn had failed on the 404 and reported it;
+that output was truncated, and a model problem was inferred from an empty transcript. Both live-run
+harnesses now **assert that a turn actually put an assistant message in the transcript**, so a turn that
+does nothing cannot read as a turn that succeeded.
+
 See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.19.0) for publication and
-validation details. The [0.18 release history](/docs/previous-changes/) remains available.
+validation details, and the
+[0.19.1 release](https://github.com/rullopat/bazilion/releases/tag/v0.19.1) for the patch. The
+[0.18 release history](/docs/previous-changes/) remains available.
