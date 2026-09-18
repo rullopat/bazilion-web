@@ -13,6 +13,12 @@ import starlightLlmsTxt from 'starlight-llms-txt';
 export default defineConfig({
   site: 'https://bazilion.com',
   output: 'static',
+  // Patch releases share their minor's page, so the retired per-patch URLs keep
+  // working: 0.19.1 lives on the 0.19.0 page.
+  redirects: {
+    '/docs/whats-new-0-19-1/': '/docs/whats-new-0-19/',
+    '/docs/whats-new-0-19-1': '/docs/whats-new-0-19/',
+  },
   build: {
     inlineStylesheets: 'auto',
   },
