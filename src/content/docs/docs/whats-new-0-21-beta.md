@@ -1,13 +1,13 @@
 ---
-title: What's new in 0.21.0-beta.2
-description: Bazilion 0.21.0-beta.2 retires the alpha clean-install contract — homes now upgrade in place — and adds per-device scopes, one-paste pairing codes and an auth-posture probe, on Pi 0.85.1.
+title: What's new in 0.21.0-beta.3
+description: Bazilion 0.21.0-beta.3 retires the alpha clean-install contract — homes now upgrade in place — and adds per-device scopes, one-paste pairing codes and an auth-posture probe, on Pi 0.85.1.
 ---
 
-Bazilion **0.21.0-beta.2** is a **pre-beta checkpoint**: the alpha database contract is gone. Since
+Bazilion **0.21.0-beta.3** is a **pre-beta checkpoint**: the alpha database contract is gone. Since
 beta.1, Bazilion **migrates your database forward on startup** and keeps a verified snapshot of the
-previous state beside it — no schema change costs you your home any more. Beta.2 is the
-cross-platform hardening release: the CI matrix now proves macOS and Windows, and the fresh-machine
-installer E2E caught six real defects before any user did.
+previous state beside it — no schema change costs you your home any more. Beta.2 hardened the
+platforms (the CI matrix caught six real defects before any user did); beta.3 is the
+failure-mode visibility audit: **no recoverable failure stays silent**.
 
 This is not yet beta. The remaining beta work — the failure-mode visibility audit, the supportability
 gates and the UI consistency sweep — is tracked in the backlog and will ship as `0.21.0-beta.N` before
@@ -15,6 +15,32 @@ gates and the UI consistency sweep — is tracked in the backlog and will ship a
 
 The public packages `bazilion`, `@bazilion/client` and `@bazilion/api-types` move together to
 0.21.0-beta.1. The bundled engine remains **Pi 0.85.1**.
+
+## Beta.3 — no silent failure
+
+Two silent failure modes were found and fixed, and every remaining recoverable
+failure mode is now pinned by a deterministic fault-injection test that asserts
+what the *operator sees*:
+
+- **The queue stall after a daemon crash.** A restart that interrupts queue
+  processing pauses the Agent's queue until you inspect and resume it — but
+  nothing surfaced the pause: new messages were accepted and never drained, with
+  no visible reason anywhere. A crash could make an Agent go permanently quiet.
+  A new Attention kind, **Paused queues**, names the crash and the uncertain
+  item count; resuming the queue clears it.
+- **Opaque OAuth refresh failures.** A revoked or expired ChatGPT refresh token
+  surfaced the raw upstream error mid-turn. The error now says what to do: sign
+  in again with `bazilion auth openai login` or the Connect button on /config.
+- **Pinned by injection tests:** provider outages retry boundedly then surface
+  as trigger-failure attention items; Telegram delivery failures leave a
+  terminal receipt while the underlying attention item stays open; message-loop
+  breaches surface payload-free; a daemon kill mid-coding-run leaves an
+  interrupted receipt with a reason; a failed backup is clean — no partial file,
+  home and daemon intact.
+
+Beta.3 also fixed a build race the CI matrix exposed: the web build and the CLI
+build (which bundles the web output) ran concurrently and could corrupt each
+other's output.
 
 ## Beta.2 — the CI matrix catches Windows and macOS
 
@@ -62,8 +88,8 @@ The headline is a contract, not a feature. Four rules now govern startup:
   [before](#what-this-means-for-older-homes).
 
 The upgrade path is proven, not asserted: CI seeds a real home with a real prior-release daemon and
-upgrades it, so `v0.20.0 → beta.2` and `beta.1 → beta.2` are exercised on every release. Read
-[the upgrade procedure](/docs/getting-started/#upgrade-to-0210-beta2).
+upgrades it, so `v0.20.0 → beta.3` and each beta hop are exercised on every release. Read
+[the upgrade procedure](/docs/getting-started/#upgrade-to-0210-beta3).
 
 ## Give every device only what it needs
 
@@ -98,7 +124,8 @@ you choose to narrow one.**
   [reset it](/docs/getting-started/#reset-a-home) or point `BAZILION_HOME` at a new empty directory.
 - Existing token scopes, Teams, Agents and conversations are all preserved across the upgrade.
 
-See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.2) for publication
+See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.3) for publication
 and validation details (the [beta.1 release](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.1)
-covers the schema-contract checkpoint itself). The [0.20.0 release notes](/docs/whats-new-0-20/) remain available, and everything
+covers the schema-contract checkpoint, [beta.2](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.2)
+the cross-platform hardening). The [0.20.0 release notes](/docs/whats-new-0-20/) remain available, and everything
 before 0.19.0 is summarised in [previous changes](/docs/previous-changes/).
