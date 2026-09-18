@@ -1,13 +1,13 @@
 ---
-title: What's new in 0.21.0-beta.3
-description: Bazilion 0.21.0-beta.3 retires the alpha clean-install contract — homes now upgrade in place — and adds per-device scopes, one-paste pairing codes and an auth-posture probe, on Pi 0.85.1.
+title: What's new in 0.21.0-beta.4
+description: Bazilion 0.21.0-beta.4 retires the alpha clean-install contract — homes now upgrade in place — and adds per-device scopes, one-paste pairing codes and an auth-posture probe, on Pi 0.85.1.
 ---
 
-Bazilion **0.21.0-beta.3** is a **pre-beta checkpoint**: the alpha database contract is gone. Since
+Bazilion **0.21.0-beta.4** is a **pre-beta checkpoint**: the alpha database contract is gone. Since
 beta.1, Bazilion **migrates your database forward on startup** and keeps a verified snapshot of the
 previous state beside it — no schema change costs you your home any more. Beta.2 hardened the
-platforms (the CI matrix caught six real defects before any user did); beta.3 is the
-failure-mode visibility audit: **no recoverable failure stays silent**.
+platforms; beta.3 made failure modes visible; beta.4 stops security regressions at the PR gate and
+answers **how big a home should be**.
 
 This is not yet beta. The remaining beta work — the failure-mode visibility audit, the supportability
 gates and the UI consistency sweep — is tracked in the backlog and will ship as `0.21.0-beta.N` before
@@ -15,6 +15,22 @@ gates and the UI consistency sweep — is tracked in the backlog and will ship a
 
 The public packages `bazilion`, `@bazilion/client` and `@bazilion/api-types` move together to
 0.21.0-beta.1. The bundled engine remains **Pi 0.85.1**.
+
+## Beta.4 — the gate is not a convention
+
+The BAZ-032 adversarial security suite — 153 required cases covering the daemon's
+security boundaries — existed as a script that ran only at release time. A new
+**security-acceptance CI job** runs it on every pull request (~2 minutes,
+docker-free). The script fails closed: deleting or renaming a required case is
+itself a CI failure, so the manifest is the gate, not a convention.
+
+Beta.4 also ships [Growth and retention](/docs/growth-and-retention/), the
+operator answer to "how big should a home be?": coding evidence is bounded by
+design (7-day TTLs, a 256 MB home-wide budget, content-addressed snapshots that
+store paths and digests only), messages and sessions grow with use because they
+are the record, pre-migration snapshots are safe to delete once an upgrade is
+confirmed good, and `logs/` is intentionally empty — the daemon writes no log
+files.
 
 ## Beta.3 — no silent failure
 
@@ -88,8 +104,8 @@ The headline is a contract, not a feature. Four rules now govern startup:
   [before](#what-this-means-for-older-homes).
 
 The upgrade path is proven, not asserted: CI seeds a real home with a real prior-release daemon and
-upgrades it, so `v0.20.0 → beta.3` and each beta hop are exercised on every release. Read
-[the upgrade procedure](/docs/getting-started/#upgrade-to-0210-beta3).
+upgrades it, so `v0.20.0 → beta.4` and each beta hop are exercised on every release. Read
+[the upgrade procedure](/docs/getting-started/#upgrade-to-0210-beta4).
 
 ## Give every device only what it needs
 
@@ -124,8 +140,9 @@ you choose to narrow one.**
   [reset it](/docs/getting-started/#reset-a-home) or point `BAZILION_HOME` at a new empty directory.
 - Existing token scopes, Teams, Agents and conversations are all preserved across the upgrade.
 
-See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.3) for publication
+See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.4) for publication
 and validation details (the [beta.1 release](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.1)
 covers the schema-contract checkpoint, [beta.2](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.2)
-the cross-platform hardening). The [0.20.0 release notes](/docs/whats-new-0-20/) remain available, and everything
+the cross-platform hardening, [beta.3](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.3)
+the failure-mode visibility audit). The [0.20.0 release notes](/docs/whats-new-0-20/) remain available, and everything
 before 0.19.0 is summarised in [previous changes](/docs/previous-changes/).

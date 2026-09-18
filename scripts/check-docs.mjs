@@ -56,7 +56,7 @@ for (const file of files) {
 }
 
 requireText('dist/llms.txt', 'https://bazilion.com/llms-full.txt');
-for (const slug of ['operations', 'backup-recovery', 'private-access', 'results', 'conversations', 'follow-up-queue', 'questions', 'attention-notifications', 'coding-environment', 'coding-review', 'coding-verification', 'coding-review-packets', 'previous-changes', 'publication']) {
+for (const slug of ['operations', 'growth-and-retention', 'backup-recovery', 'private-access', 'results', 'conversations', 'follow-up-queue', 'questions', 'attention-notifications', 'coding-environment', 'coding-review', 'coding-verification', 'coding-review-packets', 'previous-changes', 'publication']) {
   requireText('astro.config.mjs', `slug: 'docs/${slug}'`);
   requireText('dist/llms-full.txt', `/docs/${slug}`);
   const title = read(`src/content/docs/docs/${slug}.md`).match(/^title: (.+)$/m)?.[1];
