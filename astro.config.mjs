@@ -18,6 +18,8 @@ export default defineConfig({
   redirects: {
     '/docs/whats-new-0-19-1/': '/docs/whats-new-0-19/',
     '/docs/whats-new-0-19-1': '/docs/whats-new-0-19/',
+    '/docs/whats-new-0-21-beta-1/': '/docs/whats-new-0-21-beta/',
+    '/docs/whats-new-0-21-beta-1': '/docs/whats-new-0-21-beta/',
   },
   build: {
     inlineStylesheets: 'auto',
@@ -79,7 +81,7 @@ export default defineConfig({
           items: [
             { label: 'Overview', slug: 'docs' },
             { label: 'Getting started', slug: 'docs/getting-started' },
-            { label: "What's new in 0.21.0-beta.1", slug: 'docs/whats-new-0-21-beta-1' },
+            { label: "What's new in 0.21.0-beta.2", slug: 'docs/whats-new-0-21-beta' },
             { label: "What's new in 0.20.0", slug: 'docs/whats-new-0-20' },
             { label: "What's new in 0.19.0–0.19.1", slug: 'docs/whats-new-0-19' },
             { label: 'Previous changes', slug: 'docs/previous-changes' },
