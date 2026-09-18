@@ -77,10 +77,11 @@ release. The notes were corrected at the time, and this release's validation was
 ## Upgrading
 
 **0.19.x homes cannot be upgraded in place.** This release adds the `publications` table and three indexes,
-and the alpha contract remains clean-install only. Take a backup if you need the state, then set up fresh.
-Read [the upgrade procedure](/docs/getting-started/#upgrade-to-0200) and
+and at the time of release the alpha contract was still clean-install only. Take a backup if you need the
+state, then set up fresh. (From 0.21.0-beta.1 onward, forward migrations replace that contract; a 0.20.x
+home upgrades in place.) Read [the upgrade procedure](/docs/getting-started/#upgrade-to-0210-beta1) and
 [backup and recovery](/docs/backup-recovery/).
 
 See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.20.0) for publication and
-validation details. The [0.19.1 notes](/docs/whats-new-0-19-1/) remain available, and everything before
-0.19.0 is summarised in [previous changes](/docs/previous-changes/).
+validation details. The [0.19.0 and 0.19.1 notes](/docs/whats-new-0-19/) remain available, and everything
+before 0.19.0 is summarised in [previous changes](/docs/previous-changes/).

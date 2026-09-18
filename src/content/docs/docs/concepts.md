@@ -16,7 +16,7 @@ providers and tools, and supplies the coding tools.
 
 Bazilion adds the multi-agent shell around that engine: templates, Teams,
 policy, shared context, mailbox, triggers, browser/MCP integrations, the daemon,
-CLI, and web UI. Version 0.20.0 bundles Pi 0.85.1 and constructs provider,
+CLI, and web UI. Version 0.21.0-beta.1 bundles Pi 0.85.1 and constructs provider,
 catalog, authentication, and session state through Pi's public `ModelRuntime`
 and `DefaultResourceLoader` APIs.
 
@@ -142,5 +142,5 @@ See [Tools & integrations](/docs/tools/) before moving a local workflow to a sch
 The daemon owns SQLite, the scheduler, secrets, and Agent turns. Most work stays
 inspectable under `~/.bazilion/`: Team roots, Agent homes, Agent-template files,
 session transcripts, skills, and memory. See
-[Configuration](/docs/configuration/) for the complete layout and the alpha
-clean-install contract.
+[Configuration](/docs/configuration/) for the complete layout and the schema
+contract.

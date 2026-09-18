@@ -39,7 +39,7 @@ bazilion dashboard
 On first boot `bazilion dashboard`:
 
 - creates `~/.bazilion/` (profiles, agents, teams, skills, logs),
-- opens the SQLite database and applies the clean-install schema,
+- opens the SQLite database and applies any pending schema migrations,
 - mints a bootstrap token, stores its row, and writes it to
   `~/.bazilion/auth.json`,
 - on later starts, requires the database and auth file to be present together
@@ -93,36 +93,44 @@ pnpm tsx apps/cli/src/index.ts auth openai login --device-code
 
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
 
-## Upgrade to 0.20.0
+## Upgrade to 0.21.0-beta.1
 
-**0.20.0 changes the schema (it adds the `publications` table), so a 0.19.x home cannot be upgraded in place.** The same was true of earlier releases: Back up and export work using your current release first.**
-Older-schema homes and backups cannot migrate in place. A reset is destructive; review
-[what it removes](#recover-an-alpha-install) before choosing a fresh setup.
+**From 0.20.x, upgrade in place.** Bazilion migrates its database forward on startup. Before the
+first migration touches an existing home it copies the live database to
+`bazilion.pre-migration-<timestamp>.db` beside `bazilion.db` and verifies the copy, so a failed
+migration leaves your home on its previous schema with a restorable snapshot. Snapshot files are
+safe to delete once an upgrade is confirmed good.
+
+**From 0.19.x or earlier, a reset is required.** Those homes predate the migration contract.
+Startup refuses them cleanly with recovery guidance and does not modify the database. Keep the old
+home with its matching release for export, then [reset it](#reset-a-home) or point `BAZILION_HOME`
+at a new empty directory.
+
+**Downgrades are unsupported.** A database written by a newer release is refused; to run an older
+release, restore a pre-migration snapshot instead.
 
 Stop the running dashboard (Ctrl+C in its terminal), or stop your managed
 daemon and web services. For an npm installation:
 
 ```sh
-npm install -g bazilion@0.20.0
+npm install -g bazilion@0.21.0-beta.1
 bazilion --version
 bazilion dashboard
 ```
 
 If you run managed services, restart them through your service manager instead
-of starting a second dashboard. For an older home, startup will stop with incompatible-schema
-guidance. After preserving needed work, follow the explicit reset procedure below or choose a new
-empty `BAZILION_HOME`. Retain the original home with its matching release for recovery.
+of starting a second dashboard.
 
 To use Astra, follow [Select GPT-6 Astra](/docs/configuration/#select-gpt-6-astra).
 If you also change Node versions, reinstall native dependencies using the same
 runtime that starts Bazilion.
 
-## Recover an alpha install
+## Reset a home
 
-Bazilion's alpha database is clean-install-only. Bazilion checks the exact
-schema and the database/bootstrap identity pair before background work or the
-HTTP listener starts. If startup reports an incompatible or mismatched home,
-back up the complete `~/.bazilion` directory first, then reset and bootstrap it:
+Bazilion checks the database schema and the database/bootstrap identity pair
+before background work or the HTTP listener starts. If startup reports an
+incompatible or mismatched home, back up the complete `~/.bazilion` directory
+first, then reset and bootstrap it:
 
 ```sh
 bazilion uninstall --yes

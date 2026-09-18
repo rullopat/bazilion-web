@@ -73,9 +73,9 @@ export default defineConfig({
           items: [
             { label: 'Overview', slug: 'docs' },
             { label: 'Getting started', slug: 'docs/getting-started' },
+            { label: "What's new in 0.21.0-beta.1", slug: 'docs/whats-new-0-21-beta-1' },
             { label: "What's new in 0.20.0", slug: 'docs/whats-new-0-20' },
-            { label: "What's new in 0.19.1", slug: 'docs/whats-new-0-19-1' },
-            { label: "What's new in 0.19.0", slug: 'docs/whats-new-0-19' },
+            { label: "What's new in 0.19.0–0.19.1", slug: 'docs/whats-new-0-19' },
             { label: 'Previous changes', slug: 'docs/previous-changes' },
             { label: 'How Bazilion is different', slug: 'docs/why-bazilion' },
           ],
