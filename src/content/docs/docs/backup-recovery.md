@@ -92,7 +92,7 @@ startup. Follow the reported recovery guidance before retrying a swap.
 A backup from an older release cannot be restored into a newer one: restore validates that the
 archive matches the current release's full migration chain. Use the matching old release to
 recover/export work first — database migrations move a live home forward; they do not downgrade or
-rewrite an archive. See [upgrading](/docs/getting-started/#upgrade-to-0210-beta2).
+rewrite an archive. See [upgrading](/docs/getting-started/#upgrade-to-0210-beta3).
 If a reset is necessary, it removes Agents, Teams, templates, credentials, and
 the paired database/auth identity. Review the
 [reset consequences](/docs/getting-started/#reset-a-home) first.
