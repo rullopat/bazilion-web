@@ -79,7 +79,7 @@ Every upgrade that applies a pending migration first writes a verified,
 transactionally consistent copy of the database to
 `bazilion.pre-migration-<timestamp>.db` beside `bazilion.db` — one file per upgrade,
 never overwritten by a retry. These exist so a failed migration leaves a restorable
-copy instead of a half-migrated home (see [upgrading](/docs/getting-started/#upgrade-to-0210-beta4)
+copy instead of a half-migrated home (see [upgrading](/docs/getting-started/#upgrade-to-0210-beta5)
 and [backup and recovery](/docs/backup-recovery/)).
 
 **Safe to delete once an upgrade is confirmed good** — the daemon is running and your
