@@ -1,20 +1,24 @@
 ---
-title: What's new in 0.21.0-beta.5
-description: Bazilion 0.21.0-beta.5 retires the alpha clean-install contract — homes now upgrade in place — and adds per-device scopes, one-paste pairing codes and an auth-posture probe, on Pi 0.85.1.
+title: What's new in 0.21.0
+description: Bazilion 0.21 retires the alpha clean-install contract — homes now upgrade in place — and adds per-device scopes, one-paste pairing codes and an auth-posture probe, on Pi 0.85.1.
 ---
 
-Bazilion **0.21.0-beta.5** is a **pre-beta checkpoint**: the alpha database contract is gone. Since
-beta.1, Bazilion **migrates your database forward on startup** and keeps a verified snapshot of the
-previous state beside it — no schema change costs you your home any more. Beta.2 hardened the
-platforms; beta.3 made failure modes visible; beta.4 gated security in CI and documented home
-growth; beta.5 is the UI consistency sweep — **every surface degrades well**.
+> **A note on names (2026-09-21):** the 0.21 line shipped to npm as `0.21.0-beta.1` through
+> `0.21.0-beta.5`. We have dropped the beta naming — Bazilion is and remains **alpha** until a
+> deliberate 1.0 beta, so these releases are described here as **0.21.0**. `0.21.0` final is
+> published from the same commit as beta.5; the installed code is identical either way.
 
-This is not yet beta. The remaining beta work — the failure-mode visibility audit, the supportability
-gates and the UI consistency sweep — is tracked in the backlog and will ship as `0.21.0-beta.N` before
-`1.0.0-beta.1`.
+Bazilion **0.21** retired the alpha database contract: since the first 0.21 release, Bazilion
+**migrates your database forward on startup** and keeps a verified snapshot of the previous state
+beside it — no schema change costs you your home any more. The second release hardened the
+platforms; the third made failure modes visible; the fourth gated security in CI and documented
+home growth; the fifth is the UI consistency sweep — **every surface degrades well**.
 
-The public packages `bazilion`, `@bazilion/client` and `@bazilion/api-types` move together to
-0.21.0-beta.1. The bundled engine remains **Pi 0.85.1**.
+Bazilion remains **alpha**: feature checkpoints ship as plain `0.N.0` versions, and a
+`1.0.0-beta.1` label is reserved for a deliberate, later decision.
+
+The public packages `bazilion`, `@bazilion/client` and `@bazilion/api-types` move together.
+The bundled engine remains **Pi 0.85.1**.
 
 ## Beta.5 — every surface degrades well
 
