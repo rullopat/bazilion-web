@@ -1,3 +1,6 @@
+# Windows is UNSUPPORTED (operator decision 2026-09-23): untested, no CI, and
+# agent turns require Linux everywhere. Kept for contributors who want to
+# maintain it; see the platform note in the docs.
 $ErrorActionPreference = "Stop"
 
 $MinNodeMajor = 24
