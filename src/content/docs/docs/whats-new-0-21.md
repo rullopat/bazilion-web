@@ -126,7 +126,7 @@ The headline is a contract, not a feature. Four rules now govern startup:
 
 The upgrade path is proven, not asserted: CI seeds a real home with a real prior-release daemon and
 upgrades it, so `v0.20.0 → beta.5` and each beta hop are exercised on every release. Read
-[the upgrade procedure](/docs/getting-started/#upgrade-to-0210-beta5).
+[the upgrade procedure](/docs/getting-started/#upgrade-to-0220).
 
 ## Give every device only what it needs
 
