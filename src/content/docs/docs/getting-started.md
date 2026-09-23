@@ -106,7 +106,7 @@ pnpm tsx apps/cli/src/index.ts auth openai login --device-code
 
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
 
-## Upgrade to 0.21.0-beta.5
+## Upgrade to 0.22.0
 
 **From 0.20.x, upgrade in place.** Bazilion migrates its database forward on startup. Before the
 first migration touches an existing home it copies the live database to
@@ -126,7 +126,7 @@ Stop the running dashboard (Ctrl+C in its terminal), or stop your managed
 daemon and web services. For an npm installation:
 
 ```sh
-npm install -g bazilion@0.21.0-beta.5
+npm install -g bazilion@0.22.0
 bazilion --version
 bazilion dashboard
 ```
