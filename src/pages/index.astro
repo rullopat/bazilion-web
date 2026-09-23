@@ -176,13 +176,11 @@ const features = [
 
         <div class="install-tabs">
           <input class="install-tabs__input" type="radio" name="install-method" id="install-macos" checked />
-          <input class="install-tabs__input" type="radio" name="install-method" id="install-windows" />
           <input class="install-tabs__input" type="radio" name="install-method" id="install-npm" />
           <input class="install-tabs__input" type="radio" name="install-method" id="install-hackable" />
 
           <div class="install-tabs__nav" aria-label="Installation methods">
             <label class="install-tabs__tab" for="install-macos">macOS / Linux</label>
-            <label class="install-tabs__tab" for="install-windows">Windows</label>
             <label class="install-tabs__tab" for="install-npm">npm</label>
             <label class="install-tabs__tab" for="install-hackable">Hackable</label>
           </div>
@@ -200,21 +198,6 @@ const features = [
 
 <span class="c-comment"># Then open the local web dashboard.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span></pre>
-              </div>
-            </div>
-
-            <div class="install-tabs__panel install-tabs__panel--windows">
-              <div class="card-code">
-                <div class="card-code__head">
-                  <span>powershell installer</span>
-                </div>
-<pre><span class="c-comment"># Native Windows install, no WSL required.</span>
-<span class="c-prompt">PS&gt;</span> <span class="c-cmd">irm</span> `
-  https://bazilion.com/install.ps1 `
-  | iex
-
-<span class="c-comment"># Then open the local web dashboard.</span>
-<span class="c-prompt">PS&gt;</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span></pre>
               </div>
             </div>
 

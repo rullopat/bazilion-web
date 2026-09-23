@@ -704,7 +704,6 @@ a:hover { color: var(--sapphire-deep); }
 }
 
 #install-macos:checked ~ .install-tabs__nav label[for="install-macos"],
-#install-windows:checked ~ .install-tabs__nav label[for="install-windows"],
 #install-npm:checked ~ .install-tabs__nav label[for="install-npm"],
 #install-hackable:checked ~ .install-tabs__nav label[for="install-hackable"] {
   background: var(--ivory);
@@ -712,7 +711,6 @@ a:hover { color: var(--sapphire-deep); }
 }
 
 #install-macos:checked ~ .install-tabs__panels .install-tabs__panel--macos,
-#install-windows:checked ~ .install-tabs__panels .install-tabs__panel--windows,
 #install-npm:checked ~ .install-tabs__panels .install-tabs__panel--npm,
 #install-hackable:checked ~ .install-tabs__panels .install-tabs__panel--hackable {
   display: block;

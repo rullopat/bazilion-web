@@ -22,7 +22,7 @@ curl -fsSL https://bazilion.com/install.sh | bash
 bazilion dashboard
 ```
 
-On Windows PowerShell:
+On Windows PowerShell (unsupported — see the platform boundary below):
 
 ```powershell
 irm https://bazilion.com/install.ps1 | iex
@@ -30,12 +30,16 @@ bazilion dashboard
 ```
 
 :::note[Platform boundary]
-**Linux is the validated platform.** On macOS and Windows the installer sets
-everything up — daemon, dashboard, first-run setup — and the refusal is clean and
-explicit if you hit the edge: **agent turns (chat) currently require Linux**,
-because every turn resolves repository context through safe reads that pin
-ancestry with Linux-only primitives rather than read with a weaker guarantee.
-Portability is tracked in the repository backlog (BAZ-057).
+**Linux is the validated platform.** On macOS the installer sets everything up —
+daemon, dashboard, first-run setup — and the refusal is clean and explicit if you
+hit the edge: **agent turns (chat) currently require Linux**, because every turn
+resolves repository context through safe reads that pin ancestry with Linux-only
+primitives rather than read with a weaker guarantee. Portability is tracked in
+the repository backlog (BAZ-057).
+
+**Windows is unsupported**: untested end to end, no CI covers it, and turns
+require Linux everywhere anyway. The PowerShell script is kept as-is for the
+curious; a contributor who wants Windows support maintains it.
 :::
 
 Already have Node 24+? Use npm directly:
