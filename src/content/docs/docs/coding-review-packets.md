@@ -83,4 +83,4 @@ reviewer that runs anything. Review produces a reading and a handoff, and what y
 yours.
 
 Read more in [reviewing what changed](/docs/coding-review/) and
-[what changed in 0.19.0](/docs/whats-new-0-19/).
+[what changed in 0.19.0](/docs/previous-changes/).

@@ -83,5 +83,5 @@ home upgrades in place.) Read [the upgrade procedure](/docs/getting-started/#upg
 [backup and recovery](/docs/backup-recovery/).
 
 See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.20.0) for publication and
-validation details. The [0.19.0 and 0.19.1 notes](/docs/whats-new-0-19/) remain available, and everything
+validation details. The [0.19.0 and 0.19.1 summaries](/docs/previous-changes/) remain available, and everything
 before 0.19.0 is summarised in [previous changes](/docs/previous-changes/).

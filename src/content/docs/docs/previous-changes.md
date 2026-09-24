@@ -1,6 +1,6 @@
 ---
 title: Previous changes
-description: Summarised release history for Bazilion 0.13 through 0.17, before the current release notes. Each entry links to its GitHub release.
+description: Summarised release history for everything older than the three most recent Bazilion releases. Each entry links to its GitHub release.
 ---
 
 Release notes for the three most recent releases live in their own pages. Everything older is summarised
