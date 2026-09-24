@@ -16,8 +16,10 @@ export default defineConfig({
   // Patch releases share their minor's page, so the retired per-patch URLs keep
   // working: 0.19.1 lives on the 0.19.0 page.
   redirects: {
-    '/docs/whats-new-0-19-1/': '/docs/whats-new-0-19/',
-    '/docs/whats-new-0-19-1': '/docs/whats-new-0-19/',
+    '/docs/whats-new-0-19-1/': '/docs/previous-changes/',
+    '/docs/whats-new-0-19-1': '/docs/previous-changes/',
+    '/docs/whats-new-0-19/': '/docs/previous-changes/',
+    '/docs/whats-new-0-19': '/docs/previous-changes/',
     '/docs/whats-new-0-21-beta-1/': '/docs/whats-new-0-21/',
     '/docs/whats-new-0-21-beta-1': '/docs/whats-new-0-21/',
     '/docs/whats-new-0-21-beta/': '/docs/whats-new-0-21/',
@@ -86,7 +88,6 @@ export default defineConfig({
             { label: "What's new in 0.22.0", slug: 'docs/whats-new-0-22' },
             { label: "What's new in 0.21.0", slug: 'docs/whats-new-0-21' },
             { label: "What's new in 0.20.0", slug: 'docs/whats-new-0-20' },
-            { label: "What's new in 0.19.0–0.19.1", slug: 'docs/whats-new-0-19' },
             { label: 'Previous changes', slug: 'docs/previous-changes' },
             { label: 'How Bazilion is different', slug: 'docs/why-bazilion' },
           ],

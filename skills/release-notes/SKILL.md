@@ -8,7 +8,7 @@ metadata:
     - release
     - documentation
     - starlight
-  version: 1.0.0
+  version: 1.1.0
 ---
 
 # Release notes and site docs
@@ -16,6 +16,7 @@ metadata:
 ## Use This Skill For
 
 - Publishing a new `src/content/docs/docs/whats-new-0-XY.md` page for a Bazilion release
+- Demoting the oldest what's-new page into `previous-changes.md` (the section keeps three entries)
 - Moving the site's **current release** version stamps from the previous version
 - Repointing the versioned upgrade anchor in `getting-started.md`
 - Adding or renaming guide pages, including their navigation and LLM-doc entries
@@ -78,13 +79,34 @@ grep -rn 'upgrade-to-0' src/
 
 Historical "What's new" pages must point at the *current* upgrade anchor, not their own.
 
+## The What's new section keeps exactly three entries
+
+The sidebar carries **at most three** "What's new in …" pages: the three most recent releases.
+Everything older is summarised on `previous-changes.md`.
+
+Every release, demote the oldest what's-new page:
+
+1. Read the page you are retiring and write a condensed entry (a paragraph or two: what shipped,
+   anything irreversible or schema-relevant, link to its GitHub release) at the **top** of
+   `src/content/docs/docs/previous-changes.md`, above the current newest summary.
+2. Delete the retired `whats-new-0-XY.md` page.
+3. Remove its sidebar entry from `astro.config.mjs`.
+4. Redirect its old URL: add `'/docs/whats-new-0-XY/': '/docs/previous-changes/'` (and the
+   non-slash variant) to the redirect map at the top of `astro.config.mjs`.
+5. Repoint any inbound `[link](/docs/whats-new-0-XY/)` references in other pages to
+   `/docs/previous-changes/` — `pnpm check:docs` fails the build on any dangling link.
+6. Run `pnpm check:docs`.
+
+Do this in the same pull request as the new release page, so the sidebar never shows four entries.
+
 ## Historical vs current references
 
 Move only what describes the **current** release. Leave provenance alone.
 
 **Update:**
 - The homepage release-note block (slug, badge, blurb)
-- The sidebar's newest "What's new in …" entry — keep older entries below it
+- The sidebar's "What's new in …" entries — replace the oldest with the new one (three maximum)
+- `previous-changes.md` — add the demoted release's summary at the top
 - `index.mdx` release paragraph, `concepts.md` / `configuration.md` bundle statements
 - "Upgrade to Bazilion X.Y.Z" instructions, `getting-started.md` install pin, "the current
   schema-changing release" pointers in older `whats-new-*` pages
@@ -140,6 +162,8 @@ matching the previous page's closing line.
 
 - [ ] Frontmatter title matches `What's new in X.Y.Z` exactly; description contains `Pi X.Y.Z`
 - [ ] Homepage release note points at the new slug and shows `vX.Y.Z`
+- [ ] Oldest what's-new page demoted to `previous-changes.md`: page deleted, sidebar entry removed,
+      old URL redirected, inbound links repointed — the sidebar has exactly three entries
 - [ ] All seven version-stamped strings updated; Pi number unchanged unless the engine moved
 - [ ] Upgrade heading renamed and every `#upgrade-to-*` reference repointed
 - [ ] Historical provenance references deliberately left alone
