@@ -54,7 +54,8 @@ its released files under the original Team. Deleting that original Team removes 
 Team deletion first requires moving or deleting its members. Starting a new conversation retains results and their source history. Reset/full uninstall removes results with the DB.
 Linked external Team source directories are never traversed to clean result storage.
 
-Private snapshots without an active producing turn or pending/delivering approval are reclaimed
+Completed, identity-bound private image captures have the explicit recovery/discard path below.
+Other private snapshots without an active producing turn or pending/delivering approval are reclaimed
 at startup, turn settlement, result/approval access, and before new publication. Denied, cancelled,
 and expired holds cannot release bytes. An interrupted approval dispatch is recorded as failed at
 restart, without retrying an uncertain Telegram send. Already released files survive that failure.
@@ -62,6 +63,23 @@ Abandoned operations retain tombstones so a retry cannot silently recreate them.
 
 The 1 GiB limit counts retained file bytes, not the physical SQLite file size. SQLite reuses freed
 pages; deleting a result need not immediately shrink the database file on disk.
+
+## Private image captures
+
+Interrupted delivery can leave a completed image captured but not shared. The Team Results page
+shows a minimal private-image inventory and quota totals, never a private preview, filename, prompt
+or download. Recovery selects that immutable capture and reuses Team Policy/communication approval;
+it can remain blocked or require approval. It never calls the provider again or bypasses disclosure.
+
+```sh
+bazilion result private-images --team my-team
+bazilion result recover-image <capture-id> --team my-team
+bazilion result discard-image <capture-id> --team my-team --yes
+```
+
+Confirmed discard permanently removes an eligible orphan's private bytes without sharing them;
+its tombstone prevents resurrection. Active or live-held captures cannot be recovered/discarded
+through this operator path. Missing original evidence is not permission to generate again.
 
 ## API and storage contract
 
@@ -90,4 +108,6 @@ SQLite online backup captures result metadata and bytes in the same database sna
 stored size/hash is their manifest, checked by both backup creation and restore validation. Ordinary
 workspace files retain the existing backup consistency contract. Backup restore validates that an
 archive matches the current release's full migration chain, so backups from before the migration
-contract require the documented reset workflow rather than an import.
+contract require the documented reset workflow rather than an import. The 0.23.0 boundary also
+refuses incompatible 0.22.0 archives: keep the matching old binary/schema and preserve the entire
+old home before any separately authorized rebootstrap.

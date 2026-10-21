@@ -40,12 +40,12 @@ const features = [
   {
     n: '08',
     title: 'Everything stays on disk',
-    body: 'Agent homes, Team roots, sessions, skills, and memory live under ~/.bazilion, beside one forward-migrated SQLite schema.',
+    body: 'Agent homes, Team roots, sessions, skills, and memory live under ~/.bazilion, beside one daemon-owned SQLite database.',
   },
   {
     n: '09',
     title: 'Pi is the engine underneath',
-    body: 'Pi runs the per-turn loop, the JSONL transcript, replay and compaction, and the coding tools. Bazilion 0.22.0 bundles Pi 0.87.1.',
+    body: 'Pi runs the per-turn loop, the JSONL transcript, replay and compaction, and the coding tools. Bazilion adds the multi-agent orchestration.',
   },
   {
     n: '10',
@@ -70,7 +70,7 @@ const features = [
   {
     n: '14',
     title: 'Remote, recoverable, provider-flexible',
-    body: 'A paired phone reaches the same private-HTTPS gateway. Encrypted backups restore in place, and you can bring any provider, including GPT-6 Astra.',
+    body: 'A paired phone reaches the private-HTTPS gateway. Encrypted backups restore matching schemas; configured providers and models remain your choice.',
   },
 ];
 ---
@@ -123,11 +123,10 @@ const features = [
         </ul>
       </nav>
 
-      <a class="release-note" href="/docs/whats-new-0-22/" data-reveal="2">
-        <span class="release-note__badge">v0.22.0</span>
+      <a class="release-note" href="/docs/whats-new-0-23/" data-reveal="2">
+        <span class="release-note__badge">v0.23.0</span>
         <span>
-          Alpha: image generation with honest spend, and opt-in bounded web discovery.
-          Powered by Pi 0.87.1.
+          Alpha: source-grounded research, private-image recovery, and explicit workspace blockers.
         </span>
         <span class="release-note__arrow" aria-hidden="true">read what changed →</span>
       </a>
@@ -136,7 +135,7 @@ const features = [
       <header class="hero">
         <div>
           <div class="hero__supra" data-reveal="2">
-            built on Pi 0.87.1 · your machine, your keys
+            built on Pi · your machine, your keys
           </div>
           <h1 class="hero__wordmark" data-reveal="3">
             Baz<span class="ink-eye">i</span>lion
@@ -191,7 +190,7 @@ const features = [
                 <div class="card-code__head">
                   <span>one-line installer</span>
                 </div>
-<pre><span class="c-comment"># Installs Node 24+ if needed, then bazilion.</span>
+<pre><span class="c-comment"># Installs supported Node if needed, then bazilion.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">curl</span> <span class="c-flag">-fsSL</span> \
   https://bazilion.com/install.sh \
   | bash
@@ -206,7 +205,7 @@ const features = [
                 <div class="card-code__head">
                   <span>daemon + web UI</span>
                 </div>
-<pre><span class="c-comment"># Requires Node 24+.</span>
+<pre><span class="c-comment"># Requires Node 24.22+ (24.x) or 26.4+ (26.x).</span>
 <span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">bazilion</span>
 <span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span>
 <span class="c-ok">*</span> daemon <span class="c-flag">127.0.0.1:4321</span>
@@ -234,6 +233,12 @@ const features = [
           </div>
         </div>
       </section>
+
+      <p class="showcase__copy">
+        Agent turns require Linux; macOS supports installation and management.
+        Already using Bazilion? Read the <a href="/docs/getting-started/#upgrade-to-0230">0.23.0 clean-rebootstrap guidance</a>
+        before updating. Preserve your old home and linked Team work first.
+      </p>
 
       <!-- ───────────── manifesto ───────────── -->
       <section class="section" id="manifesto">

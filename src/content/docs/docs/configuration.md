@@ -11,7 +11,7 @@ stateless and talk to it over HTTP.
 
 Models use `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-6-astra`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog. Bazilion 0.22.0 bundles Pi 0.87.1, including
+data-driven from Pi's catalog. Bazilion 0.23.0 bundles Pi 1.0.0, including
 GPT-6 Astra, GPT-5.6, Claude 5, Gemini 3.6, Kimi K3, Grok 4.5, and Qwen 3.8 models.
 
 Common providers include:
@@ -40,7 +40,7 @@ After connecting, enable `openai-codex` and curate a model such as
 
 ### Select GPT-6 Astra
 
-1. Upgrade to Bazilion 0.22.0 and restart the daemon and web UI.
+1. Follow the [0.23.0 schema/runtime guidance](/docs/getting-started/#upgrade-to-0230), then restart the daemon and web UI.
 2. Open `/config` and connect **OpenAI Codex** with ChatGPT OAuth, or configure
    **OpenAI** with an API key. Enable the provider.
 3. Add the `gpt-6-astra` catalog chip to its curated models and save, keeping
@@ -131,7 +131,8 @@ linked external Team projects and their memory require separate backups.
 
 Follow [Backup and recovery](/docs/backup-recovery/) for archive scope, identity
 storage, an empty-destination rehearsal, restore validation, and recovery from
-credential exposure. Do not use destructive alpha resets as a normal upgrade step.
+credential exposure. A reset is destructive, never an automatic upgrade step; the 0.23.0 boundary requires preservation
+and separate operator authorization before rebootstrap.
 
 ## On-disk layout
 
@@ -152,27 +153,22 @@ external project directory.
 
 ## Schema contract
 
-Migrations are **forward-only and append-only**: startup applies any pending migration inside a
-transaction and records each applied version in a `schema_migrations` receipt ledger. Before the
-first migration touches an existing home, the daemon copies the live database to
-`bazilion.pre-migration-<timestamp>.db` beside it and verifies the copy; a failed migration leaves
-the home on its previous schema.
+**0.23.0 uses the clean-install alpha schema contract**, not an append-only migration promise.
+The canonical schema and actual objects must match; older SSE-capable homes, including 0.22.0,
+are refused even without SSE rows. No ALTER/import compatibility adapter is provided.
 
-The database also carries a numeric schema version (`PRAGMA user_version`). A database written by a
-newer release is refused with upgrade guidance and never mutated — downgrades are unsupported, so
-recovery from an accidental downgrade means restoring the pre-migration snapshot.
+Startup checks the schema/ledger and that `bazilion.db` and `auth.json` form one valid bootstrap
+identity before the scheduler or HTTP listener starts. A missing half or mismatched token fails
+closed. An exactly matching current home reopens idempotently; a newer database cannot be downgraded.
 
-Startup additionally checks that `bazilion.db` and `auth.json` form one valid bootstrap identity
-before the scheduler or HTTP listener starts. A home from before this contract (0.19.x and earlier),
-a missing half of the identity pair, or a mismatched bootstrap token fails closed with recovery
-guidance instead of partially starting.
-
-For such an older home, export anything you need with its matching release first, then recreate the
-state:
+Preserve the entire old home, paired DB/auth and external Team work; use its matching binary/schema
+for export and old backups. No automatic pre-refusal snapshot is promised. Only after explicit
+operator authorization and safe shutdown, recreate state as described in
+[upgrade guidance](/docs/getting-started/#upgrade-to-0230):
 
 ```sh
 bazilion uninstall --yes
-npx bazilion dashboard
+bazilion dashboard
 ```
 
 The standard reset removes the database and bootstrap token together, plus

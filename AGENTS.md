@@ -17,13 +17,21 @@ Agent skills live in `skills/<skill-name>/SKILL.md`; `skills/index.json` is the 
 Production deployment is Git-driven: Cloudflare Workers Builds publishes the
 assets-only Worker after a push to `main`. There is no local deploy script.
 
-Run `pnpm check:docs` for documentation changes. There is no application test framework.
+Run `pnpm check:docs` for documentation changes. There is no application test framework. Built-in Node policy tests run before the Astro build;
+they cover homepage engine attribution and the installer's closed supported-runtime predicate.
+Never execute the public installer to validate it on the operator's machine.
 
 ## Coding Style & Naming Conventions
 
 Use two-space indentation for Astro, JSON, CSS, and config files. Keep semantic section classes in the existing BEM-like pattern, such as `hero__wordmark`, `library__item`, and `card-code__head`.
 
 Prefer CSS custom properties from `:root` before adding raw colors, fonts, spacing, or shadows. Keep copy edits in `src/pages/index.astro` and visual changes in `src/styles/global.css`.
+
+**Permanent homepage rule:** never state the Pi version on `/`, including the hero, release banner,
+feature cards, metadata, or generated homepage text. Unversioned attribution to Pi is welcome.
+Engine versions may appear in the detailed documentation/release pages, not the homepage.
+`pnpm check:docs` tests this policy and checks both source and rendered homepage; preserve this guard
+for every future release. Update release references from confirmed public releases, not candidates.
 
 ## Testing Guidelines
 

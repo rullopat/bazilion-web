@@ -9,7 +9,7 @@ separate `init` step.
 
 ## What you need
 
-- **Node.js 24+** — the published CLI requires it.
+- **Node.js 24.22.0+ within 24.x or 26.4.0+ within 26.x** — other versions refuse before opening state.
 - **A model provider** — an API key for Anthropic, OpenAI, or Google, a
   ChatGPT account for OAuth, or a local backend (Ollama / LM Studio).
 
@@ -42,7 +42,7 @@ require Linux everywhere anyway. The PowerShell script is kept as-is for the
 curious; a contributor who wants Windows support maintains it.
 :::
 
-Already have Node 24+? Use npm directly:
+Already have a supported Node runtime? Use npm directly:
 
 ```sh
 npm install -g bazilion
@@ -52,7 +52,7 @@ bazilion dashboard
 On first boot `bazilion dashboard`:
 
 - creates `~/.bazilion/` (profiles, agents, teams, skills, logs),
-- opens the SQLite database and applies any pending schema migrations,
+- creates the canonical SQLite schema on a fresh home; incompatible older homes are refused,
 - mints a bootstrap token, stores its row, and writes it to
   `~/.bazilion/auth.json`,
 - on later starts, requires the database and auth file to be present together
@@ -106,27 +106,23 @@ pnpm tsx apps/cli/src/index.ts auth openai login --device-code
 
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
 
-## Upgrade to 0.22.0
+## Upgrade to 0.23.0
 
-**From 0.20.x, upgrade in place.** Bazilion migrates its database forward on startup. Before the
-first migration touches an existing home it copies the live database to
-`bazilion.pre-migration-<timestamp>.db` beside `bazilion.db` and verifies the copy, so a failed
-migration leaves your home on its previous schema with a restorable snapshot. Snapshot files are
-safe to delete once an upgrade is confirmed good.
+**Older homes, including 0.22.0, do not upgrade in place.** The alpha schema contract is clean-install
+only; legacy SSE-capable schemas are incompatible even without configured SSE rows. Startup refuses
+rather than altering/importing them. No automatic snapshot is promised before refusal.
 
-**From 0.19.x or earlier, a reset is required.** Those homes predate the migration contract.
-Startup refuses them cleanly with recovery guidance and does not modify the database. Keep the old
-home with its matching release for export, then [reset it](#reset-a-home) or point `BAZILION_HOME`
-at a new empty directory.
-
-**Downgrades are unsupported.** A database written by a newer release is refused; to run an older
-release, restore a pre-migration snapshot instead.
+Before an explicitly authorized [reset](#reset-a-home), preserve the **entire old home** with
+`bazilion.db` and `auth.json` together, plus external linked Team work separately. Use the matching
+old release to inspect/export old state or restore old archives. Alternatively, keep it untouched
+and set `BAZILION_HOME` to a new empty directory. Old credentials/Results are not automatically
+imported into the new home. **Downgrades are unsupported.**
 
 Stop the running dashboard (Ctrl+C in its terminal), or stop your managed
 daemon and web services. For an npm installation:
 
 ```sh
-npm install -g bazilion@0.22.0
+npm install -g bazilion@0.23.0
 bazilion --version
 bazilion dashboard
 ```
@@ -143,7 +139,10 @@ runtime that starts Bazilion.
 Bazilion checks the database schema and the database/bootstrap identity pair
 before background work or the HTTP listener starts. If startup reports an
 incompatible or mismatched home, back up the complete `~/.bazilion` directory
-first, then reset and bootstrap it:
+first, including paired DB/auth and external Team work. Shut down safely and obtain explicit
+operator authorization before the destructive reset below. If ownership is uncertain, stop and
+follow the reported guidance; never manually remove browser profiles or owner/lock markers.
+Then reset and bootstrap:
 
 ```sh
 bazilion uninstall --yes

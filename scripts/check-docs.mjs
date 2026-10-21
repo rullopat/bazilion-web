@@ -1,6 +1,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { hasPiVersion } from './homepage-policy.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const dist = join(root, 'dist');
@@ -23,7 +24,10 @@ if (!version || !pi) throw new Error('Current release page must declare Bazilion
 
 requireText('astro.config.mjs', `What's new in ${version}`);
 requireText('src/pages/index.astro', `v${version}`);
-requireText('src/pages/index.astro', `Pi ${pi}`);
+// Engine versions belong in documentation, never on the marketing homepage.
+for (const path of ['src/pages/index.astro', 'dist/index.html']) {
+  if (hasPiVersion(read(path))) failures.add(`${path}: homepage must not state the Pi version`);
+}
 requireText('src/content/docs/docs/index.mdx', `Bazilion ${version}`);
 requireText('src/content/docs/docs/concepts.md', `Version ${version} bundles Pi ${pi}`);
 requireText('src/content/docs/docs/configuration.md', `Bazilion ${version} bundles Pi ${pi}`);

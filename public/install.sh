@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-MIN_NODE_MAJOR=24
+INSTALL_NODE_VERSION=24.22.0
 BAZILION_VERSION="${BAZILION_VERSION:-latest}"
 
 log() {
@@ -13,14 +13,8 @@ fail() {
   exit 1
 }
 
-node_major() {
-  node -p "Number(process.versions.node.split('.')[0])" 2>/dev/null || true
-}
-
-has_node_24() {
-  local major
-  major="$(node_major)"
-  [[ -n "$major" && "$major" -ge "$MIN_NODE_MAJOR" ]]
+has_supported_node() {
+  node -e 'const m = /^(\d+)\.(\d+)\.(\d+)$/.exec(process.versions.node); process.exit(m && ((Number(m[1]) === 24 && Number(m[2]) >= 22) || (Number(m[1]) === 26 && Number(m[2]) >= 4)) ? 0 : 1)' 2>/dev/null
 }
 
 ensure_curl() {
@@ -28,13 +22,13 @@ ensure_curl() {
 }
 
 ensure_node() {
-  if has_node_24; then
+  if has_supported_node; then
     log "Node $(node -v) found"
     return
   fi
 
   ensure_curl
-  log "Node ${MIN_NODE_MAJOR}+ not found; installing Node ${MIN_NODE_MAJOR} with Volta"
+  log "Supported Node (24.22+ in 24.x or 26.4+ in 26.x) not found; installing Node ${INSTALL_NODE_VERSION} with Volta"
   if ! command -v volta >/dev/null 2>&1; then
     curl -fsSL https://get.volta.sh | bash
   fi
@@ -42,7 +36,8 @@ ensure_node() {
   export VOLTA_HOME="${VOLTA_HOME:-$HOME/.volta}"
   export PATH="$VOLTA_HOME/bin:$PATH"
   command -v volta >/dev/null 2>&1 || fail "Volta installed, but volta is not on PATH"
-  volta install "node@${MIN_NODE_MAJOR}" npm
+  volta install "node@${INSTALL_NODE_VERSION}" npm
+  has_supported_node || fail "Node must be 24.22+ within 24.x or 26.4+ within 26.x"
 }
 
 ensure_node

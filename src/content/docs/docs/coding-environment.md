@@ -111,6 +111,17 @@ identities. Restore never adopts copied process or container records as permissi
 original home's resources, so a backup containing active work remains recovery-blocked after restore.
 Prefer backups taken after all Agent turns finish.
 
+The Team page shows workspace blockers and limited recorded-cleanup controls. CLI parity:
+
+```sh
+bazilion team recovery list my-team
+bazilion team recovery attempt my-team <writer-id>
+```
+
+An attempt revalidates current recorded ownership/cleanup; it can remain blocked or unknown.
+No recorded writer is not proof that a workspace is safe. This never force-clears locks, adopts
+another home's processes or guarantees recovery of abnormal host commands.
+
 ## Operator inspection and optional defaults
 
 The Team page retains passive inspection under **Advanced repository diagnostics**, alongside optional

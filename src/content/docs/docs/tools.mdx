@@ -22,9 +22,9 @@ On a narrow screen, scroll the table sideways to compare both turn types.
 | --- | --- | --- |
 | Coding | Pi host tools by default; Docker `bash` when selected | Docker `bash`; no host coding tools |
 | Docker required | Only when configured | Always, even if `BAZILION_BASH_SANDBOX=off` |
-| Web fetch | Configured fetch integrations | Uncredentialed, SSRF-guarded fetch |
-| Credentialed web search / Firecrawl | When configured | Unavailable |
-| Playwright browser / MCP | When enabled | Unavailable |
+| Web fetch | Guarded fetch; configured rendering integrations | Uncredentialed, SSRF-guarded fetch |
+| Web discovery | Configured backends or eligible native OpenAI/ChatGPT route | Separate opt-in protected SearXNG only; no native search |
+| Managed browser / MCP | When enabled/admitted; MCP stdio requires Linux | Unavailable |
 | Team memory, mailbox, guarded context, Agent home tools | Available | Available through scoped tools |
 | File delivery | Available | Available from the Team workspace |
 | Provider credentials | Configured runtime | Only the selected provider's validated credential fields |
@@ -65,7 +65,7 @@ command works. Docker setup is required before those workflows can run.
 Within the capability limits above, normal turns have:
 
 - **coding tools** — host tools or Docker `bash` for Team project files,
-- **web tools** — fetch, with configured search available only in local operator turns,
+- **web tools** — guarded fetch; ordinary configured/native discovery or separately configured protected SearXNG within their distinct boundaries,
 - **mailbox tools** — `send_message`, `read_inbox`, `wait_for_reply`, and
   `approval_status`,
 - **memory tools** — search and write the Team's [shared memory](/docs/concepts/#shared-usermd-and-memory),
@@ -103,12 +103,21 @@ BAZILION_BASH_APPROVAL=dangerous \
 bazilion dashboard
 ```
 
-## Browser automation
+## Web research and optional managed browsing
 
-Local operator turns can drive an enabled **Playwright** browser. Perception is
-**accessibility-tree-first**: the agent reads an aria snapshot with stable
-element references and acts on those references, so it doesn't depend on a vision
-model to see the page.
+Ordinary interactive discovery uses **Config → Web Search** and the Agent's **Web discovery**
+status. Auto preserves configured Brave, then SearXNG; otherwise eligible OpenAI/ChatGPT Agents
+use their own selected model/account. Explicit native routes must match the Agent's provider.
+No error or missing entitlement silently switches provider, account, model or browser.
+
+Status is passive, not a provider probe. API-key native search remains experimental/live-unqualified;
+the subscription journey has bounded historical acceptance, not general entitlement. Existing model
+selections do not change automatically. Provider-hosted search networking is not confined by the
+browser proxy. Agents must read original sources through guarded fetch and cite what they read.
+
+Local interactive turns can separately use an enabled **managed browser**, attached through
+Playwright. It is accessibility-tree-first: Agents observe current references with their matching
+`observationId`, act on those references and never blindly replay uncertain submissions.
 
 The suite covers navigation and interaction — `browser_navigate`,
 `browser_snapshot`, `browser_click`, `browser_type`, `browser_fill_form`,
@@ -116,22 +125,26 @@ The suite covers navigation and interaction — `browser_navigate`,
 `browser_tabs`, `browser_take_screenshot`, `browser_console`, and
 `browser_network`.
 
-For a source checkout, install the matching browser from the repository root:
+Bazilion launches its installed browser on an Agent's daemon-owned persistent profile and attaches
+Playwright; browser state can contain sensitive cookies/logins. Profiles are excluded from backup.
+Configuration/session readiness does not prove any site, login or anti-bot access will work.
+Protected, scheduled/inbox and restricted turns do not receive browsing capability.
+
+Operator controls (not Agent recovery tools):
 
 ```sh
-pnpm exec playwright install chromium
+bazilion agent browser status <agent-id>
+bazilion agent browser stop <agent-id>
+bazilion agent browser reset <agent-id> --yes
 ```
 
-Then enable browser automation on **config → Browser Automation** (or via
-environment variables). Published Bazilion includes a Chromium browser package;
-if browser startup fails, inspect the installation error and browser system
-dependencies. The repository `pnpm exec` command is for source checkouts.
+Stop preserves the profile; reset is destructive. Unknown/live ownership is recovery-required:
+never manually delete profile directories, locks or owner markers. Downloads are denied.
 
 <Aside type="caution">
-A network-layer **SSRF guard** blocks loopback and private-network targets by
-default, so an agent can't browse `localhost` or your LAN. For local development
-you can override it with the `BROWSER_ALLOW_PRIVATE_NETWORK` environment
-variable.
+The normal validating **SSRF proxy** blocks loopback/private-network targets, including
+persisted service-worker egress. `BROWSER_ALLOW_PRIVATE_NETWORK=true` is a local-development
+exception that disables this protection, not an Agent capability or site-access guarantee.
 </Aside>
 
 ## MCP servers
@@ -140,11 +153,14 @@ The daemon is a **Model Context Protocol** client. Connect an MCP server and its
 tools are discovered automatically and injected into configured local operator turns,
 namespaced as `mcp__<server>__<tool>` so they never collide with built-ins.
 
-Three transports are supported:
+The standalone daemon-owned MCP client supports two transports:
 
-- **stdio** — the daemon launches the server as a local subprocess,
-- **Streamable-HTTP** — a remote server over HTTP, with optional bearer auth,
-- **SSE** — a server-sent-events endpoint, with optional bearer auth.
+- **stdio** — local subprocess execution on **Linux only**, with owned process-tree retirement;
+  other platforms refuse before slot allocation/spawn,
+- **Streamable HTTP** — a remote server over HTTP, with optional bearer auth.
+
+Legacy **SSE is retired**, not imported or adapted. No automatic OAuth, ambient Pi discovery or
+uncertain tool-call replay is added. MCP remains unavailable to protected/restricted turns.
 
 Manage servers from the CLI:
 

@@ -16,7 +16,7 @@ A home (`~/.bazilion` by default) contains:
 | Path | What it is | Grows with |
 | --- | --- | --- |
 | `bazilion.db` | The database: messages, agents, receipts, reviews, coding evidence | Usage (turns, coding commands) |
-| `bazilion.pre-migration-*.db` | One verified snapshot per upgrade | Upgrades |
+| `bazilion.pre-migration-*.db` | Historical snapshots from earlier migration-capable releases | Earlier upgrades, not 0.23.0 refusal |
 | `agents/<id>/sessions/*.jsonl` | Canonical conversation transcripts | Turns |
 | `agents/<id>/uploads/` | User-attached files | Attachments |
 | `profiles/`, `skills/`, `teams/` | Your configuration | You |
@@ -75,16 +75,20 @@ agent removes its uploads with it (uninstall offers a full wipe of the home — 
 
 ## Pre-migration snapshots
 
-Every upgrade that applies a pending migration first writes a verified,
-transactionally consistent copy of the database to
-`bazilion.pre-migration-<timestamp>.db` beside `bazilion.db` — one file per upgrade,
-never overwritten by a retry. These exist so a failed migration leaves a restorable
-copy instead of a half-migrated home (see [upgrading](/docs/getting-started/#upgrade-to-0220)
-and [backup and recovery](/docs/backup-recovery/)).
+**Historical 0.21/0.22 migration behavior:** earlier supported upgrades could write a verified
+transactionally consistent database copy to `bazilion.pre-migration-<timestamp>.db`.
+Existing files may therefore remain beside an older database.
 
-**Safe to delete once an upgrade is confirmed good** — the daemon is running and your
-data is intact. They are also included in `bazilion backup` archives (the backup tars
-the whole home), so a fresh backup supersedes the oldest snapshots.
+**0.23.0 does not upgrade those homes in place and creates no automatic pre-refusal snapshot.**
+It refuses incompatible state under the clean-rebootstrap contract. Preserve the entire old home,
+paired DB/auth and external Team work before any separately authorized reset. Keep the matching
+old binary/schema for old snapshots and archives; they are not importable current-schema backups.
+See [upgrading](/docs/getting-started/#upgrade-to-0230) and
+[backup and recovery](/docs/backup-recovery/).
+
+Only consider pruning historical snapshots after a separate verified backup and confirmation that
+wanted data remains accessible with its matching release. A database-only snapshot is not a backup
+of the entire home; never delete the only recoverable copy.
 
 ## Why `logs/` is empty
 
@@ -99,5 +103,6 @@ bug, not a configuration problem.
 
 - **No automatic retention on messages or sessions** — the conversation record is the
   product; structural retention/cold-archiving is post-1.0 work.
-- **No log shipping or telemetry, ever** — by product stance. The only things that
-  leave your machine are the LLM API calls you configure.
+- **No automatic log shipping or telemetry.** Configured provider and integration traffic,
+  including web research, browsing, MCP or Telegram, can leave the host within their capability
+  boundaries. Local-first is not a promise of no network traffic.

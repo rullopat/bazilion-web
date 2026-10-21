@@ -16,6 +16,7 @@ available independently of the machine you are backing up.
 | Team slot linked to an external project | The link is included; the external files are not |
 | Memory inside a linked project | External too; back it up with that project |
 | Live WAL state and rebuildable qmd indexes | Not copied as authoritative state |
+| Daemon-owned managed-browser profiles/cookies | Excluded; back up no browser login by implication |
 | age decryption identity | Store separately; do not place it inside the home |
 
 Stop Agents writing project files when you need a consistent filesystem copy.
@@ -91,8 +92,9 @@ startup. Follow the reported recovery guidance before retrying a swap.
 
 A backup from an older release cannot be restored into a newer one: restore validates that the
 archive matches the current release's full migration chain. Use the matching old release to
-recover/export work first — database migrations move a live home forward; they do not downgrade or
-rewrite an archive. See [upgrading](/docs/getting-started/#upgrade-to-0220).
+recover/export work first. The 0.23.0 clean-install boundary refuses older homes/archives rather than
+migrating/importing them; it never downgrades or rewrites an archive.
+See [upgrading](/docs/getting-started/#upgrade-to-0230).
 If a reset is necessary, it removes Agents, Teams, templates, credentials, and
 the paired database/auth identity. Review the
 [reset consequences](/docs/getting-started/#reset-a-home) first.
