@@ -186,8 +186,8 @@ model as vision input, while other files are stored where the agent can open the
 with its coding tools. From the CLI:
 
 ```sh
-bazilion agent chat <agent-id> --image ./screenshot.png
-bazilion agent chat <agent-id> --file ./report.pdf
+bazilion agent chat <agent-id> --message "Describe this screenshot" --image ./screenshot.png
+bazilion agent chat <agent-id> --message "Summarize this report" --file ./report.pdf
 ```
 
 **Outbound.** Agents send files back with the **`deliver_file`** tool (up to

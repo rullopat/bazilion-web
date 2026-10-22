@@ -16,7 +16,8 @@ client can answer the same question; only the first accepted answer settles it. 
 is lost, the web card retains the exact request for retry. Do not change the answer and treat that
 as a retry. Recent settled questions are available under **Recent question outcomes**.
 
-Terminal chat uses its existing prompt: enter a choice number, `o` for Other, or `s` to Skip.
+During one-shot terminal chat (`bazilion agent chat <id> --message '...'`), enter a choice
+number, `o` for Other, or `s` to Skip when an Agent asks a question.
 Blank input does not choose a default. Piped chat does not offer a live question prompt.
 You can inspect or answer an existing question through the CLI:
 
@@ -38,9 +39,9 @@ Other text, or send `/answer <question-id> <text>`. Earlier chunks of a long pro
 answers. Unrelated topic text remains a normal queued message. Replies must come from the paired
 owner in the original authorized topic. Stale or rebound buttons cannot answer another question.
 
-Native mobile does not offer question controls. Its waiting notice links to the paired web
-origin where supported; the browser uses its own login. Mobile-only turns, background schedules,
-inbox wakeups and review turns do not receive this interactive tool.
+The former Expo app was removed; use the web UI or CLI for question controls. Native mobile
+apps remain future scope. Background schedules, inbox wakeups and review turns do not receive
+this interactive tool.
 
 ## What the status means
 
@@ -65,5 +66,7 @@ history retains the consumed question and outcome under its normal authorization
 From a Bazilion source checkout, run `node --import tsx scripts/check-question-flow.mts`. It creates a disposable
 home and loopback model simulator, runs real daemon/Pi workers, and verifies choice, Other and Skip
 with persisted consumption. It sends no external model or Telegram traffic. The printed fixture
-home is retained for inspection. Browser and terminal acceptance evidence is recorded in
-[the release progress log](https://github.com/rullopat/bazilion/blob/main/docs/backlog/BAZ-035-038-progress.md).
+home is retained for inspection. This synthetic demo does not establish live provider or
+independent-user acceptance. See the
+[question user story](https://github.com/rullopat/bazilion/blob/main/docs/backlog/done/BAZ-037-structured-agent-questions.md)
+for accepted scope.

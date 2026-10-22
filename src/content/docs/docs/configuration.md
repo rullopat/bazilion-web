@@ -4,8 +4,8 @@ description: Providers, Team Policy enforcement, secrets, access tokens, the sch
 ---
 
 The daemon is the single owner of `~/.bazilion`, SQLite, configuration,
-secrets, scheduler state, and Agent turns. CLI, web, and mobile clients are
-stateless and talk to it over HTTP.
+secrets, scheduler state, and Agent turns. CLI, web, and compatible native consumers
+talk to it over HTTP. The former Expo app was removed; native mobile apps are future scope.
 
 ## Providers and models
 
@@ -103,8 +103,8 @@ bazilion token list
 bazilion token revoke <id>
 ```
 
-Add `--qr` to create a `bazilion://pair?...` URL and terminal QR code for a
-mobile client.
+Native consumers use separately minted device credentials or the supported one-paste pairing
+exchange. A generated pairing URL/QR does not imply a mobile application is currently shipped.
 
 ## Shell isolation and command approval
 
@@ -185,15 +185,15 @@ private Tailscale Serve. Direct daemon exposure, public reverse proxies, and
 Funnel are unsupported. The origin setting activates protected execution for
 HTTP Agent turns.
 
-Follow [Private access and mobile pairing](/docs/private-access/) for the full
+Follow [Private access](/docs/private-access/) for the full
 setup and host-side `bazilion gateway preflight` checks.
 
-## Mobile pairing
+## Phones and native clients
 
-Mint a separate expiring device credential for each phone and pair it with the
-exact private HTTPS origin. The app accepts QR scans, manual URLs, and
-`bazilion://pair` deep links; it verifies the origin and credential before saving.
+On a phone, use the authenticated private HTTPS web UI while connected to the tailnet.
+The browser has its own session/CSRF cookies; it does not inherit another client's bearer.
+The old Expo application is removed and native iOS/Android apps remain future scope.
 
-Use the [phone pairing steps](/docs/private-access/#pair-the-mobile-app).
-Revoking a device credential invalidates its derived sessions. Mobile cannot
-approve dangerous shell commands interactively.
+Compatible native consumers need their own scoped, expiring device credential and the exact
+configured origin. Revoking that credential invalidates derived browser sessions too.
+See [private client access](/docs/private-access/#phone-browsers-and-native-clients).

@@ -166,14 +166,14 @@ The web sidebar can spawn from the `default` Agent template. From the CLI:
 
 ```sh
 bazilion agent spawn --profile default --name first --team default
-bazilion agent chat <agent-id>
+bazilion agent chat <agent-id> --message "Say hello"
 ```
 
 ## Where to next
 
 - [Daily operations](/docs/operations/) — readiness, schedules, approvals, and learning.
 - [Backup and recovery](/docs/backup-recovery/) — archive scope and a restore rehearsal.
-- [Private access and mobile pairing](/docs/private-access/) — private HTTPS and device credentials.
+- [Private access](/docs/private-access/) — private HTTPS and device credentials.
 
 - [Core concepts](/docs/concepts/) — Agent templates, Team Templates, Teams,
   policy, approvals, memory, and the mailbox. Read this before building teams.

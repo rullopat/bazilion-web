@@ -1,6 +1,6 @@
 ---
-title: Private access and mobile pairing
-description: Publish the loopback web UI privately with Tailscale Serve, verify readiness, and pair a browser or phone using its own credential.
+title: Private access
+description: Publish the loopback web UI privately with Tailscale Serve, verify readiness, and give each browser or compatible native client its own credential.
 ---
 
 The supported remote topology is a private HTTPS web gateway through Tailscale
@@ -76,23 +76,16 @@ bootstrap bearer into browser cookies.
 Use a separate named credential for each device. The first-run bootstrap login
 exception ends when provider setup completes.
 
-## Pair the mobile app
+## Phone browsers and native clients
 
-With the Bazilion mobile app installed and Tailscale connected on the phone:
+The former Expo application was removed; native iOS/Android apps remain future scope.
+On a phone with Tailscale connected, open the same exact HTTPS origin in its browser and
+sign in with a separately minted device credential. The phone uses the web UI's normal
+session, CSRF and interactive controls, never a direct connection to port4321.
 
-```sh
-bazilion token create phone --expires-days 90 --qr \
-  --server https://your-host.your-tailnet.ts.net
-```
-
-Scan the QR in the app, paste its pairing URL manually, or open the
-`bazilion://pair` deep link. The app verifies the origin and credential before
-saving them. Treat the QR as a credential; do not post it in a shared channel.
-The phone connects to the HTTPS web gateway, never port 4321 directly.
-
-Open an Agent and send a short message. Confirm the streamed reply, cancel
-control, and reconnect behavior. Mobile denies dangerous shell commands rather
-than offering an interactive shell approval; use web chat for those decisions.
+Compatible native consumers use their own scoped, expiring bearer or the supported one-paste
+pairing exchange. Existing credential/pairing APIs and QR output are not proof that a mobile
+app is shipped. Never share tokens, pairing codes or credential-bearing URLs.
 
 ## Revoke access and troubleshoot
 
@@ -103,8 +96,8 @@ bazilion token revoke <device-token-id>
 ```
 
 Revoking a device credential invalidates its derived browser sessions too.
-The bootstrap token cannot be revoked. An expired or rejected mobile credential
-requires pairing again with a newly minted credential.
+The bootstrap token cannot be revoked. An expired or rejected device credential requires
+an explicit new credential/sign-in; do not reuse the bootstrap secret after setup.
 
 - **Origin or CSRF error:** use the exact configured HTTPS URL; check both
   service environments and restart after changing them.
@@ -116,10 +109,10 @@ requires pairing again with a newly minted credential.
 - **Phone cannot connect:** confirm both devices are in the tailnet and its
   access rules permit the connection, then check `tailscale serve status`.
 
-## Retained work and question handoff
+## Retained work
 
-In 0.15.0, mobile sends carry the observed conversation selection so stale input fails before it
-can reach a different conversation. Native conversation management remains deferred; use the web
-[conversation library](/docs/conversations/). [Saved results](/docs/results/) and eligible
-[question controls](/docs/questions/) open the authenticated web UI. These handoffs never place the
-native device credential in the URL; the browser uses its own sign-in.
+Use the web [conversation library](/docs/conversations/), [saved Results](/docs/results/) and
+eligible [question controls](/docs/questions/) from the authenticated browser. Native clients
+must preserve the daemon-owned conversation selection contract; they cannot choose another
+conversation by replaying stale input. A browser handoff uses its own login, never a bearer
+credential embedded in a URL.

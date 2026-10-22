@@ -69,7 +69,9 @@ them. The operator accepted completing the release with that limitation document
 signatures are verified, but are not build attestations; **no npm provenance badge is claimed**.
 No republish, unpublish or version bump was used to conceal the limitation.
 
-The [release checklist and evidence](https://github.com/rullopat/bazilion/blob/main/docs/testing/0.23.0-release-status.md)
-retain initial failures and all qualification limits. No new provider/search/image campaign was
-run during release closeout. BAZ-066 remains canceled; broader content-Team live/human work remains
-unqualified. Read [0.22 changes](/docs/whats-new-0-22/) for historical context only.
+The maintained [product release notes](https://github.com/rullopat/bazilion/blob/main/docs/releases.md)
+and [user stories](https://github.com/rullopat/bazilion/blob/main/docs/backlog/README.md) describe
+accepted scope and remaining limits; historical qualification records remain in Git history.
+No new provider/search/image campaign ran during release closeout. BAZ-066 remains canceled;
+broader content-Team live/human work remains unqualified. Read
+[0.22 changes](/docs/whats-new-0-22/) for historical context only.
