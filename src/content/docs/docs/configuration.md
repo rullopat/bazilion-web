@@ -11,8 +11,9 @@ talk to it over HTTP. The former Expo app was removed; native mobile apps are fu
 
 Models use `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-6-astra`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog. Bazilion 0.23.0 bundles Pi 1.0.0, including
-GPT-6 Astra, GPT-5.6, Claude 5, Gemini 3.6, Kimi K3, Grok 4.5, and Qwen 3.8 models.
+data-driven from Pi's catalog. Bazilion 0.24.0 bundles Pi 1.4.0.
+Catalog membership is not account entitlement or proof of connectivity. Existing Agent/Profile
+selections are not silently rewritten; select and test a configured model explicitly.
 
 Common providers include:
 
@@ -40,7 +41,7 @@ After connecting, enable `openai-codex` and curate a model such as
 
 ### Select GPT-6 Astra
 
-1. Follow the [0.23.0 schema/runtime guidance](/docs/getting-started/#upgrade-to-0230), then restart the daemon and web UI.
+1. Follow the [0.24.0 upgrade guidance](/docs/getting-started/#upgrade-to-0240), then restart the daemon and web UI.
 2. Open `/config` and connect **OpenAI Codex** with ChatGPT OAuth, or configure
    **OpenAI** with an API key. Enable the provider.
 3. Add the `gpt-6-astra` catalog chip to its curated models and save, keeping
@@ -153,7 +154,8 @@ external project directory.
 
 ## Schema contract
 
-**0.23.0 uses the clean-install alpha schema contract**, not an append-only migration promise.
+**0.24 retains the unchanged 0.23 clean-install alpha schema**, not an append-only migration promise.
+A valid 0.23 home can reopen; do not reset it merely to update.
 The canonical schema and actual objects must match; older SSE-capable homes, including 0.22.0,
 are refused even without SSE rows. No ALTER/import compatibility adapter is provided.
 
@@ -162,9 +164,9 @@ identity before the scheduler or HTTP listener starts. A missing half or mismatc
 closed. An exactly matching current home reopens idempotently; a newer database cannot be downgraded.
 
 Preserve the entire old home, paired DB/auth and external Team work; use its matching binary/schema
-for export and old backups. No automatic pre-refusal snapshot is promised. Only after explicit
+for export and old backups. No automatic pre-refusal snapshot is promised. Only for a refused incompatible home, after explicit
 operator authorization and safe shutdown, recreate state as described in
-[upgrade guidance](/docs/getting-started/#upgrade-to-0230):
+[upgrade guidance](/docs/getting-started/#upgrade-to-0240):
 
 ```sh
 bazilion uninstall --yes
