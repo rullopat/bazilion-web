@@ -8,9 +8,9 @@
   },
   {
     "name": "release-notes",
-    "description": "Use when publishing a new Bazilion release on the Bazilion website — writing the \"What's new\" page, moving current-release version stamps, repointing the versioned upgrade anchor, and syncing navigation and LLM-readable docs.",
+    "description": "Use when updating the Bazilion website for a published release — maintaining one rolling \"What's new\" page with at most the latest four releases, moving current-release references, and syncing navigation and LLM-readable docs.",
     "path": "skills/release-notes/SKILL.md",
     "tags": ["bazilion", "release", "documentation", "starlight"],
-    "version": "1.0.0"
+    "version": "2.0.0"
   }
 ]

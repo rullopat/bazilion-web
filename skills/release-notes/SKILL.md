@@ -1,172 +1,213 @@
 ---
 name: release-notes
-description: Use when publishing a new Bazilion release on the Bazilion website — writing the "What's new" page, moving current-release version stamps, repointing the versioned upgrade anchor, and syncing navigation and LLM-readable docs.
+description: Use when updating the Bazilion website for a published release — maintaining one rolling "What's new" page with at most the latest four releases, moving current-release references, and syncing navigation and LLM-readable docs.
 metadata:
-  short-description: Publish Bazilion release notes and site docs
+  short-description: Maintain rolling Bazilion release notes and site docs
   tags:
     - bazilion
     - release
     - documentation
     - starlight
-  version: 1.1.0
+  version: 2.0.0
 ---
 
 # Release notes and site docs
 
 ## Use This Skill For
 
-- Publishing a new `src/content/docs/docs/whats-new-0-XY.md` page for a Bazilion release
-- Demoting the oldest what's-new page into `previous-changes.md` (the section keeps three entries)
-- Moving the site's **current release** version stamps from the previous version
-- Repointing the versioned upgrade anchor in `getting-started.md`
-- Adding or renaming guide pages, including their navigation and LLM-doc entries
+- Updating the single `src/content/docs/docs/whats-new.md` release-notes page
+- Keeping only the latest four published releases on that page, newest first
+- Consolidating existing version-specific what's-new pages into that permanent page
+- Moving the site's **current release** references and updating accurate upgrade guidance
+- Syncing guide navigation and LLM-readable documentation
 - Verifying the documentation gate before the change reaches `main`
 
 This skill edits copy and documentation. For layout, styling, or marketing-page visual work see
-`astro-static-site`.
+`astro-static-site`. Read `AGENTS.md` before editing.
 
-## The gate is the authority
+## One What's new page, at most four releases
 
-```sh
-pnpm check:docs   # astro build && node scripts/check-docs.mjs
-```
+The canonical page is **`/docs/whats-new/`**, backed by
+`src/content/docs/docs/whats-new.md`, with frontmatter `title: What's new`.
+There must be exactly one What's new page and one sidebar entry labelled **What's new**.
+Do not create a new page, slug, or sidebar entry for each release.
 
-`pnpm build` runs the same check, so a broken doc set cannot be built. `scripts/check-docs.mjs`
-**derives the current release from the homepage**, then enforces that version everywhere else. Do
-not hardcode the version in the checker; change the homepage and follow the failures.
-
-### How the current release is derived
-
-1. Reads `class="release-note" href="/docs/<slug>/"` from `src/pages/index.astro` → announcement slug.
-2. Parses that page's frontmatter with anchored regexes:
-   - `title: What's new in X.Y.Z` — the whole title line must match, so no extra words.
-   - `description: ... ` must contain `Pi X.Y.Z` (regex `Pi(?: to)? (\d+\.\d+\.\d+)`).
-3. Requires the derived strings to appear literally in seven places (see table below).
-4. Walks every built HTML page and verifies **every internal link and `#anchor` resolves**.
-5. Requires `dist/llms.txt` to reference `llms-full.txt`, and for each slug in the checker's list
-   requires a sidebar entry plus `/docs/<slug>` and `# <title>` in `dist/llms-full.txt`.
-
-### Version-stamped files
-
-| File | Required string |
-| --- | --- |
-| `astro.config.mjs` | `What's new in X.Y.Z` (sidebar label) |
-| `src/pages/index.astro` | `vX.Y.Z` (release-note badge) **and** `Pi X.Y.Z` |
-| `src/content/docs/docs/index.mdx` | `Bazilion X.Y.Z` |
-| `src/content/docs/docs/concepts.md` | `Version X.Y.Z bundles Pi X.Y.Z` |
-| `src/content/docs/docs/configuration.md` | `Bazilion X.Y.Z bundles Pi X.Y.Z` |
-| `src/content/docs/docs/getting-started.md` | `bazilion@X.Y.Z` |
-
-The Pi version is independent of the Bazilion version. Most releases keep the same Pi version, so
-change the Bazilion number and **leave the Pi number alone** unless the engine actually moved.
-
-## Upgrade anchor policy
-
-`getting-started.md` has exactly one versioned upgrade section, and its heading produces the anchor
-that other pages link to:
+The page contains **at most four release sections**, ordered newest first:
 
 ```md
-## Upgrade to X.Y.Z        →  #upgrade-to-XYZ   (dots dropped: 0.16.0 → upgrade-to-0160)
+---
+title: What's new
+description: Recent Bazilion releases; the current release bundles Pi X.Y.Z.
+---
+
+## Bazilion X.Y.Z
+
+Concise shipped changes, upgrade implications, qualification limits, and a GitHub release link.
+
+### A release-specific detail
+
+Details belong under the release section, not in another level-two heading.
+
+## Bazilion A.B.C
+
+The previous release's own facts and limits.
 ```
 
-Every release: rename the heading, then repoint **all** inbound references. Do not keep a second
-upgrade section for the old version — the alpha is clean-install-only, so the current procedure is
-the only correct guidance, including from historical pages. Find the references with:
+Use exact published versions, including prerelease suffixes when applicable. All level-two
+headings identify releases; use level-three or deeper headings for their details. The first
+release section identifies the current release. The description records that release's embedded
+Pi version, independently of Bazilion's version.
+
+For each release:
+
+1. Confirm actual publication and release facts; do not present a candidate as released.
+2. Prepend one section, or update the existing section if that version is already present.
+   Never duplicate a release.
+3. Retain the three immediately preceding published releases, or fewer if fewer exist. Determine
+   release order from confirmed release-line history, not from whichever old page filenames happen
+   to exist. Group superseded prerelease checkpoints under their published final release; a
+   backfilled final version stays with its original release line rather than displacing a later one.
+4. When a fifth section would appear, remove the oldest section in full. Do not create another
+   What's new page or grow a website archive to preserve it; Git and GitHub Releases retain history.
+5. Repair inbound links to removed sections. Link to the corresponding GitHub release for older
+   release details, or to the current upgrade guide for upgrade instructions.
+
+Each retained section keeps its own version-specific facts and qualification limits. Do not
+rewrite an older section to imply it shipped the current engine or gained later capabilities.
+A reader must be able to distinguish current guidance from historical release observations.
+
+### One-time consolidation of existing pages
+
+When adopting this policy in a site that still has `whats-new-0-XY.md` pages:
+
+1. Create `whats-new.md` with the latest four published releases at most. Check source release
+   facts for any intervening release that lacks a standalone page.
+2. Replace the version-specific sidebar entries with the single **What's new** entry, and point
+   the homepage announcement at `/docs/whats-new/`.
+3. Delete the old version-specific What's new source pages. In `astro.config.mjs`, redirect both
+   slash and non-slash variants of each retired URL to its retained section on the canonical
+   page, or its GitHub release if that release is outside the four-release window. With Astro's
+   `trailingSlash: 'ignore'`, one redirect key covers both URL forms; do not add duplicate static
+   routes. Test both forms. Keep retired links useful without retaining duplicate content pages.
+4. Repoint internal links, including docs index and upgrade references. Keep any separately needed
+   schema-history guidance accurate; `previous-changes.md` is not a second What's new feed and
+   must not receive automatically archived release sections.
+5. Update `scripts/check-docs.mjs` for the rolling-page contract below in the same change. Its
+   legacy version-specific frontmatter parser must not dictate creating another release page.
+6. Build and check all links, redirect destinations, retained section anchors, navigation and
+   LLM-readable output before merging. Redirect stubs are not additional release-content pages.
+
+This skill change alone does not migrate or deploy the site. Perform consolidation as part of
+an explicitly requested website content update.
+
+## Documentation gate
 
 ```sh
-grep -rn 'upgrade-to-0' src/
+pnpm check:docs
 ```
 
-Historical "What's new" pages must point at the *current* upgrade anchor, not their own.
+`pnpm build` runs the same documentation check. Preserve existing link, anchor, navigation,
+LLM-doc, homepage and installer policy checks; never weaken them to make the migration pass.
+Do not hardcode a particular release version in the checker.
 
-## The What's new section keeps exactly three entries
+For the rolling page, the checker must:
 
-The sidebar carries **at most three** "What's new in …" pages: the three most recent releases.
-Everything older is summarised on `previous-changes.md`.
+1. Require the homepage announcement to link to `/docs/whats-new/` and the canonical page to have
+   `title: What's new`.
+2. Derive the current Bazilion version from the first `## Bazilion X.Y.Z` heading, accepting stable
+   and prerelease versions. Derive the current Pi version from the page description.
+3. Require one to four distinct release headings, newest first, and reject leftover standalone
+   version-specific What's new source pages or sidebar entries. Validate release order against
+   confirmed publication facts during review, not a guessed numerical sort of prerelease labels.
+4. Require the single sidebar entry and matching current-release references in the files below.
+5. Verify built internal links and anchors, and ensure the canonical page and its release headings
+   are present in `dist/llms-full.txt`; `dist/llms.txt` must reference that full document.
 
-Every release, demote the oldest what's-new page:
+### Current-release references
 
-1. Read the page you are retiring and write a condensed entry (a paragraph or two: what shipped,
-   anything irreversible or schema-relevant, link to its GitHub release) at the **top** of
-   `src/content/docs/docs/previous-changes.md`, above the current newest summary.
-2. Delete the retired `whats-new-0-XY.md` page.
-3. Remove its sidebar entry from `astro.config.mjs`.
-4. Redirect its old URL: add `'/docs/whats-new-0-XY/': '/docs/previous-changes/'` (and the
-   non-slash variant) to the redirect map at the top of `astro.config.mjs`.
-5. Repoint any inbound `[link](/docs/whats-new-0-XY/)` references in other pages to
-   `/docs/previous-changes/` — `pnpm check:docs` fails the build on any dangling link.
-6. Run `pnpm check:docs`.
+| File | Required current information |
+| --- | --- |
+| `astro.config.mjs` | One `What's new` entry for `docs/whats-new` |
+| `src/pages/index.astro` | `/docs/whats-new/`, `vX.Y.Z` badge, accurate announcement |
+| `src/content/docs/docs/whats-new.md` | Current release first; its Pi version in the description |
+| `src/content/docs/docs/index.mdx` | `Bazilion X.Y.Z` and canonical release-notes link |
+| `src/content/docs/docs/concepts.md` | `Version X.Y.Z bundles Pi P.Q.R` |
+| `src/content/docs/docs/configuration.md` | `Bazilion X.Y.Z bundles Pi P.Q.R` |
+| `src/content/docs/docs/getting-started.md` | `bazilion@X.Y.Z` and accurate upgrade instructions |
 
-Do this in the same pull request as the new release page, so the sidebar never shows four entries.
+**Never state the Pi version on the homepage**, including metadata or generated homepage text.
+Unversioned Pi attribution is welcome. Engine versions belong in detailed docs, not `/`.
+The Pi version changes only when the embedded engine actually changes.
 
-## Historical vs current references
+## Upgrade guidance and historical facts
 
-Move only what describes the **current** release. Leave provenance alone.
+Update the current upgrade instructions and their inbound links to match the released product.
+Do not assume every release requires a reset: an unchanged schema can permit an in-place upgrade.
+Preserve older schema-boundary headings/anchors when they still explain incompatible homes or
+are needed by existing links. Do not blindly rename or delete every historical upgrade section.
 
-**Update:**
-- The homepage release-note block (slug, badge, blurb)
-- The sidebar's "What's new in …" entries — replace the oldest with the new one (three maximum)
-- `previous-changes.md` — add the demoted release's summary at the top
-- `index.mdx` release paragraph, `concepts.md` / `configuration.md` bundle statements
-- "Upgrade to Bazilion X.Y.Z" instructions, `getting-started.md` install pin, "the current
-  schema-changing release" pointers in older `whats-new-*` pages
-- "Version X.Y.Z changes the schema" claims in `backup-recovery.md`, `operations.md`
+Find versioned upgrade references with:
 
-**Leave:**
-- Feature-provenance headings such as `## Durable files and live clarification in 0.15.0`
-- "Available in Bazilion X.Y.Z" notes recording when a feature landed
-- Behavior notes scoped to a version ("In 0.15.0, mobile sends …")
-- Older `whats-new-*` pages' own content and their version-specific claims
+```sh
+rg -n 'upgrade-to-' src/
+```
+
+Current install/upgrade links must reach the current procedure. Historical release sections may
+link to durable schema-boundary guidance where relevant, but must not advertise an obsolete
+install pin as the current upgrade command. Preserve identity-pair, backup, ownership and
+platform warnings; never recommend resetting a valid home merely to move the version number.
+
+Move only references describing the **current** release. Leave feature-provenance headings,
+"Available in Bazilion X.Y.Z" notes, version-scoped observations and retained release sections'
+original limits intact. Update schema-change claims only when the actual schema changed.
 
 ## Adding a guide page
 
-New pages under `src/content/docs/docs/` are automatically included in `llms-full.txt` because
-the LLM plugin is configured with `promote: ['docs']`. A new guide needs:
+New pages under `src/content/docs/docs/` are included in `llms-full.txt` through
+`promote: ['docs']`. A new guide needs:
 
 1. `src/content/docs/docs/<slug>.md` with `title:` and `description:` frontmatter.
-2. A sidebar entry in `astro.config.mjs` under `Guides` (or `Concepts`).
-3. Optionally add the slug to the checker's enforced list in `scripts/check-docs.mjs` to make its
-   navigation and LLM-doc presence a hard failure rather than an untested detail.
+2. A sidebar entry in `astro.config.mjs` under `Guides` or `Concepts`.
+3. Inclusion in the checker's enforced guide list when its navigation and LLM-doc presence should
+   be a hard requirement.
 
-Link to a new guide by its absolute path with a trailing slash: `/docs/<slug>/`. Anchors are
-generated from headings, so reference `[text](/docs/page/#heading-anchor)`.
+Use absolute internal paths with trailing slashes, such as `/docs/<slug>/`. Use actual generated
+heading anchors and verify them in the built output.
 
 ## Procedure
 
-1. Read the source release facts — the GitHub release for `vX.Y.Z` and, for coding work, the
-   feature docs in the Bazilion repo (`docs/coding-environments.md`, `docs/repository-context.md`).
-   Do not invent behavior; the site must match the released CLI and API.
-2. Create the branch: `codex/vX.Y.Z-website`.
-3. Write `whats-new-0-XY.md` using the previous release page as the template. Keep the frontmatter
-   title exact and include `Pi X.Y.Z` in the description.
-4. Move every current-release reference from the table above, plus the upgrade heading and its
-   inbound anchors.
-5. Add or update guide pages, sidebar entries, and the checker's slug list.
-6. Run `pnpm check:docs` and fix every failure. It reports missing files, missing anchors, and
-   version disagreements explicitly.
-7. Review the rendered pages with `pnpm preview` or `pnpm dev` — check the homepage release note,
-   the new page, and the getting-started upgrade section.
+1. Read the confirmed public GitHub release and relevant product feature/upgrade docs. Match the
+   released CLI/API; do not invent behavior, platform parity or build-source provenance.
+2. Create a focused website branch, such as `release/X.Y.Z-website`.
+3. Consolidate legacy pages if needed; otherwise update `whats-new.md` in place. Keep one page,
+   one sidebar entry, no duplicate versions, and at most the newest four published releases.
+4. Update current-release references, upgrade guidance, inbound links, guide navigation and
+   LLM-doc checks. Keep the homepage free of Pi versions.
+5. Run `pnpm check:docs` and fix every failure without bypassing policy checks.
+6. Review the rendered homepage announcement, rolling release page and upgrade guidance at desktop
+   and phone widths with `pnpm preview` or `pnpm dev`.
+7. Review the diff and deliver a pull request. Do not publish without authorization.
 
 ## Publishing
 
-**Pushing to `main` publishes the live site.** `wrangler.jsonc` deploys an assets-only Worker and
-Cloudflare Workers Builds publishes after a push to `main`; there is no local deploy script and no
-staging buffer. Prefer a pull request so the rendered site can be reviewed before it goes public,
-and never push an unvalidated doc change to `main`.
+**Pushing to `main` publishes the live site.** Cloudflare Workers Builds publishes the assets-only
+Worker after a push to `main`; there is no local deploy script or staging buffer. Use a pull request
+and never merge an unvalidated change. Observe the Git-driven deployment and verify production
+rather than treating a successful merge as proof of deployment.
 
-Release notes should link the umbrella GitHub release
-`https://github.com/rullopat/bazilion/releases/tag/vX.Y.Z` for publication and validation details,
-matching the previous page's closing line.
+Each release section links to its own umbrella GitHub release:
+`https://github.com/rullopat/bazilion/releases/tag/vX.Y.Z`.
 
 ## Checklist
 
-- [ ] Frontmatter title matches `What's new in X.Y.Z` exactly; description contains `Pi X.Y.Z`
-- [ ] Homepage release note points at the new slug and shows `vX.Y.Z`
-- [ ] Oldest what's-new page demoted to `previous-changes.md`: page deleted, sidebar entry removed,
-      old URL redirected, inbound links repointed — the sidebar has exactly three entries
-- [ ] All seven version-stamped strings updated; Pi number unchanged unless the engine moved
-- [ ] Upgrade heading renamed and every `#upgrade-to-*` reference repointed
-- [ ] Historical provenance references deliberately left alone
-- [ ] New guide pages have sidebar entries and are linked from the release page
-- [ ] `pnpm check:docs` passes
-- [ ] Rendered pages reviewed; change delivered by pull request
+- [ ] Exactly one canonical What's new content page, `/docs/whats-new/`, and one sidebar entry
+- [ ] At most four distinct published releases, newest first; oldest removed when adding a fifth
+- [ ] No version-specific What's new pages created; legacy pages consolidated and URLs redirected
+- [ ] Current version derived from the first release heading; its Pi version recorded in detailed docs
+- [ ] Homepage points to the permanent slug, shows the current badge, and never states a Pi version
+- [ ] Current-release references agree; historical facts and qualification limits remain intact
+- [ ] Upgrade guidance reflects actual schema compatibility; meaningful older anchors preserved
+- [ ] Links to removed release sections repaired; older details use GitHub Releases, not new pages
+- [ ] Canonical page and release headings included in navigation/LLM-doc validation
+- [ ] `pnpm check:docs` passes; rendered desktop/phone pages reviewed
+- [ ] Authorized content changes delivered by pull request; production verified after deployment
