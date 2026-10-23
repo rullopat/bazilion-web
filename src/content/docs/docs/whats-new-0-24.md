@@ -1,17 +1,13 @@
 ---
-title: Upcoming 0.24 — unreleased preview
-description: Preview of ordinary macOS chat and clearer readiness diagnostics in the qualified but unpublished 0.24.0 candidate.
+title: What's new in 0.24.0
+description: Bazilion 0.24.0 adds ordinary macOS chat, clearer readiness diagnostics and embedded Pi 1.4.0.
 ---
 
-:::caution[Not a published release]
-The 0.24.0 packages are versioned and qualified, but **not yet published**. The
-[release PR](https://github.com/rullopat/bazilion/pull/79) is still draft and unmerged.
-The public npm release remains **0.23.0**, which still refuses macOS Agent turns.
-The existing installation guides and homepage describe that published release;
-do not treat this preview as an available npm upgrade.
-:::
+Bazilion **0.24.0 is published on npm latest** for the CLI, API types and client.
+The [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.24.0) identifies the
+published source. Read the [upgrade guidance](/docs/getting-started/#upgrade-to-0240) first.
 
-The candidate focuses on three changes: ordinary macOS Agent chat, the embedded Pi 1.4.0
+This release focuses on three changes: ordinary macOS Agent chat, the embedded Pi 1.4.0
 family, and diagnostics that distinguish a healthy installation from execution readiness.
 Bazilion remains **alpha**. Codemode and Pi Durable are not included.
 
@@ -41,7 +37,7 @@ detached-writer recovery and macOS image generation are not qualified by these o
 
 ## Installation health is not execution readiness
 
-The candidate's `bazilion doctor` and web configuration page separate:
+`bazilion doctor` and web configuration page separate:
 
 - **Installation health:** structural checks, not proof that a provider or turn works.
 - **Platform support:** static support labels, not execution or connectivity tests.
@@ -53,7 +49,7 @@ The candidate's `bazilion doctor` and web configuration page separate:
 A missing protected baseline remains visible but does not by itself produce a failed installation
 exit. Automation requiring protected work must inspect `protectedWorkBaselineReady` in the
 **authenticated** `/api/health/details` response separately. Public liveness stays minimal.
-This change does not apply to the currently published 0.23.0 doctor command.
+This differs from the historical 0.23.0 doctor exit contract.
 
 ## Embedded engine, unchanged authority
 
@@ -68,24 +64,31 @@ search/image qualification limits remain unchanged.
 
 ## Existing 0.23 homes
 
-The candidate keeps the canonical 0.23 schema unchanged. Its genuine 0.23.0 fixture retained Team
+0.24 keeps the canonical 0.23 schema unchanged. Its genuine 0.23.0 fixture retained Team
 sentinel data and paired `auth.json` bytes across two healthy candidate starts. All eight older
 incompatible fixtures still refused without state changes. This is bounded startup/state evidence,
 not a general transcript, backup or cross-platform upgrade guarantee.
 
-Before any future upgrade, stop the old daemon safely and preserve the entire home, keeping
+Before upgrading, stop the old daemon safely and preserve the entire home, keeping
 `bazilion.db` and `auth.json` together, plus external linked Team work. A valid 0.23 home should not
 be reset merely to update. The older clean-rebootstrap boundary remains unchanged; there is no
 new importer, ALTER compatibility layer or force-clear for ownership records.
 
-## Candidate qualification and next step
+## Qualification and public artifacts
 
-The versioned candidate passed [all six CI jobs](https://github.com/rullopat/bazilion/actions/runs/39923495901):
+[All six final CI jobs](https://github.com/rullopat/bazilion/actions/runs/39941560898) passed:
 source checks/builds and installed CLI trials on Linux/macOS, real browser diagnostics at desktop
-and phone widths, 399 required security cases and the expanded nine-entry release matrix.
-Both library tarballs were installed together offline and checked through runtime imports and
-browser-only consumer types. CLI artifacts retain platform/build-specific hashes; cross-platform
-byte equivalence and public-registry signatures or attestations are not claimed.
+and phone widths, 399 required security cases and the nine-entry release matrix.
+The [publication workflow](https://github.com/rullopat/bazilion/actions/runs/39942502773) also passed.
 
-Publication, public-byte verification and promotion of this website to 0.24 are separate next steps.
-Until then, use the [published 0.23 release notes](/docs/whats-new-0-23/) for current availability.
+Actual public archives passed integrity, safe-structure and registry ECDSA signature checks.
+Both public libraries passed offline runtime imports and browser-only consumer types. A fresh
+Linux Node 24.22.0 guarded installation of the public CLI passed CLI/API/browser chat, diagnostics
+and owned cleanup. Lifecycle scripts were disabled and admitted dependencies rebuilt explicitly;
+this is not unrestricted npm lifecycle qualification or a new public-artifact macOS campaign.
+The library archives match the qualified bytes; the CLI comparison differs only in proven generated
+SSR source-root metadata and its corresponding manifest filename reference.
+
+**No cryptographic build-source provenance is claimed:** npm attestation endpoints returned 404
+and registry metadata supplied no `gitHead`. Registry signatures establish registry artifact
+integrity, not a signed source-build attestation. Earlier live provider/search/image limits remain.

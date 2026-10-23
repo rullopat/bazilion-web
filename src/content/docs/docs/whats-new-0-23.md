@@ -3,7 +3,8 @@ title: What's new in 0.23.0
 description: Bazilion 0.23.0 adds source-grounded research, private-image recovery and explicit workspace blockers, with Pi 1.0.0.
 ---
 
-Bazilion **0.23.0** is published on npm **latest** for the CLI, API types and client.
+Bazilion **0.23.0** was published for the CLI, API types and client.
+This is a historical release page; [0.24.0](/docs/whats-new-0-24/) is the current npm latest release.
 It remains **alpha in maturity**. The [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.23.0)
 names the exact released commit `b6d354b5e5e6bc8f82febd1a8047f7a7984c7443`.
 

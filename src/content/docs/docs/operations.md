@@ -32,6 +32,17 @@ bazilion attention list
 Cancellation does not undo tool writes or sent messages. Retrying may repeat
 side effects; check the workspace and conversation first.
 
+## Read installation and execution readiness separately
+
+In 0.24, `bazilion doctor` exits successfully when structural installation checks pass.
+A missing protected baseline remains visible but does not by itself make that exit fail.
+`/config` separates installation health, platform support, ordinary chat (**Not checked**),
+and protected unattended prerequisites. Support labels do not run a provider or turn.
+
+Protected automation must separately inspect `protectedWorkBaselineReady` in the authenticated
+`/api/health/details` response and retain all per-turn admission checks. Public health is minimal
+liveness only. See [0.24 readiness semantics](/docs/whats-new-0-24/#installation-health-is-not-execution-readiness).
+
 ## Inspect a schedule
 
 ```sh
@@ -110,7 +121,7 @@ Stable information about the human or project belongs in Team Context
 ## Before an upgrade or recovery
 
 Use [Backup and recovery](/docs/backup-recovery/) and the
-[version-specific upgrade steps](/docs/getting-started/#upgrade-to-0230).
+[version-specific upgrade steps](/docs/getting-started/#upgrade-to-0240).
 If Node changes, reinstall native dependencies with the runtime used by the
 daemon. Do not reset a healthy home just to update the model catalog.
 

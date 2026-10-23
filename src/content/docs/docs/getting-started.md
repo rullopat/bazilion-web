@@ -30,16 +30,15 @@ bazilion dashboard
 ```
 
 :::note[Platform boundary]
-**Linux is the validated platform.** On macOS the installer sets everything up —
-daemon, dashboard, first-run setup — and the refusal is clean and explicit if you
-hit the edge: **agent turns (chat) currently require Linux**, because every turn
-resolves repository context through safe reads that pin ancestry with Linux-only
-primitives rather than read with a weaker guarantee. Portability is tracked in
-the repository backlog (BAZ-057).
+**Ordinary interactive chat supports Linux and macOS.** macOS qualification is bounded to
+macOS 26 arm64 / Node 24.22.0, with installed CLI, API and browser turns and repository instructions.
+Intel/older Macs, macOS Node 26 and macOS image generation are not qualified by that evidence.
+Hardened Git inspection and MCP stdio remain Linux-only; use Streamable HTTP MCP on macOS.
+Protected unattended work has independent prerequisites and per-turn checks.
+See the [platform limits](/docs/whats-new-0-24/#ordinary-macos-chat).
 
-**Windows is unsupported**: untested end to end, no CI covers it, and turns
-require Linux everywhere anyway. The PowerShell script is kept as-is for the
-curious; a contributor who wants Windows support maintains it.
+**Windows remains unsupported**: no current end-to-end qualification or CI covers it.
+The PowerShell script is retained for contributors, not as a support claim.
 :::
 
 Already have a supported Node runtime? Use npm directly:
@@ -106,8 +105,32 @@ pnpm tsx apps/cli/src/index.ts auth openai login --device-code
 
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
 
+## Upgrade to 0.24.0
+
+**A valid 0.23 home can reopen with 0.24; the canonical schema is unchanged.** A genuine
+0.23 fixture retained its Team sentinel and paired auth bytes across two candidate starts.
+That is bounded continuity evidence, not a general transcript, backup or cross-platform guarantee.
+Do not reset a valid 0.23 home merely to update.
+
+Stop the dashboard (Ctrl+C), or stop managed daemon/web services. Preserve the complete home,
+keeping `bazilion.db` and `auth.json` together, and preserve external linked Team work separately.
+Then, for an npm installation:
+
+```sh
+npm install -g bazilion@0.24.0
+bazilion --version
+bazilion dashboard
+```
+
+Restart managed services instead of starting a second dashboard. If Node changes, reinstall
+native dependencies using the runtime that starts Bazilion. Doctor's zero exit now means
+structural installation health only; protected automation must separately inspect
+`protectedWorkBaselineReady` in authenticated health details. See [readiness](/docs/operations/#read-installation-and-execution-readiness-separately).
+
 ## Upgrade to 0.23.0
 
+This historical heading retains the **0.23 schema boundary**, which 0.24 also enforces.
+Use the [current 0.24 upgrade steps](#upgrade-to-0240) for installation commands.
 **Older homes, including 0.22.0, do not upgrade in place.** The alpha schema contract is clean-install
 only; legacy SSE-capable schemas are incompatible even without configured SSE rows. Startup refuses
 rather than altering/importing them. No automatic snapshot is promised before refusal.
@@ -117,22 +140,6 @@ Before an explicitly authorized [reset](#reset-a-home), preserve the **entire ol
 old release to inspect/export old state or restore old archives. Alternatively, keep it untouched
 and set `BAZILION_HOME` to a new empty directory. Old credentials/Results are not automatically
 imported into the new home. **Downgrades are unsupported.**
-
-Stop the running dashboard (Ctrl+C in its terminal), or stop your managed
-daemon and web services. For an npm installation:
-
-```sh
-npm install -g bazilion@0.23.0
-bazilion --version
-bazilion dashboard
-```
-
-If you run managed services, restart them through your service manager instead
-of starting a second dashboard.
-
-To use Astra, follow [Select GPT-6 Astra](/docs/configuration/#select-gpt-6-astra).
-If you also change Node versions, reinstall native dependencies using the same
-runtime that starts Bazilion.
 
 ## Reset a home
 
