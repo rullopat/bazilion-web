@@ -35,7 +35,7 @@ macOS 26 arm64 / Node 24.22.0, with installed CLI, API and browser turns and rep
 Intel/older Macs, macOS Node 26 and macOS image generation are not qualified by that evidence.
 Hardened Git inspection and MCP stdio remain Linux-only; use Streamable HTTP MCP on macOS.
 Protected unattended work has independent prerequisites and per-turn checks.
-See the [platform limits](/docs/whats-new-0-24/#ordinary-macos-chat).
+See the [platform limits](/docs/whats-new/#ordinary-macos-chat).
 
 **Windows remains unsupported**: no current end-to-end qualification or CI covers it.
 The PowerShell script is retained for contributors, not as a support claim.

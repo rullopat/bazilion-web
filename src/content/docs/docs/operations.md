@@ -41,7 +41,7 @@ and protected unattended prerequisites. Support labels do not run a provider or 
 
 Protected automation must separately inspect `protectedWorkBaselineReady` in the authenticated
 `/api/health/details` response and retain all per-turn admission checks. Public health is minimal
-liveness only. See [0.24 readiness semantics](/docs/whats-new-0-24/#installation-health-is-not-execution-readiness).
+liveness only. See [0.24 readiness semantics](/docs/whats-new/#installation-health-is-not-execution-readiness).
 
 ## Inspect a schedule
 

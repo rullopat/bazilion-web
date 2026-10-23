@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { hasPiVersion } from './homepage-policy.mjs';
+import { releaseNotesPolicy } from './release-notes-policy.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const dist = join(root, 'dist');
@@ -14,15 +15,19 @@ const requireText = (path, text) => {
 if (!existsSync(dist)) throw new Error('Build the website before checking documentation.');
 const announcementSlug = read('src/pages/index.astro')
   .match(/class="release-note" href="\/docs\/([^/]+)\//)?.[1];
-if (!announcementSlug) throw new Error('Homepage must link to the current release page.');
-const announcement = read(`src/content/docs/docs/${announcementSlug}.md`);
-// Accepts stable and pre-release versions (`0.21.0-beta.1`): the docs gate should
-// not force a prerelease to masquerade as its eventual stable number.
-const version = announcement.match(/^title: What's new in (\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)$/m)?.[1];
-const pi = announcement.match(/^description: .*Pi(?: to)? (\d+\.\d+\.\d+)/m)?.[1];
-if (!version || !pi) throw new Error('Current release page must declare Bazilion and Pi versions.');
+const { version, pi, versions, failures: releaseFailures } = releaseNotesPolicy({
+  announcementSlug,
+  announcement: read('src/content/docs/docs/whats-new.md'),
+  config: read('astro.config.mjs'),
+  pages: readdirSync(join(root, 'src/content/docs/docs')).filter((name) => /\.mdx?$/.test(name))
+    .map((name) => ({ name, content: read(`src/content/docs/docs/${name}`) })),
+});
+for (const failure of releaseFailures) failures.add(failure);
+if (!version || !pi) throw new Error([...failures].join('\n'));
 
-requireText('astro.config.mjs', `What's new in ${version}`);
+requireText('dist/llms-full.txt', '/docs/whats-new');
+requireText('dist/llms-full.txt', "# What's new");
+for (const release of versions) requireText('dist/llms-full.txt', `## Bazilion ${release}`);
 requireText('src/pages/index.astro', `v${version}`);
 // Engine versions belong in documentation, never on the marketing homepage.
 for (const path of ['src/pages/index.astro', 'dist/index.html']) {

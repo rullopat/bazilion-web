@@ -13,17 +13,19 @@ import starlightLlmsTxt from 'starlight-llms-txt';
 export default defineConfig({
   site: 'https://bazilion.com',
   output: 'static',
-  // Patch releases share their minor's page, so the retired per-patch URLs keep
-  // working: 0.19.1 lives on the 0.19.0 page.
+  // One rolling release page; retired URLs retain useful destinations without
+  // keeping duplicate content. Releases outside the window live on GitHub.
+  // trailingSlash: 'ignore' serves both forms; duplicate keys collide in Astro.
   redirects: {
-    '/docs/whats-new-0-19-1/': '/docs/previous-changes/',
-    '/docs/whats-new-0-19-1': '/docs/previous-changes/',
-    '/docs/whats-new-0-19/': '/docs/previous-changes/',
-    '/docs/whats-new-0-19': '/docs/previous-changes/',
-    '/docs/whats-new-0-21-beta-1/': '/docs/whats-new-0-21/',
-    '/docs/whats-new-0-21-beta-1': '/docs/whats-new-0-21/',
-    '/docs/whats-new-0-21-beta/': '/docs/whats-new-0-21/',
-    '/docs/whats-new-0-21-beta': '/docs/whats-new-0-21/',
+    '/docs/whats-new-0-24/': '/docs/whats-new/#bazilion-0240',
+    '/docs/whats-new-0-23/': '/docs/whats-new/#bazilion-0230',
+    '/docs/whats-new-0-22/': '/docs/whats-new/#bazilion-0220',
+    '/docs/whats-new-0-21/': '/docs/whats-new/#bazilion-0210',
+    '/docs/whats-new-0-21-beta-1/': '/docs/whats-new/#bazilion-0210',
+    '/docs/whats-new-0-21-beta/': '/docs/whats-new/#bazilion-0210',
+    '/docs/whats-new-0-20/': 'https://github.com/rullopat/bazilion/releases/tag/v0.20.0',
+    '/docs/whats-new-0-19-1/': 'https://github.com/rullopat/bazilion/releases/tag/v0.19.1',
+    '/docs/whats-new-0-19/': 'https://github.com/rullopat/bazilion/releases/tag/v0.19.0',
   },
   build: {
     inlineStylesheets: 'auto',
@@ -85,11 +87,7 @@ export default defineConfig({
           items: [
             { label: 'Overview', slug: 'docs' },
             { label: 'Getting started', slug: 'docs/getting-started' },
-            { label: "What's new in 0.23.0", slug: 'docs/whats-new-0-23' },
-            { label: "What's new in 0.24.0", slug: 'docs/whats-new-0-24' },
-            { label: "What's new in 0.22.0", slug: 'docs/whats-new-0-22' },
-            { label: "What's new in 0.21.0", slug: 'docs/whats-new-0-21' },
-            { label: "What's new in 0.20.0", slug: 'docs/whats-new-0-20' },
+            { label: "What's new", slug: 'docs/whats-new' },
             { label: 'Previous changes', slug: 'docs/previous-changes' },
             { label: 'How Bazilion is different', slug: 'docs/why-bazilion' },
           ],
