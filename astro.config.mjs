@@ -86,6 +86,7 @@ export default defineConfig({
             { label: 'Overview', slug: 'docs' },
             { label: 'Getting started', slug: 'docs/getting-started' },
             { label: "What's new in 0.23.0", slug: 'docs/whats-new-0-23' },
+            { label: 'Upcoming 0.24 (unreleased)', slug: 'docs/upcoming-0-24' },
             { label: "What's new in 0.22.0", slug: 'docs/whats-new-0-22' },
             { label: "What's new in 0.21.0", slug: 'docs/whats-new-0-21' },
             { label: "What's new in 0.20.0", slug: 'docs/whats-new-0-20' },
