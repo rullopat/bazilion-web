@@ -7,9 +7,74 @@ The latest four release lines, newest first. Older details remain in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases).
 Historical sections describe their own release, not today's platform or upgrade guarantees.
 
+## Bazilion 0.25.0
+
+Published **2026-10-30**: the CLI, API types and HTTP client are all **0.25.0 on npm latest**.
+This is **alpha software for operator testing**, not production readiness or complete platform parity.
+See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.25.0) and read the
+[0.25 upgrade guidance](/docs/getting-started/#upgrade-to-0250) before changing an existing home.
+The embedded Pi family stays **1.4.0**; no ambient discovery or extra Agent authority is enabled.
+
+### Trusted Mac 27.x and Linux isolation
+
+Actual installed CLI/API/web, trusted host coding, hardened private-worktree Git and owned MCP
+stdio are observed on **macOS 27.0.1 (26A434), M2 Pro arm64 / Node 26.12.1**. The tested **27.x
+major line** is sufficient for this alpha; other minors are not implied tested or automatically
+incompatible. Ordinary Mac shell execution is explicitly **trusted and unisolated** (`off`).
+Working from a Team directory and asking for command approval are not an OS sandbox.
+
+Linux adds **unprivileged Bubblewrap with mandatory seccomp**, minimal credentials, scoped files
+and original-owner cleanup. Retained Linux Docker remains a separate explicit backend. Neither
+backend falls back to host execution when admission or cleanup fails.
+
+**Mac generic native isolation is deferred/unqualified; Mac Docker/VM execution is removed.**
+Explicit or stale native/Docker choices refuse rather than becoming host execution.
+Isolation-required Mac coding and specialist command verification refuse before model/tool effects.
+Existing fixed-tool reviewers still have no shell/coding capability. Browser, MCP, guarded Git,
+policy/approvals and worker ownership retain independent boundaries.
+
+### Non-GUI browsing and real lifecycle evidence
+
+The installed non-GUI browser path uses an Agent-private native keychain, not the operator's
+personal profile/keychain. Observed checks include actual source reads/snapshots, PNG delivery,
+private-network denial, main-process shutdown with a live browser/worker, and restart/offline
+restore. Stop preserves the profile; backup excludes it; restored homes launch fresh owned
+browsers only for a new explicit turn. Unknown cleanup remains blocked, never force-cleared.
+
+**Mac headed/desktop-browser qualification is deferred to a later version**, explicitly untested
+for 0.25. Public-page reads, browser PNGs and synthetic providers do not qualify live models,
+generated-image routes, account entitlement, Google access or arbitrary sites. Earlier failed
+runs and unconfirmed resources remain preserved; publication does not settle them.
+
+### Node 26 and a new clean-rebootstrap boundary
+
+Require **Node `^26.12.1` only**, with **26.12.1 / pnpm 12.15.0** as the product development
+baseline. Node 24, earlier 26.x releases and other majors are refused before application/state
+bootstrap. Updating Node does not authorize resetting data.
+
+The canonical alpha schema changed. **Genuine 0.24.0 and older homes refuse unchanged**; there is
+no ALTER migration or old-backup importer. Preserve the entire old home, paired `bazilion.db` and
+`auth.json`, and external Team work before any explicitly authorized reset. Keeping the old home
+and choosing a fresh `BAZILION_HOME` is an alternative; old data is not automatically imported.
+
+### Published artifacts and qualification limits
+
+[All nine final CI jobs](https://github.com/rullopat/bazilion/actions/runs/41024307235) and the
+[existing publication workflow](https://github.com/rullopat/bazilion/actions/runs/41025663188)
+passed. Genuine public CLI installs/CLI/API/web/MCP and owned cleanup pass on Linux and the
+accepted Mac. Guarded installs disable lifecycle scripts and rebuild only admitted dependencies;
+this does not qualify unrestricted default npm scripts. Public libraries pass offline runtime
+and browser-only type consumers.
+
+Public archives pass integrity, safe-structure and registry ECDSA checks. Library bytes match
+qualified candidates; CLI differences are confined to proven generated SSR build-root metadata
+and its manifest reference. Registry metadata supplies no `gitHead` or build-source attestations:
+**no cryptographic build-source provenance is claimed**. Alpha scope, deferred testing and
+unobserved provider/image limits remain explicit.
+
 ## Bazilion 0.24.0
 
-Bazilion **0.24.0 is published on npm latest** for the CLI, API types and client.
+Bazilion **0.24.0 was published on npm latest** for the CLI, API types and client.
 The [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.24.0) identifies the
 published source. Read the [upgrade guidance](/docs/getting-started/#upgrade-to-0240) first.
 
@@ -121,7 +186,7 @@ release; macOS ordinary chat arrived in 0.24.0.
 **0.23 introduced a clean-rebootstrap boundary for incompatible older homes, including 0.22.**
 Preserve the complete home and paired DB/auth identity before an authorized reset. The later
 0.24 release did not change that schema and must not trigger a reset of a valid 0.23 home.
-See [current upgrade guidance](/docs/getting-started/#upgrade-to-0240) and the
+See [current upgrade guidance](/docs/getting-started/#upgrade-to-0250) and the
 [0.23 schema boundary](/docs/getting-started/#upgrade-to-0230).
 
 Public archive integrity, registry signatures and guarded public installations passed.
@@ -151,31 +216,6 @@ Published 2026-09-23 as a plain version at **alpha** maturity, with **Pi 0.87.1*
 
 The historical release supported its declared 0.20/0.21 home upgrades. That does **not** make
 those homes compatible with the later 0.23 boundary. Follow
-[current upgrade guidance](/docs/getting-started/#upgrade-to-0240), not an old install pin.
+[current upgrade guidance](/docs/getting-started/#upgrade-to-0250), not an old install pin.
 
 [0.22.0 GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.22.0).
-
-## Bazilion 0.21.0
-
-The 0.21 line shipped through `0.21.0-beta.5` before the plain `0.21.0` npm version was
-published. Those superseded prerelease checkpoints are grouped here, not counted as additional
-release entries. The bundled engine was **Pi 0.85.1**; maturity remained **alpha**.
-
-- **Consistent recovery UI:** route-level error/loading states, named unavailable screens and
-  consequence-aware verification cancellation. Browser acceptance included narrow/desktop
-  views and a real daemon-kill recovery walk.
-- **Visible failures:** paused queues after interruption, actionable OAuth failures and
-  deterministic failure-injection coverage. Web typechecking and security acceptance became
-  CI gates.
-- **Device access:** scoped credentials and one-paste pairing codes; the Expo shell and
-  interactive chat REPL were removed in favor of responsive web and one-shot/piped chat.
-- **Historical migration contract:** admitted older homes could advance transactionally with a
-  verified pre-migration snapshot; newer/unknown schemas were refused. Later releases changed
-  the compatibility boundary, so this is not today's universal in-place-upgrade guarantee.
-
-Installation/platform fixes did not qualify off-Linux Agent chat: repository instructions still
-refused with `safe_reads_unavailable`. Ordinary macOS chat was qualified later, in 0.24.0;
-Windows remains unsupported. Use [current upgrade guidance](/docs/getting-started/#upgrade-to-0240).
-
-[0.21 beta.5 GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.5)
-records the final checkpoint of this release line.

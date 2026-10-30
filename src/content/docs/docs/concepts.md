@@ -16,7 +16,7 @@ providers and tools, and supplies the coding tools.
 
 Bazilion adds the multi-agent shell around that engine: templates, Teams,
 policy, shared context, mailbox, triggers, browser/MCP integrations, the daemon,
-CLI, and web UI. Version 0.24.0 bundles Pi 1.4.0 and constructs provider,
+CLI, and web UI. Version 0.25.0 bundles Pi 1.4.0 and constructs provider,
 catalog, authentication, and session state through Pi's public `ModelRuntime`
 and `DefaultResourceLoader` APIs.
 
@@ -132,9 +132,11 @@ Inspect delivery with `bazilion trigger history <id>` or the Agent's Triggers
 tab.
 
 Tool availability depends on the turn's origin. Local operator chat can use
-configured host coding, browser, and MCP tools. Background, Telegram, and
-private-gateway turns require protected Docker execution and exclude browser
-and MCP. Both normal surfaces have scoped mailbox, memory, and file delivery.
+configured coding, browser, and MCP tools. Background, Telegram, and
+private-gateway normal turns require the selected protected Linux native/Docker backend and
+exclude browser/MCP; isolation-required Mac coding refuses. Trusted Mac operator coding uses
+unisolated host execution. Fixed-tool reviewers have their own no-shell admission, not a host
+fallback. Admitted normal surfaces have scoped mailbox, memory, and file delivery.
 See [Tools & integrations](/docs/tools/) before moving a local workflow to a schedule.
 
 ## State on disk

@@ -79,12 +79,12 @@ agent removes its uploads with it (uninstall offers a full wipe of the home — 
 transactionally consistent database copy to `bazilion.pre-migration-<timestamp>.db`.
 Existing files may therefore remain beside an older database.
 
-**The 0.23 schema boundary, retained in 0.24, does not upgrade those older homes in place
-and creates no automatic pre-refusal snapshot.** A valid 0.23 home can reopen in 0.24 without reset.
-Incompatible earlier state is still refused under the clean-rebootstrap contract. Preserve the entire old home,
-paired DB/auth and external Team work before any separately authorized reset. Keep the matching
-old binary/schema for old snapshots and archives; they are not importable current-schema backups.
-See [upgrading](/docs/getting-started/#upgrade-to-0240) and
+**0.25 changes the canonical alpha schema: genuine 0.24.0 and older homes refuse unchanged,
+with no automatic pre-refusal snapshot or legacy importer.** Historical 0.23-to-0.24 continuity
+does not make those homes compatible with 0.25. Preserve the entire old home, paired DB/auth and
+external Team work before any separately authorized reset. Keep the matching old binary, runtime
+and schema for old snapshots and archives; they are not importable current-schema backups.
+See [upgrading](/docs/getting-started/#upgrade-to-0250) and
 [backup and recovery](/docs/backup-recovery/).
 
 Only consider pruning historical snapshots after a separate verified backup and confirmation that

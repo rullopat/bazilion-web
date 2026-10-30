@@ -18,7 +18,7 @@ does not send you to a configuration dashboard.
 | Tool | Purpose |
 | --- | --- |
 | `repository_context` | Resolve applicable instructions, Git state and suggested commands for a scope |
-| `coding_environment` | Describe this turn's actual host, Docker or protected posture, directory and restrictions |
+| `coding_environment` | Describe this turn's actual host, native, Docker or protected posture, directory and restrictions |
 | `coding_command` | Execute a task-selected runtime, dependency, preparation, build or test command |
 | `coding_receipt` | Read retained command evidence and check whether its recorded inputs still apply |
 
@@ -51,23 +51,41 @@ an environment-readiness result or a test receipt.
 
 ## Execution posture and missing prerequisites
 
-The Agent can inspect the posture its turn was admitted into before running anything. In a protected
-or Docker turn every command runs in a fresh network-disabled container: workspace files persist,
-temporary files do not, and the root filesystem and Team memory are read-only to shell commands.
-There are no ambient host credentials or package caches.
+The Agent can inspect the posture its turn was admitted into before running anything.
 
-The Agent can install from workspace-local artifacts or an available offline package store under its
-existing authority. If a package must be downloaded, a service is unavailable, or the image lacks a
-required tool, it names the missing prerequisite and yields. It cannot silently switch to host
-execution, and network-enabled dependency provisioning is outside this release.
+| Platform/posture in 0.25 alpha | Behavior |
+| --- | --- |
+| Mac operator work, `off` | Explicitly trusted **unisolated host execution**, with the OS user's filesystem/network permissions |
+| Mac native/Docker selection | Refuses; generic native isolation is deferred/unqualified and Mac Docker/VM execution is removed |
+| Mac isolation-required coding / specialist command checks | Unavailable; never downgraded to host work |
+| Linux `native` | Unprivileged Bubblewrap, mandatory seccomp and per-turn owned admission |
+| Linux `docker` | Separately selected, fresh network-disabled command containers |
 
-A local toolchain image is an installation prerequisite for Docker execution, not a per-task
-checklist. Host execution remains host execution under its existing policy.
+Approvals and a Team working directory are not OS containment. Fixed-tool reviewer-only workers
+have no shell/coding capability. Browser/MCP/Git retain their independent admission/ownership;
+ordinary browser/MCP networking is not confined by the coding sandbox.
+
+Native `bash` and `coding_command` share the daemon-owned executor. Host-backed file tools are
+hidden; Team memory, skills and admitted uploads are read-only to commands. Commands receive only
+closed Team environment flags, not provider credentials or a Docker environment allowlist.
+TCP/UDP, including localhost, are denied; explicitly admitted private pathname Unix IPC is allowed.
+Native always uses dangerous-command approval, with unattended risky commands denied.
+
+In a Docker-selected turn, workspace files persist but temporary files do not. The root filesystem,
+Team memory and injected inputs are read-only to commands; there are no ambient host credentials
+or package caches. A compatible local image is an installation prerequisite for **Linux Docker**,
+not a per-task checklist or native prerequisite. Protected Linux work selects native explicitly,
+otherwise Docker; Mac isolation-required work refuses before execution.
+
+An isolated Agent may use workspace-local artifacts or an available offline store within its
+existing authority. Missing downloads, services or tools must be named as prerequisites; there is
+no host/Docker fallback or network-enabled dependency provisioning. See
+[backend preparation](/docs/tools/#prepare-protected-work-on-linux).
 
 ## Reading a command result
 
-A receipt records the purpose, exact command, scope, admitted posture and image, observed exit, time
-and bounded diagnostic output. Terminal states distinguish success, failure, block, timeout,
+A receipt records the purpose, exact command, scope, admitted posture and any captured image/native
+facts, observed exit, time and bounded diagnostic output. Terminal states distinguish success, failure, block, timeout,
 cancellation and interruption.
 
 **Success means that command exited zero at that time.** It does not certify later edits, other
@@ -105,11 +123,13 @@ and cancellation is not proof of cleanup. Uncertain cleanup leaves the workspace
 and never records a fabricated success.
 
 A lost host worker may leave separate process groups, so restarting the daemon alone cannot prove
-those commands stopped; the same-boot workspace stays blocked while cleanup is uncertain. A host
-restart proves the old local processes are gone, and Docker recovery uses recorded container
-identities. Restore never adopts copied process or container records as permission to terminate the
-original home's resources, so a backup containing active work remains recovery-blocked after restore.
-Prefer backups taken after all Agent turns finish.
+commands stopped. Mac recorded cleanup needs observed closure, natural pipe EOF and original-group
+absence, not locally destroyed pipes. Linux native signals require the original live pidfd/birth
+binding; stored receipts, census PIDs and diagnostics never authorize adoption or signalling.
+Unknown ownership after restart/restore remains blocked. Docker recovery independently revalidates
+recorded container identities. Restore never grants permission to terminate the original home's
+processes/containers; active-work backups remain recovery-blocked. Prefer backups after all turns
+finish. There is no arbitrary detached-host-writer recovery guarantee.
 
 The Team page shows workspace blockers and limited recorded-cleanup controls. CLI parity:
 
@@ -143,9 +163,12 @@ bazilion team environment configure default --file environment.json
 ```
 
 `GET/PUT /api/teams/:id/coding-environment` reads and saves those defaults; later writes require the
-current revision, and saving never executes commands. Allowed environment values are only `CI`,
-`NO_COLOR` and `TZ`. Arbitrary credentials and startup hooks are rejected, and Docker defaults do not
-change a host turn's directory or environment.
+current revision, and saving never executes commands. Defaults distinguish Linux `native` from
+`docker`: native refuses an `image` field and backend drift never substitutes another runtime.
+Defaults alone do not select a backend or prove readiness; Mac isolation defaults cannot be
+saved/activated, and stale selections remain unavailable rather than becoming host work.
+Allowed environment values are only `CI`, `NO_COLOR` and `TZ`. Arbitrary credentials and startup
+hooks are rejected, and isolation defaults do not change a host turn's directory or environment.
 
 There are no named checks, readiness badges, probe history or review-and-run workflows.
 
@@ -156,9 +179,12 @@ sources are limited to 32 files, 64 KiB per file and 256 KiB total, with at most
 the report itself is limited to 256 KiB. Limits produce explicit incomplete states; partial
 instruction bytes are never presented as complete guidance.
 
-Git inspection uses a disposable, bounded copy of Git metadata with a Bazilion-authored config, so
-hooks, filters, includes and alternates are never activated. The registered Team-root symlink is
-supported; nested links, instruction-file links, traversal and external Git metadata links are
+Git inspection uses one hardened daemon implementation: Linux pinned descriptor-relative access
+or a bounded private Mac worktree over frozen source bytes and metadata. Mac capture is limited to
+64 MiB, 16,384 entries, 256 directories, depth 16 and a shared five-second budget; drift refuses.
+Bazilion-authored configuration prevents hooks, filters, includes and alternates from activating.
+The registered Team-root symlink is supported; nested links, instruction-file links, traversal
+and external Git metadata links are
 rejected, and Git never discovers an ancestor repository outside the Team.
 
 If an applicable instruction is unsafe, unreadable, oversized or changing during capture, the scope

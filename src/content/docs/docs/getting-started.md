@@ -7,9 +7,13 @@ Bazilion ships as an npm package that bundles the CLI, daemon, and production
 web UI. The daemon self-bootstraps its workspace on first run — there is no
 separate `init` step.
 
+**0.25.0 is alpha software for operator testing.** Already using Bazilion? Read the
+[upgrade procedure](#upgrade-to-0250) first: 0.24.0 and older homes require preservation
+and an explicit choice of clean rebootstrap, not an in-place import.
+
 ## What you need
 
-- **Node.js 24.22.0+ within 24.x or 26.4.0+ within 26.x** — other versions refuse before opening state.
+- **Node.js 26.12.1+ within 26.x only** (`^26.12.1`) — Node 24, earlier 26.x and other majors refuse before opening state.
 - **A model provider** — an API key for Anthropic, OpenAI, or Google, a
   ChatGPT account for OAuth, or a local backend (Ollama / LM Studio).
 
@@ -30,12 +34,17 @@ bazilion dashboard
 ```
 
 :::note[Platform boundary]
-**Ordinary interactive chat supports Linux and macOS.** macOS qualification is bounded to
-macOS 26 arm64 / Node 24.22.0, with installed CLI, API and browser turns and repository instructions.
-Intel/older Macs, macOS Node 26 and macOS image generation are not qualified by that evidence.
-Hardened Git inspection and MCP stdio remain Linux-only; use Streamable HTTP MCP on macOS.
-Protected unattended work has independent prerequisites and per-turn checks.
-See the [platform limits](/docs/whats-new/#ordinary-macos-chat).
+**Linux and trusted Mac operation are supported within explicit alpha limits.** Actual Mac
+qualification uses **macOS 27.0.1 arm64 / Node 26.12.1**; the tested 27.x major line is accepted,
+not every minor, Intel or older Mac qualified. Mac coding is **trusted, unisolated host execution**
+(`BAZILION_BASH_SANDBOX=off`). Native/Docker selections and isolation-required coding or specialist
+command checks refuse without downgrade. Fixed-tool reviewers, guarded Git, daemon-owned MCP and
+browsing retain independent admission; MCP stdio is no longer Linux-only.
+
+**Mac headed/desktop-browser testing is deferred**, not passed. Actual non-GUI browser, SSRF and
+shutdown/restart/restore evidence does not prove live-model/generated-image or arbitrary-site access.
+Linux native Bubblewrap/seccomp and retained Linux Docker have separate per-turn admission.
+See the [0.25 limits](/docs/whats-new/#bazilion-0250) and [tool boundary](/docs/tools/).
 
 **Windows remains unsupported**: no current end-to-end qualification or CI covers it.
 The PowerShell script is retained for contributors, not as a support claim.
@@ -64,7 +73,7 @@ On first boot `bazilion dashboard`:
 ```sh
 git clone https://github.com/rullopat/bazilion
 cd bazilion
-npm install -g pnpm # if pnpm is missing
+npm install -g pnpm@12.15.0 # product development baseline
 pnpm install
 
 # Start the source daemon, then run the web UI in another terminal.
@@ -105,7 +114,45 @@ pnpm tsx apps/cli/src/index.ts auth openai login --device-code
 
 See [The web interface](/docs/web-interface/) for a full tour of the UI.
 
+## Upgrade to 0.25.0
+
+**The canonical alpha schema changed. Genuine 0.24.0 and older homes refuse unchanged.** There
+is no ALTER migration, legacy importer or old-backup compatibility adapter. A matching current
+0.25 home reopens normally; do not reset it merely to update. Downgrades are unsupported.
+
+1. Safely stop the old dashboard/services and finish active work. Unknown ownership or cleanup
+   remains blocked: never delete resource rows, browser slots, locks or owner markers to proceed.
+2. Preserve the **entire old home**, including paired `bazilion.db` / `auth.json`, transcripts,
+   Results, skills and Team files. Preserve external linked Team work separately. Keep the matching
+   old binary/runtime/schema for inspecting/exporting old state or restoring old archives. No
+   automatic snapshot is promised before refusal.
+3. Install supported **Node 26.12.1+ within 26.x**. For an npm installation, update the binary:
+
+   ```sh
+   npm install -g bazilion@0.25.0
+   bazilion --version
+   ```
+
+4. Choose a **new empty absolute `BAZILION_HOME`**, leaving the old home untouched, or separately
+   authorize a destructive [reset](#reset-a-home) after preservation and confirmed safe shutdown.
+   For the fresh-home option, consistently use your chosen path for daemon and CLI:
+
+   ```sh
+   BAZILION_HOME=/path/to/new-empty-home bazilion dashboard
+   ```
+
+5. Complete provider setup again and deliberately recreate needed Teams/Agents. Old credentials,
+   Results and conversations are **not automatically imported**. Native modules must be installed
+   or rebuilt with the runtime that starts Bazilion; source development uses pnpm 12.15.0.
+
+For a matching current home, restart the dashboard or managed services rather than starting a
+second copy. Doctor's successful exit means structural installation health only, not provider,
+ordinary-turn or protected-work execution. See [readiness](/docs/operations/#read-installation-and-execution-readiness-separately).
+
 ## Upgrade to 0.24.0
+
+**Historical 0.24 instructions only.** For the current release, use [0.25 steps](#upgrade-to-0250).
+The continuity below does not make a 0.23/0.24 home compatible with 0.25.
 
 **A valid 0.23 home can reopen with 0.24; the canonical schema is unchanged.** A genuine
 0.23 fixture retained its Team sentinel and paired auth bytes across two candidate starts.
@@ -129,8 +176,8 @@ structural installation health only; protected automation must separately inspec
 
 ## Upgrade to 0.23.0
 
-This historical heading retains the **0.23 schema boundary**, which 0.24 also enforces.
-Use the [current 0.24 upgrade steps](#upgrade-to-0240) for installation commands.
+This historical heading retains the **0.23 schema boundary**, also enforced by 0.24.
+Current 0.25 adds a new boundary; use the [current upgrade steps](#upgrade-to-0250) for installation commands.
 **Older homes, including 0.22.0, do not upgrade in place.** The alpha schema contract is clean-install
 only; legacy SSE-capable schemas are incompatible even without configured SSE rows. Startup refuses
 rather than altering/importing them. No automatic snapshot is promised before refusal.

@@ -9,6 +9,13 @@ Requesting verification runs nothing by itself.
 
 Available in Bazilion 0.18.0.
 
+**0.25 platform boundary:** Mac command-executing specialist verification is unavailable because
+no qualified isolation backend is admitted. Trusted host coding is not a fallback. Linux uses the
+captured native/Docker/host posture under its independent admission rules. Native capture through
+HTTP/CLI/web runs only fixed readiness probes, positively retires them, and freezes native facts;
+it does not execute the declared checks. Agent capture stays bound to its producing turn.
+Existing fixed-tool reviewer-only workers are separate and do not gain shell capability.
+
 ## Capture first, then request
 
 Verification binds a specific captured change, so capture one on the
@@ -44,12 +51,15 @@ credential.
 | Situation | What happens |
 | --- | --- |
 | The tree moved after the capture | Blocked, with a fresh capture named as the remedy. It never quietly re-captures. |
-| Captured for a container, daemon running host-backed (or the reverse) | Blocked — a check is never run somewhere you did not approve. |
+| Captured backend/environment no longer matches the selected runtime | Blocked — native, Docker and host postures are never silently substituted. |
 | A check needs an approval nobody can give | Blocked. Verification runs unattended, so nothing is auto-approved. |
 | The command contains protected credential material | Refused before it starts. |
 | The captured evidence expired | Blocked, not re-captured. |
 
 Each refusal comes back as a reason you can act on, and a refused capture writes nothing.
+Native unknown cleanup keeps resources/writers and an uncertain outcome; receipts or census PIDs
+cannot grant cleanup authority. Later successful retirement does not rewrite the failed attempt
+or permit replaying its effects.
 
 ## How to read the result
 

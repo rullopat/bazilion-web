@@ -32,8 +32,9 @@ binding agents is a single command.
 - A working bazilion daemon (see [Getting started](/docs/getting-started/)).
 - A private forum supergroup intended for you and your bot. Keep the paired
   owner account distinct from anonymous/channel identities.
-- A local Docker engine and compatible image on the daemon host. Telegram
-  turns always require [protected runtime readiness](/docs/tools/#prepare-docker-for-protected-work).
+- A Linux daemon host with the selected native Bubblewrap/seccomp or Docker backend admitted.
+  Telegram turns require [protected execution](/docs/tools/#prepare-protected-work-on-linux);
+  isolation-required Mac coding is unavailable and never becomes trusted host execution.
 - The Telegram app, signed in to the account that will **own** the supergroup.
 - About ten minutes.
 
@@ -234,9 +235,9 @@ setup is one owner plus the bot. If a code expired, generate a fresh one.
 Use `bazilion telegram pairing cancel` to cancel an unused code.
 
 Telegram turns cannot use host coding tools, browser automation, or MCP.
-If Docker is unavailable, pairing may succeed but Agent work will fail. Follow
-[Docker preparation](/docs/tools/#prepare-docker-for-protected-work) before
-sending work.
+Pairing may succeed while protected Agent work cannot run. Follow
+[Linux backend preparation](/docs/tools/#prepare-protected-work-on-linux) before sending work;
+Mac isolation-required coding refuses, regardless of pairing or communication approval.
 
 ## Part 5 — Spawn and bind agents
 
@@ -382,7 +383,7 @@ These tune Telegram behavior (set them in the daemon's environment):
 
 **The agent doesn't respond to plain messages.** Confirm the configured group
 and bound Agent topic, then check pairing status, `telegram health`, and
-`bazilion doctor`. A failed Docker/provider preflight, policy hold, or unpaired
+`bazilion doctor`. A failed native/Docker/provider preflight, unavailable Mac isolation, policy hold, or unpaired
 sender can prevent a turn even when Telegram is connected. Also check the
 Privacy Mode setting from Step 2.
 

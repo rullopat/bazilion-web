@@ -1,9 +1,9 @@
 # Windows is UNSUPPORTED (operator decision 2026-09-23): untested, no CI, and
-# agent turns require Linux everywhere. Kept for contributors who want to
+# no Agent-turn qualification is claimed. Kept for contributors who want to
 # maintain it; see the platform note in the docs.
 $ErrorActionPreference = "Stop"
 
-$MinNodeMajor = 24
+$InstallNodeVersion = "26.12.1"
 $BazilionVersion = if ($env:BAZILION_VERSION) { $env:BAZILION_VERSION } else { "latest" }
 
 function Write-Step($Message) {
@@ -15,17 +15,11 @@ function Fail($Message) {
   exit 1
 }
 
-function Get-NodeMajor {
+function Test-SupportedNode {
   try {
-    $major = & node -p "Number(process.versions.node.split('.')[0])" 2>$null
-    if ($LASTEXITCODE -eq 0 -and $major) { return [int]$major }
-  } catch {}
-  return $null
-}
-
-function Test-Node24 {
-  $major = Get-NodeMajor
-  return ($null -ne $major -and $major -ge $MinNodeMajor)
+    & node -e 'const v = process.versions.node; const m = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.exec(v); const p = m ? m.slice(1).map(Number) : []; process.exit(v === v.trim() && m && p.every(Number.isSafeInteger) && p[0] === 26 && (p[1] > 12 || (p[1] === 12 && p[2] >= 1)) ? 0 : 1)' 2>$null
+    return ($LASTEXITCODE -eq 0)
+  } catch { return $false }
 }
 
 function Add-VoltaToPath {
@@ -36,15 +30,15 @@ function Add-VoltaToPath {
 }
 
 function Ensure-Node {
-  if (Test-Node24) {
+  if (Test-SupportedNode) {
     Write-Step "Node $(& node -v) found"
     return
   }
 
-  Write-Step "Node $MinNodeMajor+ not found; installing Node $MinNodeMajor with Volta"
+  Write-Step "Node 26.12.1+ within 26.x not found; installing Node $InstallNodeVersion with Volta"
   if (-not (Get-Command volta -ErrorAction SilentlyContinue)) {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-      Fail "winget is required to install Volta automatically. Install Node.js $MinNodeMajor+ from https://nodejs.org/ and rerun this installer."
+      Fail "winget is required to install Volta automatically. Install Node.js 26.12.1+ within 26.x from https://nodejs.org/ and rerun this installer."
     }
     winget install Volta.Volta --accept-package-agreements --accept-source-agreements
     Add-VoltaToPath
@@ -54,8 +48,9 @@ function Ensure-Node {
     Fail "Volta installed, but volta is not on PATH. Open a new PowerShell window and rerun this installer."
   }
 
-  volta install "node@$MinNodeMajor" npm
+  volta install "node@$InstallNodeVersion" npm
   Add-VoltaToPath
+  if (-not (Test-SupportedNode)) { Fail "Node must be 26.12.1+ within 26.x" }
 }
 
 Ensure-Node

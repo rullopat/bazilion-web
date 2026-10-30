@@ -19,13 +19,17 @@ control, with your own provider keys.
 It is not a hosted platform. It is a daemon, a CLI, and a web UI you run
 yourself, published under the MIT license.
 
-**Bazilion 0.24.0 adds ordinary macOS chat and clearer installation and execution readiness.**
-It remains alpha. Hardened Git inspection and MCP stdio remain Linux-only; Streamable HTTP is portable.
+**Bazilion 0.25.0 is alpha software for operator testing:** trusted Mac 27.x operation and Linux
+native Bubblewrap/seccomp, with retained explicit Linux Docker. Mac coding is unisolated host
+execution; isolation-required work and native/Docker choices refuse rather than downgrade.
+Mac guarded Git and owned MCP stdio have independent admission. Actual non-GUI browser/lifecycle
+checks do not qualify headed/desktop browsing, live-model/image routes or arbitrary sites.
 A healthy installation is not proof that a provider, ordinary chat or protected work can run.
-The 0.23 schema is unchanged: preserve a valid 0.23 home rather than resetting it merely to update.
-Older incompatible homes, including 0.22.0, still require preservation and operator-controlled clean
-rebootstrap. Read [what changed in 0.24.0](/docs/whats-new/#bazilion-0240) and
-[upgrade guidance](/docs/getting-started/#upgrade-to-0240) before changing an existing installation.
+
+Require **Node 26.12.1+ within 26.x only**. The alpha schema changed: **0.24.0 and older homes refuse**
+and need preservation of the complete home, paired DB/auth and linked Team work before an explicit
+clean-rebootstrap choice. Read [what changed in 0.25.0](/docs/whats-new/#bazilion-0250) and
+[upgrade guidance](/docs/getting-started/#upgrade-to-0250) before changing an existing installation.
 
 - [Coding during an Agent task](/docs/coding-environment/): repository context and scoped commands.
 - [Publishing a reviewed change](/docs/publication/): operator-controlled publication to a code host.
