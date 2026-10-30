@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-INSTALL_NODE_VERSION=24.22.0
+INSTALL_NODE_VERSION=26.12.1
 BAZILION_VERSION="${BAZILION_VERSION:-latest}"
 
 log() {
@@ -14,7 +14,7 @@ fail() {
 }
 
 has_supported_node() {
-  node -e 'const m = /^(\d+)\.(\d+)\.(\d+)$/.exec(process.versions.node); process.exit(m && ((Number(m[1]) === 24 && Number(m[2]) >= 22) || (Number(m[1]) === 26 && Number(m[2]) >= 4)) ? 0 : 1)' 2>/dev/null
+  node -e 'const v = process.versions.node; const m = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/.exec(v); const p = m ? m.slice(1).map(Number) : []; process.exit(v === v.trim() && m && p.every(Number.isSafeInteger) && p[0] === 26 && (p[1] > 12 || (p[1] === 12 && p[2] >= 1)) ? 0 : 1)' 2>/dev/null
 }
 
 ensure_curl() {
@@ -28,7 +28,7 @@ ensure_node() {
   fi
 
   ensure_curl
-  log "Supported Node (24.22+ in 24.x or 26.4+ in 26.x) not found; installing Node ${INSTALL_NODE_VERSION} with Volta"
+  log "Supported Node (26.12.1+ within 26.x) not found; installing Node ${INSTALL_NODE_VERSION} with Volta"
   if ! command -v volta >/dev/null 2>&1; then
     curl -fsSL https://get.volta.sh | bash
   fi
@@ -37,7 +37,7 @@ ensure_node() {
   export PATH="$VOLTA_HOME/bin:$PATH"
   command -v volta >/dev/null 2>&1 || fail "Volta installed, but volta is not on PATH"
   volta install "node@${INSTALL_NODE_VERSION}" npm
-  has_supported_node || fail "Node must be 24.22+ within 24.x or 26.4+ within 26.x"
+  has_supported_node || fail "Node must be 26.12.1+ within 26.x"
 }
 
 ensure_node

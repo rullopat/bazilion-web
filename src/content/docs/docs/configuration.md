@@ -11,7 +11,7 @@ talk to it over HTTP. The former Expo app was removed; native mobile apps are fu
 
 Models use `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-6-astra`, or `lmstudio:my-loaded-model`. The provider list is
-data-driven from Pi's catalog. Bazilion 0.24.0 bundles Pi 1.4.0.
+data-driven from Pi's catalog. Bazilion 0.25.0 bundles Pi 1.4.0.
 Catalog membership is not account entitlement or proof of connectivity. Existing Agent/Profile
 selections are not silently rewritten; select and test a configured model explicitly.
 
@@ -41,7 +41,7 @@ After connecting, enable `openai-codex` and curate a model such as
 
 ### Select GPT-6 Astra
 
-1. Follow the [0.24.0 upgrade guidance](/docs/getting-started/#upgrade-to-0240), then restart the daemon and web UI.
+1. Follow the [0.25.0 upgrade guidance](/docs/getting-started/#upgrade-to-0250), then restart the daemon and web UI.
 2. Open `/config` and connect **OpenAI Codex** with ChatGPT OAuth, or configure
    **OpenAI** with an API key. Enable the provider.
 3. Add the `gpt-6-astra` catalog chip to its curated models and save, keeping
@@ -109,16 +109,21 @@ exchange. A generated pairing URL/QR does not imply a mobile application is curr
 
 ## Shell isolation and command approval
 
-Local operator chat uses host-backed coding tools when
-`BAZILION_BASH_SANDBOX=off`. Setting it to `docker` replaces those coding
-tools with containerized `bash`. Background, Telegram, approved-delivery, and
-private-gateway turns always require protected Docker execution regardless of
-that setting.
+Local operator chat uses host-backed coding tools when `BAZILION_BASH_SANDBOX=off`.
+On Mac this is explicitly **trusted, unisolated host execution**; native/Docker choices refuse
+without downgrade, including stale settings and optional Team defaults. Isolation-required Mac
+coding and specialist command checks are unavailable, not repaired by installing Docker/VMs.
+
+On Linux, `native` selects Bubblewrap with mandatory seccomp; `docker` selects containerized
+`bash`. Background, Telegram, approved-delivery and private-gateway normal turns always require
+protected execution: native when explicitly selected, otherwise Docker, even with `off`.
+Fixed-tool reviewer-only workers retain separate no-shell admission. No selected backend
+falls back to host execution.
 
 `BAZILION_BASH_SANDBOX_IMAGE` selects a compatible locally installed image
 (default `debian:bookworm-slim`). Bazilion never pulls it during a turn.
-`BAZILION_BASH_APPROVAL=dangerous` independently gates classified shell commands;
-non-interactive clients auto-deny them. Set these in the daemon environment and
+`BAZILION_BASH_APPROVAL=dangerous` independently gates classified host/Docker commands;
+native always uses dangerous-command approval. Non-interactive clients auto-deny them. Set these in the daemon environment and
 restart after changes.
 
 See [Tools & integrations](/docs/tools/) for the capability table, Docker
@@ -132,7 +137,7 @@ linked external Team projects and their memory require separate backups.
 
 Follow [Backup and recovery](/docs/backup-recovery/) for archive scope, identity
 storage, an empty-destination rehearsal, restore validation, and recovery from
-credential exposure. A reset is destructive, never an automatic upgrade step; the 0.23.0 boundary requires preservation
+credential exposure. A reset is destructive, never an automatic upgrade step; the 0.25.0 boundary requires preservation
 and separate operator authorization before rebootstrap.
 
 ## On-disk layout
@@ -154,10 +159,10 @@ external project directory.
 
 ## Schema contract
 
-**0.24 retains the unchanged 0.23 clean-install alpha schema**, not an append-only migration promise.
-A valid 0.23 home can reopen; do not reset it merely to update.
-The canonical schema and actual objects must match; older SSE-capable homes, including 0.22.0,
-are refused even without SSE rows. No ALTER/import compatibility adapter is provided.
+**0.25 changes the canonical clean-install alpha schema. Genuine 0.24.0 and older homes
+refuse unchanged**, rather than migrating or importing them. Historical 0.23-to-0.24 continuity
+is not 0.25 compatibility. The canonical schema, ledger and actual objects must match; there
+is no ALTER/import/old-backup compatibility adapter. A matching current home reopens normally.
 
 Startup checks the schema/ledger and that `bazilion.db` and `auth.json` form one valid bootstrap
 identity before the scheduler or HTTP listener starts. A missing half or mismatched token fails
@@ -166,7 +171,7 @@ closed. An exactly matching current home reopens idempotently; a newer database 
 Preserve the entire old home, paired DB/auth and external Team work; use its matching binary/schema
 for export and old backups. No automatic pre-refusal snapshot is promised. Only for a refused incompatible home, after explicit
 operator authorization and safe shutdown, recreate state as described in
-[upgrade guidance](/docs/getting-started/#upgrade-to-0240):
+[upgrade guidance](/docs/getting-started/#upgrade-to-0250):
 
 ```sh
 bazilion uninstall --yes

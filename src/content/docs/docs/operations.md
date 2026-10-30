@@ -34,14 +34,16 @@ side effects; check the workspace and conversation first.
 
 ## Read installation and execution readiness separately
 
-In 0.24, `bazilion doctor` exits successfully when structural installation checks pass.
+Since 0.24, `bazilion doctor` exits successfully when structural installation checks pass.
 A missing protected baseline remains visible but does not by itself make that exit fail.
 `/config` separates installation health, platform support, ordinary chat (**Not checked**),
 and protected unattended prerequisites. Support labels do not run a provider or turn.
 
 Protected automation must separately inspect `protectedWorkBaselineReady` in the authenticated
 `/api/health/details` response and retain all per-turn admission checks. Public health is minimal
-liveness only. See [0.24 readiness semantics](/docs/whats-new/#installation-health-is-not-execution-readiness).
+liveness only. Mac protected coding reports **unavailable**; Linux native remains **Not checked**
+until real per-turn admission, not an image/global readiness badge. See
+[readiness semantics introduced in 0.24](/docs/whats-new/#installation-health-is-not-execution-readiness).
 
 ## Inspect a schedule
 
@@ -55,8 +57,10 @@ the Agent completed it. Read dispatch history for attempts, errors, and terminal
 results. Busy Agents defer delivery; retries are bounded. Interval occurrences
 coalesce while a dispatch is open instead of building an unlimited queue.
 
-Before testing a new schedule, complete Docker/provider readiness. Create a
-disabled trigger, inspect it, and explicitly enable it when ready:
+Before testing a new schedule on Linux, complete the selected native/Docker and provider
+prerequisites with all per-turn checks. Mac isolation-required scheduled coding is unavailable;
+it never reuses trusted host admission. Create a disabled trigger, inspect it, and explicitly
+enable it when ready:
 
 ```sh
 bazilion trigger add <agent-id> --every 300 --message 'Summarize project status' --disabled
@@ -121,7 +125,7 @@ Stable information about the human or project belongs in Team Context
 ## Before an upgrade or recovery
 
 Use [Backup and recovery](/docs/backup-recovery/) and the
-[version-specific upgrade steps](/docs/getting-started/#upgrade-to-0240).
+[version-specific upgrade steps](/docs/getting-started/#upgrade-to-0250).
 If Node changes, reinstall native dependencies with the runtime used by the
 daemon. Do not reset a healthy home just to update the model catalog.
 

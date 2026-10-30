@@ -13,10 +13,10 @@ Finish local provider setup first. Install Tailscale and connect the host and
 client devices to your tailnet. Use the host's actual HTTPS name, such as
 `https://your-host.your-tailnet.ts.net`, for every step below.
 
-Remote chat uses protected execution. Prepare Docker and confirm
-[protected-work readiness](/docs/tools/#prepare-docker-for-protected-work)
-before exposing the web UI. Enabled browser and MCP tools remain unavailable
-in protected turns.
+Remote chat uses protected execution. On Linux, prepare the selected native/Docker backend and
+confirm [protected-work prerequisites](/docs/tools/#prepare-protected-work-on-linux) before
+exposing the web UI. Mac isolation-required remote coding is unavailable, never downgraded to
+trusted host execution. Enabled browser and MCP tools remain unavailable in protected turns.
 
 The current `bazilion gateway preflight` command runs on the Linux daemon host
 and uses `ss` and the Tailscale CLI to inspect listeners and Serve configuration.
@@ -103,9 +103,10 @@ an explicit new credential/sign-in; do not reuse the bootstrap secret after setu
   service environments and restart after changing them.
 - **Gateway preflight cannot inspect listeners:** run it on the Linux host
   with `ss` available, not on the phone or a different computer.
-- **Protected runtime unavailable:** run `bazilion doctor` and repair Docker,
-  the image, or the selected provider configuration. Remote chat cannot fall
-  back to host tools.
+- **Protected runtime unavailable:** on Linux, inspect the selected native/Docker prerequisites
+  and provider configuration with `bazilion doctor` and actual per-turn admission. Mac protected
+  coding is unavailable; installing Docker/VMs is not a remedy. Remote chat never falls back
+  to host tools.
 - **Phone cannot connect:** confirm both devices are in the tailnet and its
   access rules permit the connection, then check `tailscale serve status`.
 

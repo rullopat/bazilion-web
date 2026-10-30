@@ -20,9 +20,10 @@ export default defineConfig({
     '/docs/whats-new-0-24/': '/docs/whats-new/#bazilion-0240',
     '/docs/whats-new-0-23/': '/docs/whats-new/#bazilion-0230',
     '/docs/whats-new-0-22/': '/docs/whats-new/#bazilion-0220',
-    '/docs/whats-new-0-21/': '/docs/whats-new/#bazilion-0210',
-    '/docs/whats-new-0-21-beta-1/': '/docs/whats-new/#bazilion-0210',
-    '/docs/whats-new-0-21-beta/': '/docs/whats-new/#bazilion-0210',
+    // The plain 0.21 npm final has no umbrella GitHub release; use its final published checkpoint.
+    '/docs/whats-new-0-21/': 'https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.5',
+    '/docs/whats-new-0-21-beta-1/': 'https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.5',
+    '/docs/whats-new-0-21-beta/': 'https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.5',
     '/docs/whats-new-0-20/': 'https://github.com/rullopat/bazilion/releases/tag/v0.20.0',
     '/docs/whats-new-0-19-1/': 'https://github.com/rullopat/bazilion/releases/tag/v0.19.1',
     '/docs/whats-new-0-19/': 'https://github.com/rullopat/bazilion/releases/tag/v0.19.0',

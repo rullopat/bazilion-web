@@ -20,11 +20,11 @@ On a narrow screen, scroll the table sideways to compare both turn types.
 
 | Capability | Local operator turn | Protected normal turn |
 | --- | --- | --- |
-| Coding | Pi host tools by default; Docker `bash` when selected | Docker `bash`; no host coding tools |
-| Docker required | Only when configured | Always, even if `BAZILION_BASH_SANDBOX=off` |
+| Coding | Trusted host tools (`off`); Linux native/Docker when selected | Selected Linux native/Docker; no host coding tools |
+| Isolation | Mac host execution is unisolated; native/Docker choices refuse | Required; Mac protected coding is unavailable, never downgraded |
 | Web fetch | Guarded fetch; configured rendering integrations | Uncredentialed, SSRF-guarded fetch |
 | Web discovery | Configured backends or eligible native OpenAI/ChatGPT route | Separate opt-in protected SearXNG only; no native search |
-| Managed browser / MCP | When enabled/admitted; MCP stdio requires Linux | Unavailable |
+| Managed browser / MCP | When independently admitted; owned stdio on Linux/admitted Mac, or HTTP | Unavailable |
 | Team memory, mailbox, guarded context, Agent home tools | Available | Available through scoped tools |
 | File delivery | Available | Available from the Team workspace |
 | Provider credentials | Configured runtime | Only the selected provider's validated credential fields |
@@ -35,9 +35,35 @@ the normal Agent toolset. See [Daily operations](/docs/operations/#review-and-ap
 Enabling a browser or MCP server does not add it to protected turns. A failed
 protected preflight stops the turn; it never falls back to host execution.
 
-## Prepare Docker for protected work
+## Prepare protected work on Linux
 
-On the daemon host, install and start a local Docker engine and ensure the user
+**Mac isolation-required coding and specialist command checks are unavailable.** Generic native
+Mac isolation is deferred/unqualified and Mac Docker/VM execution is removed. Installing Docker,
+changing approval settings or approving communication cannot make trusted host execution protected.
+Closed reviewer-only workers keep their independent no-shell/fixed-tool contract.
+
+On Linux, `BAZILION_BASH_SANDBOX=native` selects unprivileged Bubblewrap with **mandatory seccomp**.
+The host must provide admitted Bubblewrap/toolchain inputs and permit the required namespace/kernel
+operations. Commands get minimal environment/credentials and bounded original-owner cleanup;
+missing mechanisms, unsafe inputs or drift refuse. TCP/UDP, including localhost, are denied;
+explicitly admitted private pathname Unix IPC remains possible. No image, host or Docker fallback
+is used. Native commands always use dangerous-command approval; unattended risky commands deny.
+
+```sh
+bazilion config set BAZILION_BASH_SANDBOX native
+bazilion doctor
+```
+
+Selection is not readiness. Doctor/Config report **Not checked** until actual owned per-turn
+admission; unknown cleanup retains resources/writers and never grants a force-clear. Native
+isolates coding commands, not separately admitted ordinary browser/MCP capabilities.
+
+Protected Linux work selects native only when explicitly configured; otherwise it retains Docker,
+including when local operator chat uses `off`. Team defaults alone do not select a backend.
+
+### Prepare Docker for protected work
+
+On the **Linux** daemon host, install and start a local Docker engine and ensure the user
 running Bazilion can access its Unix socket. Prepare the default image yourself:
 
 ```sh
@@ -58,13 +84,15 @@ shell commands run without network access.
 Confirm the protected-work readiness reported by `bazilion doctor`, then test
 the intended Agent/provider through its actual Telegram, trigger, or remote
 path. General readiness does not prove every provider credential or project
-command works. Docker setup is required before those workflows can run.
+command works. Docker setup is required only for Docker-selected workflows, not native execution.
+Use authenticated health details and preserve all per-turn checks; a zero doctor exit alone means
+structural installation health.
 
 ## The built-in tools
 
 Within the capability limits above, normal turns have:
 
-- **coding tools** — host tools or Docker `bash` for Team project files,
+- **coding tools** — the admitted host, Linux native or Linux Docker surface for Team project files,
 - **web tools** — guarded fetch; ordinary configured/native discovery or separately configured protected SearXNG within their distinct boundaries,
 - **mailbox tools** — `send_message`, `read_inbox`, `wait_for_reply`, and
   `approval_status`,
@@ -83,10 +111,13 @@ For local operator turns, Pi's host-backed `read`, `bash`, `edit`, `write`, `gre
 and `ls` tools operate from the Team root. This is convenient, but the working
 directory is not a security boundary.
 
-Set `BAZILION_BASH_SANDBOX=docker` to replace the host-backed coding surface
+**Mac operator coding must explicitly use `off`: trusted, unisolated host execution.** Native or
+Docker choices, including stale configuration, refuse rather than becoming host execution.
+
+On Linux, set `BAZILION_BASH_SANDBOX=docker` to replace the host-backed coding surface
 with a containerized `bash`. Every invocation uses a fresh container with no
 network, a read-only root, a temporary `/tmp`, a scrubbed environment, and the
-Team workspace as its only writable mount. Team memory, Agent inputs, and
+Team workspace as its writable project mount. Team memory, Agent inputs, and
 attached skills are mounted read-only. Bazilion accepts only a local Unix-socket
 Docker context and a pre-existing compatible image; a missing or invalid setup
 fails closed instead of falling back to the host.
@@ -96,6 +127,9 @@ as dangerous pause for approval inline in web chat or at an interactive CLI
 prompt. Decisions are scoped to that turn; cancellation and timeouts clean up
 the request, and non-interactive turns deny automatically. This is independent
 of durable Team Policy communication approvals.
+
+Native always uses the dangerous-command gate, even if the separate approval setting is off.
+For a Linux Docker example:
 
 ```sh
 BAZILION_BASH_SANDBOX=docker \
@@ -130,6 +164,12 @@ Playwright; browser state can contain sensitive cookies/logins. Profiles are exc
 Configuration/session readiness does not prove any site, login or anti-bot access will work.
 Protected, scheduled/inbox and restricted turns do not receive browsing capability.
 
+The 0.25 alpha has actual **non-GUI macOS 27.0.1 arm64 / Node 26.12.1** browser, private-keychain,
+SSRF, PNG and main-process shutdown/restart/restore evidence. It uses an Agent-private native
+keychain, never the operator's personal browser profile/keychain. **Mac headed/desktop-browser
+qualification is deferred to a later version**, not passed; public-page/PNG checks do not qualify
+live models, generated-image routes, Google access or arbitrary sites.
+
 Operator controls (not Agent recovery tools):
 
 ```sh
@@ -155,8 +195,9 @@ namespaced as `mcp__<server>__<tool>` so they never collide with built-ins.
 
 The standalone daemon-owned MCP client supports two transports:
 
-- **stdio** — local subprocess execution on **Linux only**, with owned process-tree retirement;
-  other platforms refuse before slot allocation/spawn,
+- **stdio** — local subprocess execution on Linux and admitted Apple Silicon macOS, with native
+  process ownership and positive retirement; unknown identity/cleanup retains a blocked slot.
+  Unsupported platforms refuse before spawn,
 - **Streamable HTTP** — a remote server over HTTP, with optional bearer auth.
 
 Legacy **SSE is retired**, not imported or adapted. No automatic OAuth, ambient Pi discovery or

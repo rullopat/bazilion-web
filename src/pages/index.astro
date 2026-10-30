@@ -65,7 +65,7 @@ const features = [
   {
     n: '13',
     title: 'Protected outside your terminal',
-    body: 'Local operator chat can use configured coding, browser, and MCP tools. Background, Telegram, and gateway turns run network-disabled with a restricted toolset.',
+    body: 'Background, Telegram, and gateway coding requires admitted Linux isolation. Mac protected coding refuses; ordinary browser and MCP tools remain separate.',
   },
   {
     n: '14',
@@ -124,9 +124,9 @@ const features = [
       </nav>
 
       <a class="release-note" href="/docs/whats-new/" data-reveal="2">
-        <span class="release-note__badge">v0.24.0</span>
+        <span class="release-note__badge">v0.25.0</span>
         <span>
-          Alpha: ordinary macOS chat and clearer installation and execution readiness.
+          Alpha: trusted Mac coding, Linux native isolation, and explicit safety limits.
         </span>
         <span class="release-note__arrow" aria-hidden="true">read what changed →</span>
       </a>
@@ -205,7 +205,7 @@ const features = [
                 <div class="card-code__head">
                   <span>daemon + web UI</span>
                 </div>
-<pre><span class="c-comment"># Requires Node 24.22+ (24.x) or 26.4+ (26.x).</span>
+<pre><span class="c-comment"># Requires Node 26.12.1+ within 26.x only.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">bazilion</span>
 <span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span>
 <span class="c-ok">*</span> daemon <span class="c-flag">127.0.0.1:4321</span>
@@ -222,7 +222,7 @@ const features = [
 <pre><span class="c-comment"># For people who want to read and change the code.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">git</span> <span class="c-cmd">clone</span> https://github.com/rullopat/bazilion
 <span class="c-prompt">$</span> <span class="c-cmd">cd</span> bazilion
-<span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">pnpm</span> <span class="c-comment"># if pnpm is missing</span>
+<span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">pnpm@12.15.0</span> <span class="c-comment"># product development baseline</span>
 <span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">install</span>
 
 <span class="c-comment"># Start the source daemon, then run the web UI in another terminal.</span>
@@ -235,9 +235,9 @@ const features = [
       </section>
 
       <p class="showcase__copy">
-        Ordinary chat supports Linux and macOS, with <a href="/docs/whats-new/#ordinary-macos-chat">platform-specific limits</a>.
-        Already using Bazilion? Read the <a href="/docs/getting-started/#upgrade-to-0240">0.24.0 upgrade guidance</a>
-        before updating. Preserve your home and linked Team work; do not reset a valid 0.23 home just to update.
+        Trusted Mac 27.x operation and Linux execution have <a href="/docs/whats-new/#bazilion-0250">explicit alpha limits</a>.
+        Read the <a href="/docs/getting-started/#upgrade-to-0250">0.25.0 upgrade guidance</a>
+        before updating. Preserve your complete home, paired DB/auth and linked Team work; older homes need an explicitly chosen clean rebootstrap.
       </p>
 
       <!-- ───────────── manifesto ───────────── -->

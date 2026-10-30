@@ -91,11 +91,12 @@ Do not manually delete recovery markers or edit database tables to force
 startup. Follow the reported recovery guidance before retrying a swap.
 
 Do not assume an older archive is compatible: restore validates the current release's full
-migration chain and schema contract. The 0.24 continuity evidence covers reopening a valid 0.23
-home, not a general archive-restore guarantee. The unchanged 0.23 schema boundary refuses earlier
-incompatible homes/archives, including 0.22, rather than importing or rewriting them. Keep the
-matching old release to recover/export incompatible state.
-See [upgrading](/docs/getting-started/#upgrade-to-0240).
+migration chain and schema contract. **0.25 changes the canonical schema: genuine 0.24.0 and
+older homes/archives are not imported or rewritten.** Historical 0.23-to-0.24 continuity is not
+0.25 compatibility or a general archive-restore guarantee. Preserve the entire old home with
+paired DB/auth and external Team work; keep its matching old binary/runtime/schema to recover
+or export incompatible state. A fresh home does not import those bytes automatically.
+See [upgrading](/docs/getting-started/#upgrade-to-0250).
 If a reset is necessary, it removes Agents, Teams, templates, credentials, and
 the paired database/auth identity. Review the
 [reset consequences](/docs/getting-started/#reset-a-home) first.
