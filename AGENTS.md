@@ -39,7 +39,9 @@ for every future release. Update release references from confirmed public releas
 
 ## Testing Guidelines
 
-For documentation changes, run `pnpm check:docs` and inspect the affected pages with `pnpm preview` or `pnpm dev`. For visual edits, check desktop and mobile widths. Match command examples to the released CLI and distinguish local operator tools from protected turns.
+For documentation changes, run `pnpm check:docs` and inspect the affected pages with `pnpm preview` or `pnpm dev`. For visual edits, check desktop and mobile widths. Match command examples and flags to the released CLI's `--help`, and environment variables to the released code. Describe only shipped features, plainly and briefly.
+
+The only public installer is `public/install.sh` (Linux and macOS). Platform lines on the site say only: Linux is the tested platform; macOS runs commands on the host and is untested.
 
 ## Commit & Pull Request Guidelines
 

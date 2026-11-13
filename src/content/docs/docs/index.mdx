@@ -1,99 +1,91 @@
 ---
 title: Bazilion documentation
-description: An MIT-licensed, local-first multi-agent runtime built on Pi's coding agent — Agent templates, revisioned Team Templates, live Team Policy, shared memory, and a mailbox.
+description: Bazilion is an MIT-licensed, local multi-agent runtime for one person, built on Pi's coding agent — Agents in Teams with a shared workspace, memory and mailbox.
 ---
 
 import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
-Bazilion is a personal, open-source, **local-first multi-agent runtime** built
-on [Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent)
-as its core engine. Pi runs the per-turn loop, stores the JSONL transcript,
-handles replay and compaction, executes providers and tools, and supplies the
-coding tools.
+Bazilion is a local multi-agent runtime for one person. Agents run on
+[Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent) with the LLM
+provider of your choice: a ChatGPT login, an API key for OpenAI, Anthropic, Google and many
+others, or a local LM Studio, Ollama or llama.cpp. They work in Teams that share a workspace,
+memory and a mailbox, run on schedules, and are reachable from a web UI, a CLI and Telegram. One
+daemon on your machine owns all state in `~/.bazilion`.
 
-Bazilion wraps that engine with a small daemon on your own machine, a workspace
-under `~/.bazilion`, Agent templates, revisioned Team Templates, Teams, live
-communication policy, shared files, memory, and messages — all under your own
-control, with your own provider keys.
+It is not a hosted platform: it is a daemon, a CLI and a web UI you run yourself, under the MIT
+license.
 
-It is not a hosted platform. It is a daemon, a CLI, and a web UI you run
-yourself, published under the MIT license.
-
-**Bazilion 0.25.0 is alpha software for operator testing:** trusted Mac 27.x operation and Linux
-native Bubblewrap/seccomp, with retained explicit Linux Docker. Mac coding is unisolated host
-execution; isolation-required work and native/Docker choices refuse rather than downgrade.
-Mac guarded Git and owned MCP stdio have independent admission. Actual non-GUI browser/lifecycle
-checks do not qualify headed/desktop browsing, live-model/image routes or arbitrary sites.
-A healthy installation is not proof that a provider, ordinary chat or protected work can run.
-
-Require **Node 26.12.1+ within 26.x only**. The alpha schema changed: **0.24.0 and older homes refuse**
-and need preservation of the complete home, paired DB/auth and linked Team work before an explicit
-clean-rebootstrap choice. Read [what changed in 0.25.0](/docs/whats-new/#bazilion-0250) and
-[upgrade guidance](/docs/getting-started/#upgrade-to-0250) before changing an existing installation.
-
-- [Coding during an Agent task](/docs/coding-environment/): repository context and scoped commands.
-- [Publishing a reviewed change](/docs/publication/): operator-controlled publication to a code host.
-- [Saved results](/docs/results/) and [conversations](/docs/conversations/).
-- [Follow-up queue](/docs/follow-up-queue/) and [Agent questions](/docs/questions/).
+**Bazilion 0.26.0** simplifies the product for a single local operator. It needs Node.js
+`^26.12.1`, and a home from an earlier release is refused: back it up and start fresh, as
+described in [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260). Read
+[what changed](/docs/whats-new/#bazilion-0260). Linux is the tested platform; macOS runs commands
+on the host and is untested.
 
 <CardGrid>
   <LinkCard
     title="Getting started"
     href="/docs/getting-started/"
-    description="Install the daemon, boot it, and finish first-run setup."
+    description="Install, open the dashboard and spawn your first Agent."
   />
   <LinkCard
     title="Core concepts"
     href="/docs/concepts/"
-    description="Agent templates, Team Templates, Teams, policy, approvals, and memory."
+    description="Profiles, Agents, Teams, policy, memory, the mailbox and triggers."
   />
   <LinkCard
     title="Tools & integrations"
     href="/docs/tools/"
-    description="Shell isolation, command approval, browser automation, MCP, and files."
+    description="Web research, the managed browser, MCP, image generation and files."
   />
   <LinkCard
     title="Configuration"
     href="/docs/configuration/"
-    description="Providers, secrets, tokens, and the on-disk layout."
+    description="Providers, settings, secrets, tokens and the on-disk layout."
   />
 </CardGrid>
 
-## Operate your installation
+## Working with Agents
 
-- [Daily operations](/docs/operations/) — diagnose failures, inspect schedules,
-  decide approvals, and review lessons.
-- [Growth and retention](/docs/growth-and-retention/) — understand storage bounds and cleanup.
-- [Backup and recovery](/docs/backup-recovery/) — protect the home and linked
-  projects, rehearse restores, and recover credentials.
-- [Private access](/docs/private-access/) — prepare the
-  protected runtime, publish through Tailscale Serve, and pair each device.
+- [Coding with Agents](/docs/coding-environment/): the shell, the Docker sandbox and repository
+  instructions.
+- [Reviewing what changed](/docs/coding-review/): live tool output and Git change review.
+- [Saved results](/docs/results/) and [conversations](/docs/conversations/).
+- [Follow-up queue](/docs/follow-up-queue/) and [Agent questions](/docs/questions/).
+- [Telegram](/docs/telegram/) and [Attention notifications](/docs/attention-notifications/).
+
+## Running your installation
+
+- [Daily operations](/docs/operations/): diagnose a silent Agent, schedules, Attention and
+  reviewed learning.
+- [Growth and retention](/docs/growth-and-retention/): what grows in a home and what to delete.
+- [Backup and recovery](/docs/backup-recovery/): back up, restore and reset.
+- [Private access](/docs/private-access/): reach the web UI from other devices over Tailscale.
 
 ## How the pieces fit
 
 <CardGrid stagger>
-  <Card title="Agent templates become agents" icon="seti:config">
-    A Profile is an Agent template — SOUL.md, IDENTITY.md, tools, skills mode,
-    and a default model. Spawning it creates a permanent live Agent.
+  <Card title="Profiles become Agents" icon="seti:config">
+    A Profile is an Agent template: SOUL.md, IDENTITY.md, AGENTS.md, TOOLS.md, a default model
+    and skills. Spawning one creates an Agent with its own documents and conversations.
   </Card>
   <Card title="Pi runs the agent loop" icon="settings">
-    Bazilion is based on Pi's coding agent for the session loop, transcript,
-    compaction, provider/tool execution, and coding tools.
+    Pi owns the turn loop, provider calls, compaction and the JSONL transcript. Bazilion adds
+    Agents, Teams, credentials, tools and the daemon around it.
   </Card>
-  <Card title="One reusable Team roster" icon="rocket">
-    A Team Template owns revisioned stable slots and directed communication
-    edges. Spawning a reviewed revision materializes its Agents atomically.
+  <Card title="Teams share a workspace" icon="rocket">
+    A Team is a directory (or a link to your project), a USER.md about you, shared memory and
+    its members. Team templates spawn a whole Team at once.
   </Card>
-  <Card title="One effective live policy" icon="lock">
-    Every Team owns exactly one revisioned policy. Edges allow directly or hold
-    one typed attempt for approval; a missing edge denies during enforcement.
+  <Card title="Policy says who may message whom" icon="lock">
+    An open Team lets members message each other freely; a restricted one needs an allow edge.
+    You can always chat with every Agent.
   </Card>
   <Card title="A mailbox between them" icon="email">
-    Agents coordinate through a durable mailbox: `send_message`, `read_inbox`,
-    and `wait_for_reply` in the loop, plus CLI, API, and web surfaces.
+    Agents message each other with `send_message`, `read_inbox` and `wait_for_reply`; an idle
+    Agent with unread mail wakes up.
   </Card>
   <Card title="Shared memory, indexed" icon="magnifier">
-    Each Team has one memory rooted at `<team>/memory`, indexed with qmd
-    (BM25 over markdown) so every member can search it.
+    Each Team keeps Markdown notes in `<team>/memory/`, searched with qmd (BM25), so decisions
+    outlive the chat that produced them.
   </Card>
 </CardGrid>

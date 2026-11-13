@@ -1,108 +1,81 @@
 ---
 title: How Bazilion is different
-description: Bazilion is built on Pi and OpenClaw-inspired in skill compatibility, but centers revisioned Team Templates, live Team Policy, shared memory, and one local daemon.
+description: Bazilion is built on Pi and imports OpenClaw-style skills, but centers Teams of Agents that share a workspace, memory and a mailbox, run by one local daemon.
 ---
 
-Bazilion's core engine is
-[Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent):
-Pi owns the per-turn session loop, transcript, compaction, provider/tool
-execution, and coding tools. Bazilion layers Agent templates, Team Templates,
-live Teams, policy, approvals, shared memory, mailbox, scheduler, daemon, CLI,
-and web UI around that engine.
+Bazilion's engine is
+[Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent): Pi owns the
+turn loop, provider calls, compaction, the transcript and the coding tools. Bazilion adds
+Profiles, Agents, Teams, shared memory, a mailbox, a scheduler, the daemon, the CLI and the web UI
+around it.
 
-Bazilion is also openly **OpenClaw-inspired** in its prompt-only skill
-compatibility: it can import skills from a local OpenClaw install. It is still a
-different kind of tool with a different center of gravity.
+Bazilion is also openly **OpenClaw-inspired** in its skills: it imports prompt-only skills from a
+local OpenClaw install. It is still a different kind of tool.
 
 ## The one-line difference
 
-**OpenClaw is a personal AI gateway** — it connects one assistant to many
-channels and extends it through a large plugin and skill ecosystem.
+**OpenClaw is a personal AI gateway**: it connects one assistant to many channels and extends it
+through a large plugin and skill ecosystem.
 
-**Bazilion is a local multi-agent runtime** — it is built around reviewed Teams
-of permanent Agents sharing a workspace and memory, coordinating through a
-mailbox, and communicating under one explicit live policy.
+**Bazilion is a local multi-agent runtime**: Teams of Agents that share a workspace and memory,
+message each other through a mailbox, and run on schedules, all on your own machine.
 
 ## What Bazilion is built around
 
-### One canonical Team roster
+### Teams with a shared place to work
 
-An **Agent template** (the technical Profile entity) defines a reusable role. A
-**Team Template** is the sole reusable Team roster: stable ordered slots,
-profile-backed roles, optional name/model/reasoning overrides, directed
-communication edges, and immutable revisions.
-
-Spawning a reviewed revision creates the Agents atomically in one Team and
-retains source-slot lineage. That lineage never becomes a second live roster.
-
-### A shared place to work
-
-Every Agent belongs to exactly one **Team**. The Team supplies one filesystem
-root (optionally a symlink to a real project), one shared `USER.md`, one Agent
-roster, one shared qmd memory, and exactly one effective revisioned Team Policy.
+Every Agent belongs to one **Team**. The Team has one workspace directory (or a link to a real
+project), one `USER.md` about you, one shared memory and a simple policy for who may message whom.
+A **Team template** spawns a whole Team at once.
 
 ### Memory that is shared and searchable
 
-Team memory is markdown indexed with **qmd** (BM25 search). A member can write a
-decision once and another can find it later. It is a Team resource, not a
-per-Agent transcript or a vector database.
+Team memory is Markdown indexed with **qmd** (BM25 search). One member writes a decision down;
+another finds it later. It is a Team resource, not a per-Agent transcript or a vector database.
 
-### A mailbox under policy
+### A mailbox and a scheduler
 
-Agents coordinate through durable messages (`send_message`, `read_inbox`, and
-`wait_for_reply`), not only live chat. Interval and cron triggers can wake an
-Agent to pick up work later.
-
-When Team Policy enforcement is enabled, the same authorizer gates user,
-same-Team, cross-Team, scheduler, inbox, worker, and Telegram boundaries.
-Directed edges allow communication or require one operator approval; a missing
-edge denies. Approval holds one attempt and can dispatch it at most once—it is
-not a general workflow engine.
+Agents coordinate through messages (`send_message`, `read_inbox`, `wait_for_reply`), not only live
+chat. An idle Agent with unread mail wakes up, and interval and cron triggers wake an Agent to do
+recurring work.
 
 ## Architecture differences
 
 | | OpenClaw | Bazilion |
 | --- | --- | --- |
 | Shape | Personal assistant gateway | Local multi-agent Team runtime |
-| Agent engine | Own assistant runtime | Pi for session loop, transcript, compaction, provider/tool execution, and coding tools |
-| Team model | Not the center of the product | Revisioned Team Templates, permanent Agents, one live policy per Team |
-| Extensibility | Skills and in-process plugins | Prompt-only skills, out-of-process MCP servers, and native daemon code |
-| Channels | Many first-class transports | HTTP API + web UI + CLI, plus a deep Telegram integration |
-| Config & secrets | JSON/config and credential files | One SQLite database with encrypted secrets and plaintext non-secret config |
-| State | Workspace + config files | One daemon owns `~/.bazilion`; Team roots, Agent homes, sessions, skills, and memory remain inspectable |
-| Registry | Community skill ecosystem | No registry; import skills from a directory, zip, or local OpenClaw install |
+| Agent engine | Its own assistant runtime | Pi for the loop, transcript, compaction, providers and coding tools |
+| Team model | Not the center of the product | Profiles, Agents, Teams with shared workspace, memory and policy |
+| Extensibility | Skills and in-process plugins | Prompt-only skills, MCP servers and native daemon code |
+| Channels | Many first-class transports | Web UI, CLI and HTTP API, plus a deep Telegram integration |
+| Config and secrets | JSON config and credential files | One SQLite database with encrypted secrets |
+| State | Workspace and config files | One daemon owns `~/.bazilion`; workspaces, Agent documents, transcripts, skills and memory stay readable |
+| Registry | Community skill ecosystem | No registry; import from a directory, a zip or a local OpenClaw install |
 
 ### One daemon owns everything
 
-The Bazilion daemon owns the database, Team policy, approval queue, scheduler,
-secrets, and Agent runtime. CLI, web, and mobile clients are stateless HTTP
-clients. Each chat turn runs in its own short-lived worker subprocess, while
-long-lived browser/MCP resources remain in the daemon and are reached over IPC.
+The daemon owns the database, the scheduler, secrets and the Agent runtime. The CLI and the web
+UI are clients of its HTTP API. Each turn runs in its own short-lived worker process, while
+browsers and MCP connections stay in the daemon and are reached over IPC.
 
-### Local-first and yours
+### Local and yours
 
-Bazilion is a personal, MIT-licensed project. It runs on your machine, with your
-provider keys, and stores state under `~/.bazilion`. There is no hosted account.
-Both listeners stay on loopback. Supported remote access uses the web listener
-through [private Tailscale Serve](/docs/private-access/); direct daemon/LAN
-exposure, public reverse proxies, and Funnel are unsupported.
+Bazilion is a personal, MIT-licensed project. It runs on your machine with your provider keys and
+keeps its state under `~/.bazilion`. There is no hosted account. Both listeners stay on loopback;
+remote access goes through the web UI over
+[Tailscale Serve](/docs/private-access/).
 
-## What Bazilion deliberately leaves out
+## What Bazilion leaves out
 
-- **No in-process plugin SDK.** Prompt-only skills use existing tools; MCP
-  servers add out-of-process capabilities; the rest is native daemon code.
-- **Fewer channels.** Bazilion concentrates on HTTP/web/CLI plus one deeply
-  integrated Telegram forum surface.
-- **No skill registry.** Import from local paths, zip archives, or an existing
-  OpenClaw installation.
-- **No general approval workflow.** Communication approval is a posture on one
-  policy edge and protects one captured attempt.
+- **No in-process plugin SDK.** Skills are prompt text that uses the existing tools; MCP servers
+  add out-of-process tools; the rest is daemon code.
+- **Fewer channels.** Web, CLI and HTTP, plus one Telegram forum integration.
+- **No skill registry.** Import from local paths, zip archives or an OpenClaw install.
 
 ## When to use which
 
-Reach for **OpenClaw** when the center of the problem is one assistant available
-across many messaging channels and a broad extension ecosystem.
+Reach for **OpenClaw** when the problem is one assistant across many messaging channels with a
+broad extension ecosystem.
 
-Reach for **Bazilion** when you want to design revisioned Teams of Agents that
-share real project files and memory, talk through an explicit policy, and run
-locally under your control.
+Reach for **Bazilion** when you want Teams of Agents that share real project files and memory,
+message each other and run locally under your control.

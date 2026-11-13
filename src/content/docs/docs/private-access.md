@@ -1,119 +1,80 @@
 ---
 title: Private access
-description: Publish the loopback web UI privately with Tailscale Serve, verify readiness, and give each browser or compatible native client its own credential.
+description: Reach the web UI from a laptop or phone over Tailscale Serve, with one device token per device.
 ---
 
-The supported remote topology is a private HTTPS web gateway through Tailscale
-Serve. Both Bazilion listeners stay on loopback. Direct daemon exposure, public
-reverse proxies, and Tailscale Funnel are unsupported.
+To use Bazilion from a laptop or phone elsewhere, publish the web UI over Tailscale Serve:
+tailnet-only HTTPS in front of the loopback web listener. The daemon and the web UI both stay on
+loopback. Tailscale Funnel, a public reverse proxy and exposing the daemon directly are not
+supported.
 
-## Prepare the host
+## Set up
 
-Finish local provider setup first. Install Tailscale and connect the host and
-client devices to your tailnet. Use the host's actual HTTPS name, such as
-`https://your-host.your-tailnet.ts.net`, for every step below.
-
-Remote chat uses protected execution. On Linux, prepare the selected native/Docker backend and
-confirm [protected-work prerequisites](/docs/tools/#prepare-protected-work-on-linux) before
-exposing the web UI. Mac isolation-required remote coding is unavailable, never downgraded to
-trusted host execution. Enabled browser and MCP tools remain unavailable in protected turns.
-
-The current `bazilion gateway preflight` command runs on the Linux daemon host
-and uses `ss` and the Tailscale CLI to inspect listeners and Serve configuration.
-
-## Start Bazilion with one exact origin
-
-Stop the running dashboard or managed services. For a terminal-managed setup,
-export these values and start the dashboard in that shell:
+Install Tailscale on the host and on your devices. Run Bazilion as an ordinary user, with the
+exact HTTPS origin in its environment (the daemon and the web UI both read it):
 
 ```sh
 export BAZILION_PUBLIC_ORIGIN=https://your-host.your-tailnet.ts.net
-export HOST=127.0.0.1
-export PORT=4321
-export WEB_HOST=127.0.0.1
-export WEB_PORT=4322
-bazilion dashboard
-```
-
-Use an origin only: no URL path, query, or credentials. For managed services,
-put these settings in their service environments and restart both processes.
-Do not start a second dashboard alongside them. Both the daemon and web UI must
-receive the same origin. Once set, all HTTP Agent turns use protected execution,
-even when a client connects locally.
-
-## Publish only the web listener
-
-In another terminal on the host:
-
-```sh
+bazilion dashboard --no-open        # daemon on 127.0.0.1:4321, web UI on 127.0.0.1:4322
 tailscale serve --bg --https=443 http://127.0.0.1:4322
-tailscale serve status
-BAZILION_PUBLIC_ORIGIN=https://your-host.your-tailnet.ts.net bazilion gateway preflight
+tailscale serve status --json       # must show Serve on the web port, never Funnel
 ```
 
-Use the same port environment values if you changed the defaults. Preflight
-checks loopback listeners, the private Serve target, absence of Funnel, and
-authenticated protected-runtime readiness. It does not reconfigure anything.
-Resolve a failed check before proceeding.
+Use an origin only: no path, query or credentials. With `BAZILION_PUBLIC_ORIGIN` set, the daemon
+refuses a non-loopback `HOST`, cookies become `__Host-` cookies, and the web UI answers only
+requests for that host. When the two processes run as separate services (`bazilion serve` with
+`HOST`/`PORT`, the web server with `WEB_HOST`/`WEB_PORT`), give both the same value.
 
-Serve may prompt you to enable HTTPS for the tailnet. Its `--bg` setting persists
-in the background. See the [Tailscale Serve reference](https://tailscale.com/docs/reference/tailscale-cli/serve)
-for installation-specific setup and command details.
+Check from another machine that ports 4321 and 4322 are not reachable and that the HTTPS name does
+not resolve off the tailnet. See the
+[Tailscale Serve reference](https://tailscale.com/docs/reference/tailscale-cli/serve) for setup on
+your tailnet.
 
-## Give each browser a credential
+## Sign in
 
-From the authenticated local CLI:
+Open the HTTPS origin on a tailnet device and log in with a token: the bootstrap token
+(`bazilion token show-local` on the host) or a device token. The daemon turns it into a session
+cookie; the browser does not keep the token. A session ends after 30 days without use.
 
-```sh
-bazilion token create personal-laptop --expires-days 90
-```
-
-Open the exact HTTPS origin from that laptop while connected to Tailscale and
-paste the newly displayed device credential into the login form. It is shown
-once. Browser login exchanges it for a bounded session; it does not put the
-bootstrap bearer into browser cookies.
-
-Use a separate named credential for each device. The first-run bootstrap login
-exception ends when provider setup completes.
-
-## Phone browsers and native clients
-
-The former Expo application was removed; native iOS/Android apps remain future scope.
-On a phone with Tailscale connected, open the same exact HTTPS origin in its browser and
-sign in with a separately minted device credential. The phone uses the web UI's normal
-session, CSRF and interactive controls, never a direct connection to port4321.
-
-Compatible native consumers use their own scoped, expiring bearer or the supported one-paste
-pairing exchange. Existing credential/pairing APIs and QR output are not proof that a mobile
-app is shipped. Never share tokens, pairing codes or credential-bearing URLs.
-
-## Revoke access and troubleshoot
+Give each browser, phone or remote CLI its own device token, on **Setup → Tokens**
+(`/config/tokens`) or with the CLI. The plaintext is shown once. Every token has full access (with
+`BAZILION_BASH_SANDBOX=off` that includes running host commands through an Agent) and expires only
+when you ask:
 
 ```sh
+bazilion token create personal-laptop               # --expires-days 90 for one that expires
 bazilion token list
 bazilion session list
-bazilion token revoke <device-token-id>
 ```
 
-Revoking a device credential invalidates its derived browser sessions too.
-The bootstrap token cannot be revoked. An expired or rejected device credential requires
-an explicit new credential/sign-in; do not reuse the bootstrap secret after setup.
+## Phones
 
-- **Origin or CSRF error:** use the exact configured HTTPS URL; check both
-  service environments and restart after changing them.
-- **Gateway preflight cannot inspect listeners:** run it on the Linux host
-  with `ss` available, not on the phone or a different computer.
-- **Protected runtime unavailable:** on Linux, inspect the selected native/Docker prerequisites
-  and provider configuration with `bazilion doctor` and actual per-turn admission. Mac protected
-  coding is unavailable; installing Docker/VMs is not a remedy. Remote chat never falls back
-  to host tools.
-- **Phone cannot connect:** confirm both devices are in the tailnet and its
-  access rules permit the connection, then check `tailscale serve status`.
+On a phone with Tailscale connected, open the same HTTPS origin in the browser and sign in with
+its own device token. There is no native app; the web UI works at phone widths.
 
-## Retained work
+## A remote CLI
 
-Use the web [conversation library](/docs/conversations/), [saved Results](/docs/results/) and
-eligible [question controls](/docs/questions/) from the authenticated browser. Native clients
-must preserve the daemon-owned conversation selection contract; they cannot choose another
-conversation by replaying stale input. A browser handoff uses its own login, never a bearer
-credential embedded in a URL.
+A remote CLI talks to the same HTTPS origin. Set `BAZILION_SERVER=https://your-host.your-tailnet.ts.net`
+and `BAZILION_TOKEN=<device token>` in its environment, or save the pair:
+
+```sh
+bazilion login --server https://your-host.your-tailnet.ts.net --token <device token>
+bazilion login --clear              # back to the local daemon
+```
+
+`login` checks the token against the server first (`--skip-verify` skips that) and stores the
+remote in the local `auth.json`, so it needs a machine that has run `bazilion serve` once;
+elsewhere use the two environment variables.
+
+## Lost device
+
+Revoke its token with `bazilion token revoke <id>` or on the Tokens page; every browser session
+opened with it ends at once. A single session can be revoked with `bazilion session revoke <id>`.
+The bootstrap token cannot be revoked.
+
+## Troubleshooting
+
+- **Origin or CSRF error:** use the exact configured HTTPS URL, and check that the daemon and the
+  web UI got the same `BAZILION_PUBLIC_ORIGIN`; restart both after changing it.
+- **Phone cannot connect:** check that both devices are on the tailnet and its access rules allow
+  the connection, then `tailscale serve status`.

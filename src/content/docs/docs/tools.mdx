@@ -1,253 +1,154 @@
 ---
 title: Tools & integrations
-description: The agent toolset — browser automation with Playwright, MCP servers, file handling, and the built-in coding, web, mailbox, and memory tools.
+description: The tools every Agent turn gets — files and shell, memory, the mailbox, web search and fetch, the managed browser, MCP servers, image generation and file delivery.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
-The tools an Agent can use depend on how its turn starts. Check this before
-moving a workflow from local chat to Telegram, a schedule, or remote access.
+Every turn gets the same tools, whatever started it: web or CLI chat, a follow-up, Telegram, a
+scheduled trigger or an inbox wake. Only two depend on someone being there to answer: `ask_user`
+([questions](/docs/questions/)) and dangerous-command approval, which is denied when nobody can
+answer. Learning reviews run separately with a single `propose_lesson` tool.
 
-## Which tools can this turn use?
+## Built-in tools
 
-A **local operator turn** is a direct web or CLI chat while
-`BAZILION_PUBLIC_ORIGIN` is unset. It uses your configured tools and shell mode.
-A **protected turn** is started by Telegram, a trigger, inbox delivery, or an
-approved delivery. Setting `BAZILION_PUBLIC_ORIGIN` also makes HTTP chat use
-protected execution, including requests made from the same machine.
+| Tools | What they do |
+| --- | --- |
+| `bash`, and with the sandbox off `read`, `edit`, `write`, `grep`, `find`, `ls` | Work in the Team directory ([coding](/docs/coding-environment/)) |
+| `memory_write`, `memory_read`, `memory_search`, `memory_list` | The Team's shared Markdown memory |
+| `home_read`, `home_write`, `home_list`, `bootstrap_done` | The Agent's own documents |
+| `user_md_get`, `user_md_write` | The Team's USER.md |
+| `send_message`, `read_inbox`, `wait_for_reply` | The mailbox, within [Team Policy](/docs/concepts/#team-policy) |
+| `web_fetch`, `web_search` | [Web research](#web-research) |
+| `browser_*` | The [managed browser](#managed-browser) |
+| `mcp__<server>__<tool>` | Tools from [MCP servers](#mcp-servers) |
+| `image_generate` | [Image generation](#image-generation), when a model is set |
+| `deliver_file` | Saves a workspace file as a [result](/docs/results/) |
+| `ask_user` | Asks you a question, when someone is watching |
 
-On a narrow screen, scroll the table sideways to compare both turn types.
+While a tool runs, its output streams into the chat; see
+[live tool output](/docs/coding-review/#live-tool-output).
 
-| Capability | Local operator turn | Protected normal turn |
+## Web research
+
+- `web_search` finds sources. The daemon runs the search, so backend URLs and keys never reach
+  the Agent.
+- `web_fetch` reads a page as Markdown. It refuses private and loopback addresses, also after
+  redirects, and caches pages for 15 minutes. With `FIRECRAWL_API_KEY` set, a page whose text comes
+  out nearly empty is fetched again through Firecrawl.
+
+`BAZILION_WEB_SEARCH_ROUTE` picks the search backend (**Web search** on `/config/services`, or
+`bazilion config set BAZILION_WEB_SEARCH_ROUTE <value>`):
+
+| Value | Backend |
+| --- | --- |
+| `auto` (default) | Brave when `BRAVE_API_KEY` is set, else SearXNG when `SEARXNG_URL` is set, else `native` |
+| `brave` | The Brave Search API with `BRAVE_API_KEY` |
+| `searxng` | Your SearXNG instance at `SEARXNG_URL`, with JSON output enabled |
+| `native` | The search built into the Agent's own model: OpenAI models with `OPENAI_API_KEY`, or ChatGPT models with the ChatGPT login. Other models get no `web_search` |
+| `off` | No `web_search` tool |
+
+A backend that is chosen but not configured leaves Agents without `web_search`; nothing falls
+back to another one. A query has at most 512 characters and returns up to 10 results. `web_fetch`
+reads at most 3 MiB of a page and returns 20,000 characters by default.
+
+## Managed browser
+
+Each Agent has its own browser: the Chrome, Brave, Edge or Chromium installed on the machine,
+running on a persistent profile, so cookies and logins carry over between turns. The Agent reads
+pages as accessibility snapshots with refs such as `[ref=e5]` and acts on them with
+`browser_navigate`, `browser_snapshot`, `browser_click`, `browser_type`, `browser_fill_form`,
+`browser_select`, `browser_hover`, `browser_press_key`, `browser_go_back`, `browser_tabs`,
+`browser_take_screenshot`, `browser_console` and `browser_network`.
+
+The browser starts at the Agent's first browser action and stops after `BROWSER_IDLE_MS` of
+inactivity. Settings are on `/config/services` (**Browser Automation**):
+
+| Key | Default | |
 | --- | --- | --- |
-| Coding | Trusted host tools (`off`); Linux native/Docker when selected | Selected Linux native/Docker; no host coding tools |
-| Isolation | Mac host execution is unisolated; native/Docker choices refuse | Required; Mac protected coding is unavailable, never downgraded |
-| Web fetch | Guarded fetch; configured rendering integrations | Uncredentialed, SSRF-guarded fetch |
-| Web discovery | Configured backends or eligible native OpenAI/ChatGPT route | Separate opt-in protected SearXNG only; no native search |
-| Managed browser / MCP | When independently admitted; owned stdio on Linux/admitted Mac, or HTTP | Unavailable |
-| Team memory, mailbox, guarded context, Agent home tools | Available | Available through scoped tools |
-| File delivery | Available | Available from the Team workspace |
-| Provider credentials | Configured runtime | Only the selected provider's validated credential fields |
+| `BROWSER_ENABLED` | `true` | Give Agent turns the browser tools |
+| `BROWSER_EXECUTABLE_PATH` | discovery | Browser binary; otherwise the first installed Chrome, Brave, Edge or Chromium |
+| `BROWSER_HEADLESS` | `true` | `false` opens a visible window |
+| `BROWSER_ALLOW_PRIVATE_NETWORK` | `false` | Turn the SSRF proxy off; local development only |
+| `BROWSER_IDLE_MS` | `900000` | Stop a browser after 15 minutes idle |
+| `BROWSER_MAX_SESSIONS` | `4` | Browsers running at once |
 
-Reviewed learning uses a separate restricted review surface; it does not get
-the normal Agent toolset. See [Daily operations](/docs/operations/#review-and-apply-a-lesson).
+All browser traffic goes through a proxy in the daemon that refuses loopback, private and
+link-local addresses. Downloads are refused and WebRTC and QUIC are off, so nothing goes around the
+proxy.
 
-Enabling a browser or MCP server does not add it to protected turns. A failed
-protected preflight stops the turn; it never falls back to host execution.
-
-## Prepare protected work on Linux
-
-**Mac isolation-required coding and specialist command checks are unavailable.** Generic native
-Mac isolation is deferred/unqualified and Mac Docker/VM execution is removed. Installing Docker,
-changing approval settings or approving communication cannot make trusted host execution protected.
-Closed reviewer-only workers keep their independent no-shell/fixed-tool contract.
-
-On Linux, `BAZILION_BASH_SANDBOX=native` selects unprivileged Bubblewrap with **mandatory seccomp**.
-The host must provide admitted Bubblewrap/toolchain inputs and permit the required namespace/kernel
-operations. Commands get minimal environment/credentials and bounded original-owner cleanup;
-missing mechanisms, unsafe inputs or drift refuse. TCP/UDP, including localhost, are denied;
-explicitly admitted private pathname Unix IPC remains possible. No image, host or Docker fallback
-is used. Native commands always use dangerous-command approval; unattended risky commands deny.
+The profile lives in `~/.bazilion/browsers/<agent-id>/`. It holds the Agent's cookies and logins,
+is never mounted into the Docker sandbox and is left out of backups. Manage it on the Agent page
+(**Managed browser** card) or:
 
 ```sh
-bazilion config set BAZILION_BASH_SANDBOX native
-bazilion doctor
+bazilion agent browser status <agent>   # never starts the browser
+bazilion agent browser stop <agent>     # keeps the profile
+bazilion agent browser reset <agent>    # deletes the profile; --yes skips the prompt
 ```
 
-Selection is not readiness. Doctor/Config report **Not checked** until actual owned per-turn
-admission; unknown cleanup retains resources/writers and never grants a force-clear. Native
-isolates coding commands, not separately admitted ordinary browser/MCP capabilities.
-
-Protected Linux work selects native only when explicitly configured; otherwise it retains Docker,
-including when local operator chat uses `off`. Team defaults alone do not select a backend.
-
-### Prepare Docker for protected work
-
-On the **Linux** daemon host, install and start a local Docker engine and ensure the user
-running Bazilion can access its Unix socket. Prepare the default image yourself:
-
-```sh
-docker context show
-docker info
-docker pull debian:bookworm-slim
-docker image inspect debian:bookworm-slim
-bazilion doctor
-```
-
-Bazilion uses `--pull never`: it will not download a missing image during a
-turn. Use `BAZILION_BASH_SANDBOX_IMAGE` in the daemon environment to select a
-different locally installed compatible image, then restart. Images with
-declared volumes and remote Docker endpoints are rejected. The default image
-is minimal; prepare a compatible image with any project tools you need because
-shell commands run without network access.
-
-Confirm the protected-work readiness reported by `bazilion doctor`, then test
-the intended Agent/provider through its actual Telegram, trigger, or remote
-path. General readiness does not prove every provider credential or project
-command works. Docker setup is required only for Docker-selected workflows, not native execution.
-Use authenticated health details and preserve all per-turn checks; a zero doctor exit alone means
-structural installation health.
-
-## The built-in tools
-
-Within the capability limits above, normal turns have:
-
-- **coding tools** — the admitted host, Linux native or Linux Docker surface for Team project files,
-- **web tools** — guarded fetch; ordinary configured/native discovery or separately configured protected SearXNG within their distinct boundaries,
-- **mailbox tools** — `send_message`, `read_inbox`, `wait_for_reply`, and
-  `approval_status`,
-- **memory tools** — search and write the Team's [shared memory](/docs/concepts/#shared-usermd-and-memory),
-- **guarded Team context tools** — `user_md_get` and concurrency-checked
-  `user_md_write`,
-- **home-file tools** — read and update its own `IDENTITY.md` and notes.
-
-Because a Team root can be a symlink to a real project (see
-[Core concepts](/docs/concepts/#teams)), Agents work on actual code rather than
-a throwaway sandbox.
-
-## Shell isolation and dangerous-command approval
-
-For local operator turns, Pi's host-backed `read`, `bash`, `edit`, `write`, `grep`, `find`,
-and `ls` tools operate from the Team root. This is convenient, but the working
-directory is not a security boundary.
-
-**Mac operator coding must explicitly use `off`: trusted, unisolated host execution.** Native or
-Docker choices, including stale configuration, refuse rather than becoming host execution.
-
-On Linux, set `BAZILION_BASH_SANDBOX=docker` to replace the host-backed coding surface
-with a containerized `bash`. Every invocation uses a fresh container with no
-network, a read-only root, a temporary `/tmp`, a scrubbed environment, and the
-Team workspace as its writable project mount. Team memory, Agent inputs, and
-attached skills are mounted read-only. Bazilion accepts only a local Unix-socket
-Docker context and a pre-existing compatible image; a missing or invalid setup
-fails closed instead of falling back to the host.
-
-`BAZILION_BASH_APPROVAL=dangerous` is a separate control. Commands classified
-as dangerous pause for approval inline in web chat or at an interactive CLI
-prompt. Decisions are scoped to that turn; cancellation and timeouts clean up
-the request, and non-interactive turns deny automatically. This is independent
-of durable Team Policy communication approvals.
-
-Native always uses the dangerous-command gate, even if the separate approval setting is off.
-For a Linux Docker example:
-
-```sh
-BAZILION_BASH_SANDBOX=docker \
-BAZILION_BASH_APPROVAL=dangerous \
-bazilion dashboard
-```
-
-## Web research and optional managed browsing
-
-Ordinary interactive discovery uses **Config → Web Search** and the Agent's **Web discovery**
-status. Auto preserves configured Brave, then SearXNG; otherwise eligible OpenAI/ChatGPT Agents
-use their own selected model/account. Explicit native routes must match the Agent's provider.
-No error or missing entitlement silently switches provider, account, model or browser.
-
-Status is passive, not a provider probe. API-key native search remains experimental/live-unqualified;
-the subscription journey has bounded historical acceptance, not general entitlement. Existing model
-selections do not change automatically. Provider-hosted search networking is not confined by the
-browser proxy. Agents must read original sources through guarded fetch and cite what they read.
-
-Local interactive turns can separately use an enabled **managed browser**, attached through
-Playwright. It is accessibility-tree-first: Agents observe current references with their matching
-`observationId`, act on those references and never blindly replay uncertain submissions.
-
-The suite covers navigation and interaction — `browser_navigate`,
-`browser_snapshot`, `browser_click`, `browser_type`, `browser_fill_form`,
-`browser_select`, `browser_hover`, `browser_press_key`, `browser_go_back`,
-`browser_tabs`, `browser_take_screenshot`, `browser_console`, and
-`browser_network`.
-
-Bazilion launches its installed browser on an Agent's daemon-owned persistent profile and attaches
-Playwright; browser state can contain sensitive cookies/logins. Profiles are excluded from backup.
-Configuration/session readiness does not prove any site, login or anti-bot access will work.
-Protected, scheduled/inbox and restricted turns do not receive browsing capability.
-
-The 0.25 alpha has actual **non-GUI macOS 27.0.1 arm64 / Node 26.12.1** browser, private-keychain,
-SSRF, PNG and main-process shutdown/restart/restore evidence. It uses an Agent-private native
-keychain, never the operator's personal browser profile/keychain. **Mac headed/desktop-browser
-qualification is deferred to a later version**, not passed; public-page/PNG checks do not qualify
-live models, generated-image routes, Google access or arbitrary sites.
-
-Operator controls (not Agent recovery tools):
-
-```sh
-bazilion agent browser status <agent-id>
-bazilion agent browser stop <agent-id>
-bazilion agent browser reset <agent-id> --yes
-```
-
-Stop preserves the profile; reset is destructive. Unknown/live ownership is recovery-required:
-never manually delete profile directories, locks or owner markers. Downloads are denied.
+Archiving an Agent stops its browser; deleting it deletes the profile. Sites may still block the
+browser or show CAPTCHAs and logins; the Agent is told to stop and tell you.
 
 <Aside type="caution">
-The normal validating **SSRF proxy** blocks loopback/private-network targets, including
-persisted service-worker egress. `BROWSER_ALLOW_PRIVATE_NETWORK=true` is a local-development
-exception that disables this protection, not an Agent capability or site-access guarantee.
+`BROWSER_ALLOW_PRIVATE_NETWORK=true` lets pages reach your local network and `file:` URLs. Use it
+only for local development.
 </Aside>
 
 ## MCP servers
 
-The daemon is a **Model Context Protocol** client. Connect an MCP server and its
-tools are discovered automatically and injected into configured local operator turns,
-namespaced as `mcp__<server>__<tool>` so they never collide with built-ins.
-
-The standalone daemon-owned MCP client supports two transports:
-
-- **stdio** — local subprocess execution on Linux and admitted Apple Silicon macOS, with native
-  process ownership and positive retirement; unknown identity/cleanup retains a blocked slot.
-  Unsupported platforms refuse before spawn,
-- **Streamable HTTP** — a remote server over HTTP, with optional bearer auth.
-
-Legacy **SSE is retired**, not imported or adapted. No automatic OAuth, ambient Pi discovery or
-uncertain tool-call replay is added. MCP remains unavailable to protected/restricted turns.
-
-Manage servers from the CLI:
+Tools from Model Context Protocol servers are offered to every turn as `mcp__<server>__<tool>`.
+Servers are configured once for the whole installation, on `/config/mcp` or with the CLI:
 
 ```sh
-bazilion mcp add <name> …     # register a server
-bazilion mcp list             # list configured servers
-bazilion mcp show <name>      # inspect one server and its tools
-bazilion mcp test <name>      # connect and verify it responds
-bazilion mcp enable <name>
-bazilion mcp disable <name>
-bazilion mcp rm <name>
+bazilion mcp add files --command npx --args "-y @modelcontextprotocol/server-filesystem /my/project"
+bazilion mcp add docs --transport http --url https://mcp.example.com/mcp --token <bearer>
+bazilion mcp list
+bazilion mcp test <server-id>      # connect afresh and list the tools
+bazilion mcp disable <server-id>   # or enable
+bazilion mcp rm <server-id>
 ```
 
-The same servers are managed visually on the **`/config/mcp`** page.
+- **stdio** servers run as daemon child processes. They get the daemon's environment with your
+  provider keys, but never Bazilion's own credentials. Treat them as trusted local programs.
+- **http** servers use Streamable HTTP. The bearer token is stored encrypted and redirects are
+  refused. A token passed with `--token` can land in your shell history; the web page avoids that.
 
-## File handling
+A server starts on first use and is shared by all turns. One that fails to start or to list its
+tools within 10 seconds is skipped for that turn; `bazilion mcp test` shows why. Calls time out
+after 60 seconds and are never retried. Only tools are supported: no MCP resources, prompts,
+sampling or automatic OAuth sign-in.
 
-Files move **both ways** between you and your agents, across the web UI,
-Telegram, and the CLI.
+## Image generation
 
-**Inbound.** Attach a file and the daemon classifies it: images are passed to the
-model as vision input, while other files are stored where the agent can open them
-with its coding tools. From the CLI:
+`image_generate` creates an image from a prompt and saves it as a [result](/docs/results/). It is
+off until you pick a model with `BAZILION_IMAGE_MODEL` (**Content tools → Image generation** on
+`/config/services`, or `bazilion config set BAZILION_IMAGE_MODEL <value>`):
+
+| Value | Account |
+| --- | --- |
+| `off` (default) | No `image_generate` tool |
+| `openai-codex:gpt-image-2` | Your ChatGPT login; uses the subscription |
+| `openai:gpt-image-2` | `OPENAI_API_KEY`; billed per image by OpenAI |
+| `openrouter:google/gemini-3.1-flash-image` | `OPENROUTER_API_KEY`; billed by OpenRouter |
+| `openrouter:openai/gpt-image-2` | `OPENROUTER_API_KEY`; billed by OpenRouter |
+
+At most four calls per turn, each waiting up to 180 seconds. Nothing is retried, and a call that
+failed after the request was sent may still have been billed. Set spending limits in the
+provider's own account.
+
+## Files in and out
+
+**In.** Attach files in the web composer (button, paste or drag and drop), in Telegram, or from
+the CLI. Images reach the model as images; any other file is saved to the Agent's `uploads/`
+directory and the Agent gets its path. Audio and video are stored as files, not model input.
 
 ```sh
-bazilion agent chat <agent-id> --message "Describe this screenshot" --image ./screenshot.png
-bazilion agent chat <agent-id> --message "Summarize this report" --file ./report.pdf
+bazilion agent chat <agent> --message "Describe this screenshot" --image ./screenshot.png
+bazilion agent chat <agent> --message "Summarise this report" --file ./report.pdf
 ```
 
-**Outbound.** Agents send files back with the **`deliver_file`** tool (up to
-**25 MB** per file). These deliveries arrive as downloadable files, including
-Telegram documents. Images returned by tools such as browser screenshots are
-displayed separately in web chat and sent as Telegram photos when supported.
-
-<Aside type="note">
-Audio and video files are stored as attachments; they are not native audio/video
-model input. Browser and MCP availability follows the turn boundary above,
-regardless of which client displays the conversation.
-</Aside>
-
-## Durable files and live clarification in 0.15.0
-
-`deliver_file` captures an immutable Team-owned result, rather than relying on transient stream
-bytes. Saved chat cards and the Team Results library survive reload and restart; downloads retain
-the original filename. See [Saved results](/docs/results/) for authorization, previews and limits.
-
-`ask_user` is available only on eligible live human routes. It offers bounded choices, Other or
-Skip and waits for a correlated answer in the originating conversation. Scheduled, inbox and review
-turns do not inherit this capability. See [Agent questions](/docs/questions/).
+**Out.** `deliver_file` saves a workspace file (up to 25 MiB) as a [result](/docs/results/): a
+download card in the web chat, a document in the Agent's Telegram topic, and a file in the current
+directory for `bazilion agent chat`. Screenshots and other tool images show inline in the chat and
+as Telegram photos.
