@@ -1,66 +1,51 @@
 ---
 import '../styles/global.css';
 
+const steps = [
+  {
+    title: 'Describe an Agent once',
+    body: 'A Profile is an Agent template: its SOUL.md, IDENTITY.md, AGENTS.md and TOOLS.md, a default model and its skills.',
+  },
+  {
+    title: 'Spawn Agents into a Team',
+    body: 'A Team is a workspace directory, or a link to your project, with a USER.md about you, shared memory and its members. Team templates spawn a whole Team at once.',
+  },
+  {
+    title: 'Talk to them where you are',
+    body: 'Chat in the web UI, run a turn from the CLI, or write in Telegram, where every Agent has its own topic. Triggers wake them on a schedule.',
+  },
+];
+
 const features = [
   {
-    n: '01',
-    title: 'Profiles become Agents',
-    body: 'A profile is an Agent template: SOUL.md, IDENTITY.md, AGENTS.md, TOOLS.md, a default model and skills. Spawning one makes an Agent in a Team.',
+    title: 'Memory the whole Team shares',
+    body: 'Markdown notes in the Team’s memory folder, searched with BM25 through qmd, so decisions outlive the chat that produced them.',
+    tells: ['memory_write', 'memory_search'],
   },
   {
-    n: '02',
-    title: 'Teams share a workspace',
-    body: 'A Team is a directory, or a link to your project, with a USER.md about you, shared memory and its members. Team templates spawn a whole Team at once.',
+    title: 'Agents that message each other',
+    body: 'An inbox inside the agent loop. An idle Agent with unread mail wakes up, and a hop limit stops message loops. A restricted Team decides who may message whom.',
+    tells: ['send_message', 'wait_for_reply'],
   },
   {
-    n: '03',
-    title: 'Simple messaging policy',
-    body: 'An open Team lets members message each other freely; a restricted one needs an allow edge. You can always chat with every Agent.',
-  },
-  {
-    n: '04',
-    title: 'A mailbox between agents',
-    body: 'send_message, read_inbox and wait_for_reply inside the loop; an idle Agent with unread mail wakes up, and a hop limit stops message loops.',
-  },
-  {
-    n: '05',
-    title: 'Shared memory, indexed by qmd',
-    body: 'One <team>/memory per Team, searched with qmd BM25 over Markdown, so decisions outlive the chat that produced them.',
-  },
-  {
-    n: '06',
-    title: 'Schedules that run once',
+    title: 'Work on a schedule',
     body: 'Interval and cron triggers wake an Agent with a stored instruction. Each occurrence runs once; failures show in Attention with the real error.',
+    tells: ['bazilion trigger add'],
   },
   {
-    n: '07',
-    title: 'Coding on the host or in Docker',
-    body: 'Agents run bash and file tools in the Team directory, guided by the repository\'s AGENTS.md. One setting moves every turn into a network-less Docker sandbox.',
+    title: 'Coding, on the host or in Docker',
+    body: 'Agents run bash and file tools in the Team directory, guided by the repository’s AGENTS.md. One setting moves shell commands into a network-less container; the Team Review page shows the Git changes.',
+    tells: ['BAZILION_BASH_SANDBOX=docker'],
   },
   {
-    n: '08',
-    title: 'Watch it work, review the diff',
-    body: 'Tool output streams live into the chat. The Team Review page shows the Git changes since any base and sends file feedback to an Agent.',
+    title: 'Tools, browser and skills',
+    body: 'Web search and fetch, a managed browser per Agent, MCP servers, image generation, and OpenClaw-style skills added to an Agent’s prompt.',
+    tells: ['bazilion mcp add', 'SKILL.md'],
   },
   {
-    n: '09',
-    title: 'Research, browse, connect',
-    body: 'Web search and fetch, a managed browser per Agent, MCP servers and image generation, with the same tools on every kind of turn.',
-  },
-  {
-    n: '10',
-    title: 'Results and conversations persist',
-    body: 'Delivered files and generated images are saved as Team results. Earlier conversations stay readable when you start a new one.',
-  },
-  {
-    n: '11',
-    title: 'Follow-ups, questions, Telegram',
-    body: 'Queue messages while an Agent works, answer its questions mid-turn, and talk to every Agent in its own Telegram topic.',
-  },
-  {
-    n: '12',
-    title: 'Pi underneath, your machine around it',
-    body: 'Pi runs the turn loop, transcript and coding tools. One daemon owns ~/.bazilion; the web UI and the CLI offer the same features.',
+    title: 'The model you already use',
+    body: 'Sign in with ChatGPT, use an API key for Anthropic, OpenAI, Google and many others, or run a local LM Studio or Ollama.',
+    tells: ['bazilion auth openai login'],
   },
 ];
 ---
@@ -73,17 +58,17 @@ const features = [
     <link rel="icon" type="image/svg+xml" href="/baziu.svg" />
     <meta name="theme-color" content="#F5F0E8" />
 
-    <title>Bazilion — personal open source multi-agent runtime</title>
+    <title>Bazilion — your own team of AI agents, on your machine</title>
     <meta
       name="description"
-      content="Bazilion is Patrizio Rullo's MIT-licensed, local multi-agent runtime for one person, built on Pi's coding agent — Agents in Teams with a shared workspace, memory and mailbox, on schedules, from a web UI, a CLI and Telegram."
+      content="Bazilion is Patrizio Rullo's MIT-licensed, local multi-agent runtime for one person, built on Pi's coding agent. Spawn Agents into Teams with a shared workspace, memory and inbox, and talk to them from a web UI, the CLI and Telegram."
     />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Bazilion — personal open source multi-agent runtime" />
+    <meta property="og:title" content="Bazilion — your own team of AI agents, on your machine" />
     <meta
       property="og:description"
-      content="MIT-licensed and local, built on Pi's coding agent. Teams of Agents with a shared workspace, memory and mailbox, schedules, coding on the host or in Docker, and saved results."
+      content="An MIT-licensed, local multi-agent runtime for one person, built on Pi's coding agent. Teams of Agents with a shared workspace, memory and inbox, schedules, and coding on the host or in Docker."
     />
     <meta property="og:url" content="https://bazilion.com" />
     <meta property="og:image" content="https://bazilion.com/baziu.svg" />
@@ -97,289 +82,319 @@ const features = [
     />
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
     <div class="page">
-      <!-- ───────────── nav ───────────── -->
-      <nav class="nav" data-reveal="1">
-        <a href="/" class="mark" aria-label="Bazilion home">
-          Baz<span class="dot" aria-hidden="true"></span>lion
+      <nav class="nav" aria-label="Main">
+        <a href="/" class="nav__mark" aria-label="Bazilion home">
+          <img src="/baziu.svg" alt="" width="34" height="34" />
+          <span>Baz<span class="ink-eye">i</span>lion</span>
         </a>
-        <ul role="list">
-          <li><a href="#manifesto">why</a></li>
-          <li><a href="#library">features</a></li>
-          <li><a href="#agents">templates</a></li>
-          <li><a href="#install">install</a></li>
-          <li><a href="/docs">docs</a></li>
-          <li><a href="https://github.com/rullopat/bazilion" rel="noreferrer">github ↗</a></li>
+        <ul role="list" class="nav__links">
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#library">Features</a></li>
+          <li><a href="#install">Install</a></li>
+          <li><a href="/docs/">Docs</a></li>
+          <li><a href="https://github.com/rullopat/bazilion" rel="noreferrer">GitHub</a></li>
         </ul>
       </nav>
+    </div>
 
-      <a class="release-note" href="/docs/whats-new/" data-reveal="2">
-        <span class="release-note__badge">v0.26.0</span>
-        <span>
-          Simplified for one local operator. Back up your home and start fresh to upgrade.
-        </span>
-        <span class="release-note__arrow" aria-hidden="true">read what changed →</span>
-      </a>
-
+    <main id="main">
       <!-- ───────────── hero ───────────── -->
-      <header class="hero">
-        <div>
-          <div class="hero__supra" data-reveal="2">
-            built on Pi · your machine, your keys
-          </div>
-          <h1 class="hero__wordmark" data-reveal="3">
-            Baz<span class="ink-eye">i</span>lion
+      <header class="hero page">
+        <a class="release-note" href="/docs/whats-new/" data-reveal="1">
+          <span class="release-note__badge">v0.26.0</span>
+          <span class="release-note__text">
+            Simplified for one local operator. Back up your home and start fresh to upgrade.
+          </span>
+          <span class="release-note__more">Read what changed</span>
+        </a>
+
+        <div class="hero__text">
+          <h1 class="hero__title" data-reveal="2">
+            Your own team of AI agents, running on your machine.
           </h1>
-          <p class="hero__lede" data-reveal="4">
-            An MIT-licensed runtime <br />for <em>agent teams</em>, <br />living on your machine.
+
+          <p class="hero__lede" data-reveal="3">
+            Bazilion is an open source multi-agent runtime for one person. Spawn Agents into
+            Teams that share a workspace and memory, let them message each other and work on
+            schedules, and talk to them from a web UI, the terminal or Telegram. Your machine,
+            your keys.
           </p>
-          <div class="hero__meta" data-reveal="5">
-            <a class="hero__cta" href="#install">
-              <span>install bazilion</span>
-              <span class="arrow" aria-hidden="true">→</span>
-            </a>
-            <a class="hero__link" href="https://github.com/rullopat/bazilion/blob/main/LICENSE" rel="noreferrer">MIT license ↗</a>
+
+          <div class="hero__install" data-reveal="4">
+            <div class="cmd">
+              <code class="cmd__text"><span class="cmd__prompt" aria-hidden="true">$ </span>curl -fsSL https://bazilion.com/install.sh | bash</code>
+              <button class="cmd__copy" type="button" data-copy="curl -fsSL https://bazilion.com/install.sh | bash" aria-label="Copy the install command" hidden>Copy</button>
+            </div>
+            <p class="hero__then">
+              Then run <code>bazilion dashboard</code>. With a supported Node already installed,
+              <code>npm install -g bazilion</code> works too.
+            </p>
           </div>
+
+          <div class="hero__actions" data-reveal="5">
+            <a class="btn btn--primary" href="/docs/getting-started/">Get started</a>
+            <a class="btn btn--ghost" href="https://github.com/rullopat/bazilion" rel="noreferrer">
+              <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+              View on GitHub
+            </a>
+          </div>
+
+          <p class="hero__platform" data-reveal="5">
+            MIT licensed, built on Pi's coding agent. Linux is the tested platform; macOS runs commands on the
+            host and is untested.
+          </p>
         </div>
 
-        <figure class="hero__portrait" data-reveal="4">
-          <img
-            src="/baziu.svg"
-            alt="Baziu — a Neva Masquerade cat, portrait used as the Bazilion mark"
-            width="460"
-            height="460"
-            fetchpriority="high"
-          />
+        <figure class="hero__portrait" data-reveal="3">
+          <div class="hero__frame">
+            <img
+              src="/baziu.svg"
+              alt="Baziu — a Neva Masquerade cat, portrait used as the Bazilion mark"
+              width="420"
+              height="420"
+              fetchpriority="high"
+            />
+          </div>
           <figcaption class="caption">
             Baziu, <span>♡</span> 2007 — 2025
           </figcaption>
         </figure>
       </header>
 
-      <!-- ───────────── install ───────────── -->
-      <section class="section quickstart" id="install">
-        <div class="section__label">Quick start</div>
-        <h2 class="section__title">
-          One-line install, npm, or source. <em>The dashboard opens locally</em>.
-        </h2>
-
-        <div class="install-tabs">
-          <input class="install-tabs__input" type="radio" name="install-method" id="install-macos" checked />
-          <input class="install-tabs__input" type="radio" name="install-method" id="install-npm" />
-          <input class="install-tabs__input" type="radio" name="install-method" id="install-hackable" />
-
-          <div class="install-tabs__nav" aria-label="Installation methods">
-            <label class="install-tabs__tab" for="install-macos">Linux / macOS</label>
-            <label class="install-tabs__tab" for="install-npm">npm</label>
-            <label class="install-tabs__tab" for="install-hackable">Hackable</label>
-          </div>
-
-          <div class="install-tabs__panels">
-            <div class="install-tabs__panel install-tabs__panel--macos">
-              <div class="card-code">
-                <div class="card-code__head">
-                  <span>one-line installer</span>
-                </div>
-<pre><span class="c-comment"># Installs supported Node if needed, then bazilion.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">curl</span> <span class="c-flag">-fsSL</span> \
-  https://bazilion.com/install.sh \
-  | bash
-
-<span class="c-comment"># Then open the local web dashboard.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span></pre>
-              </div>
-            </div>
-
-            <div class="install-tabs__panel install-tabs__panel--npm">
-              <div class="card-code">
-                <div class="card-code__head">
-                  <span>daemon + web UI</span>
-                </div>
-<pre><span class="c-comment"># Requires Node ^26.12.1.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">bazilion</span>
-<span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span>
-<span class="c-ok">*</span> daemon <span class="c-flag">127.0.0.1:4321</span>
-<span class="c-ok">*</span> dashboard <span class="c-flag">127.0.0.1:4322</span>
-<span class="c-ok">*</span> workspace <span class="c-flag">~/.bazilion</span></pre>
-              </div>
-            </div>
-
-            <div class="install-tabs__panel install-tabs__panel--hackable">
-              <div class="card-code">
-                <div class="card-code__head">
-                  <span>source checkout</span>
-                </div>
-<pre><span class="c-comment"># For people who want to read and change the code.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">git</span> <span class="c-cmd">clone</span> https://github.com/rullopat/bazilion
-<span class="c-prompt">$</span> <span class="c-cmd">cd</span> bazilion
-<span class="c-prompt">$</span> <span class="c-cmd">mise</span> <span class="c-cmd">install</span> <span class="c-comment"># Node 26.12.1 and pnpm 12.15.0</span>
-<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">install</span>
-
-<span class="c-comment"># Start the source daemon, then run the web UI in another terminal.</span>
-<span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">tsx</span> apps/cli/src/index.ts serve
-<span class="c-prompt">$</span> <span class="c-cmd">cd</span> apps/web && <span class="c-cmd">pnpm</span> <span class="c-cmd">dev</span></pre>
-              </div>
-            </div>
-          </div>
+      <!-- ───────────── how it works ───────────── -->
+      <section class="section page" id="how" aria-labelledby="how-title">
+        <span id="agents" class="anchor-alias" aria-hidden="true"></span>
+        <div class="section__head">
+          <h2 class="section__title" id="how-title">How it works</h2>
+          <p class="section__intro">
+            One daemon on your machine owns everything in <code>~/.bazilion</code>. You write the
+            roles; it runs the Agents.
+          </p>
         </div>
-      </section>
 
-      <p class="showcase__copy">
-        Linux is the tested platform; macOS runs commands on the host and is untested.
-        Upgrading from an earlier release? A 0.25 home is refused: back it up, run
-        <code>bazilion uninstall --yes</code> and start fresh, as the
-        <a href="/docs/getting-started/#upgrade-to-0260">0.26.0 upgrade steps</a> describe.
-      </p>
-
-      <!-- ───────────── manifesto ───────────── -->
-      <section class="section" id="manifesto">
-        <div class="section__label">Personal open source</div>
-        <h2 class="section__title">
-          A runtime I built because I wanted agents that <em>stayed home</em>.
-        </h2>
-
-        <div class="manifesto">
-          <div class="manifesto__body">
-            <p class="dropcap">
-              Bazilion is my personal open source multi-agent runtime for one
-              person. The engine is Pi's coding agent; Bazilion wraps it in one
-              daemon, a CLI, a web UI and a Telegram bot, with Teams, shared memory,
-              a mailbox and schedules.
-            </p>
-            <p>
-              A profile defines one kind of agent; a Team template lists the
-              Agents of a whole Team and who may message whom. Spawning one puts
-              its Agents in a single Team with one workspace, one USER.md, one
-              memory and one mailbox, on your machine and with your own keys.
-            </p>
-          </div>
-
-          <aside class="manifesto__aside">
-            <strong>Engine credit</strong>
-            Built on <code>@earendil-works/pi-coding-agent</code>, with
-            Bazilion orchestration around Pi's session, transcript, tool loop,
-            and coding tools.
-          </aside>
-        </div>
-      </section>
-
-      <!-- ───────────── library / features ───────────── -->
-      <section class="section" id="library">
-        <div class="section__label">Core ideas</div>
-        <h2 class="section__title">
-          The pieces that make agent collaboration <em>concrete</em>.
-        </h2>
-
-        <ol class="library" role="list">
-          {features.map((f) => (
-            <li class="library__item">
-              <div class="library__num">{f.n}</div>
-              <div>
-                <h3 class="library__title">{f.title}</h3>
-                <p class="library__desc">{f.body}</p>
+        <ol class="flow" role="list">
+          <li class="flow__step">
+            <div class="flow__visual flow__visual--profile" aria-hidden="true">
+              <div class="sheet">
+                <span class="sheet__name">profiles/researcher</span>
+                <span>SOUL.md</span>
+                <span>IDENTITY.md</span>
+                <span>AGENTS.md</span>
+                <span>TOOLS.md</span>
+                <span class="sheet__meta">a default model and skills</span>
               </div>
-            </li>
-          ))}
+            </div>
+            <div class="flow__copy">
+              <span class="flow__num" aria-hidden="true">1</span>
+              <h3>{steps[0].title}</h3>
+              <p>{steps[0].body}</p>
+            </div>
+          </li>
+
+          <li class="flow__step">
+            <div class="flow__visual flow__visual--team" aria-hidden="true">
+              <div class="folder">
+                <span class="folder__tab">teams/site</span>
+                <span class="folder__line">USER.md</span>
+                <span class="folder__line">memory/</span>
+                <span class="folder__line folder__line--dim">your project files</span>
+                <span class="folder__members">
+                  <span class="member">scout</span>
+                  <span class="member">writer</span>
+                  <span class="member">reviewer</span>
+                </span>
+              </div>
+            </div>
+            <div class="flow__copy">
+              <span class="flow__num" aria-hidden="true">2</span>
+              <h3>{steps[1].title}</h3>
+              <p>{steps[1].body}</p>
+            </div>
+          </li>
+
+          <li class="flow__step">
+            <div class="flow__visual flow__visual--surfaces" aria-hidden="true">
+              <span class="surface"><b>Web UI</b><i>127.0.0.1:4322</i></span>
+              <span class="surface"><b>CLI</b><i>bazilion agent chat</i></span>
+              <span class="surface"><b>Telegram</b><i>one topic per Agent</i></span>
+            </div>
+            <div class="flow__copy">
+              <span class="flow__num" aria-hidden="true">3</span>
+              <h3>{steps[2].title}</h3>
+              <p>{steps[2].body}</p>
+            </div>
+          </li>
         </ol>
       </section>
 
-      <!-- ───────────── agent showcase ───────────── -->
-      <section class="section" id="agents">
-        <div class="section__label">Templates</div>
-        <h2 class="section__title">
-          Profiles describe agents. Team templates describe a <em>whole team</em>.
-        </h2>
-
-        <div class="showcase">
-          <div class="showcase__left">
-            <p class="showcase__lead">
-              Write the roles once.<br />
-              Decide who may message whom.<br />
-              Spawn the whole Team.
+      <!-- ───────────── terminal session ───────────── -->
+      <section class="session" aria-labelledby="session-title">
+        <div class="page session__inner">
+          <div class="session__intro">
+            <h2 class="section__title" id="session-title">A first session, in the terminal</h2>
+            <div class="session__notes">
+            <p>
+              Start the dashboard, point a Team at a project, spawn an Agent and ask it something.
+              It checks the Team’s memory before it answers.
             </p>
-            <p class="showcase__copy">
-              A profile is the reusable role; a Team template is the reusable
-              roster, with allow edges and an open or restricted mode. Spawn it into
-              a Team from the web UI, the CLI or Telegram, edit the live Team's
-              policy, and save a Team as a new template.
+            <p>
+              The web UI does all of this too: the dashboard and the CLI offer the same management
+              features.
+            </p>
+            <a class="text-link" href="/docs/getting-started/">Read the getting started guide</a>
+            </div>
+          </div>
+
+          <figure class="terminal">
+            <div class="terminal__bar" aria-hidden="true">
+              <span></span><span></span><span></span>
+              <em>~/code/site</em>
+            </div>
+            <figcaption class="visually-hidden">
+              A terminal session: starting the dashboard, registering a Team, spawning an Agent,
+              chatting with it and adding a schedule.
+            </figcaption>
+<pre class="terminal__body" tabindex="0"><code><span class="t-p">$</span> <span class="t-c">bazilion dashboard</span>
+<span class="t-o">starting bazilion daemon at http://127.0.0.1:4321
+starting bazilion web UI at http://127.0.0.1:4322
+
+dashboard: http://127.0.0.1:4322
+sign in:   the token in /home/you/.bazilion/auth.json (print it: bazilion token show-local)</span>
+
+<span class="t-n"># Connect a provider on /config, then:</span>
+<span class="t-p">$</span> <span class="t-c">bazilion team add site</span> <span class="t-f">--link /home/you/code/site</span>
+<span class="t-o">registered team site at /home/you/.bazilion/teams/site</span>
+
+<span class="t-p">$</span> <span class="t-c">bazilion agent spawn</span> <span class="t-f">--profile default --name scout --team site</span>
+<span class="t-o">spawned agent 7c41e0b2-5d8a-4f3e-9a61-2b0c8d4e7f15 (scout)
+dir: /home/you/.bazilion/agents/7c41e0b2-5d8a-4f3e-9a61-2b0c8d4e7f15</span>
+
+<span class="t-p">$</span> <span class="t-c">bazilion agent chat 7c41</span> <span class="t-f">--message "What did we decide about the changelog?"</span>
+<span class="t-o">  [tool: memory_search &#123;"query":"changelog"&#125;]
+  [result: decisions/changelog.md: One rolling page, the latest four releases, newest first.]</span>
+<span class="t-a">We decided on one rolling changelog page with the latest four releases,
+newest first. Older releases link to their GitHub release notes.</span>
+
+<span class="t-p">$</span> <span class="t-c">bazilion trigger add 7c41</span> <span class="t-f">--cron "0 9 * * 1-5" --message "Triage new issues"</span>
+<span class="t-o">0b9e3f6a-21c4-4d7e-8f5a-6c2d1e9b4a70	cron "0 9 * * 1-5"	enabled</span></code></pre>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ───────────── features ───────────── -->
+      <section class="section page" id="library" aria-labelledby="library-title">
+        <div class="section__head">
+          <h2 class="section__title" id="library-title">What your Agents get</h2>
+          <p class="section__intro">
+            The parts that turn a few Agents into a working Team instead of separate chats.
+          </p>
+        </div>
+
+        <ul class="library" role="list">
+          {features.map((f) => (
+            <li class="library__item">
+              <h3 class="library__title">{f.title}</h3>
+              <p class="library__desc">{f.body}</p>
+              <p class="library__tells">
+                {f.tells.map((t) => <code>{t}</code>)}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- ───────────── install ───────────── -->
+      <section class="section page" id="install" aria-labelledby="install-title">
+        <div class="install">
+          <div class="install__intro">
+            <h2 class="section__title" id="install-title">Install</h2>
+            <p>
+              One line, npm, or a source checkout. Bazilion needs Node.js
+              <code>^26.12.1</code>; the installer sets it up through Volta when no supported Node
+              is found. The dashboard opens locally.
+            </p>
+            <p class="install__note">
+              Linux is the tested platform; macOS runs commands on the host and is untested.
+              Upgrading from an earlier release? A 0.25 home is refused: back it up, run
+              <code>bazilion uninstall --yes</code> and start fresh, as the
+              <a href="/docs/getting-started/#upgrade-to-0260">0.26.0 upgrade steps</a> describe.
             </p>
           </div>
 
-          <div>
-            <div class="card-code">
-              <div class="card-code__head">
-                <span>team template</span>
-                <span class="pill">cli</span>
-              </div>
-<pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">team-template</span> <span class="c-cmd">show</span> <span class="c-flag">release-review</span>
-<span class="c-comment"># release-review — Release review</span>
-mode:  <span class="c-ok">restricted</span>
+          <div class="install-tabs">
+            <input class="install-tabs__input" type="radio" name="install-method" id="install-macos" checked />
+            <input class="install-tabs__input" type="radio" name="install-method" id="install-npm" />
+            <input class="install-tabs__input" type="radio" name="install-method" id="install-hackable" />
 
-slot  profile          Agent name  model  reasoning
-0     docs-reviewer    reader      -      high
-1     cli-tester       tester      -      medium
-2     release-captain  maintainer  -      high</pre>
+            <div class="install-tabs__nav">
+              <label class="install-tabs__tab" for="install-macos">Linux / macOS</label>
+              <label class="install-tabs__tab" for="install-npm">npm</label>
+              <label class="install-tabs__tab" for="install-hackable">From source</label>
             </div>
 
-            <div class="card-code">
-              <div class="card-code__head">
-                <span>live Team policy</span>
-                <span class="pill">team</span>
-              </div>
-<pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">team</span> <span class="c-cmd">policy</span> <span class="c-cmd">show</span> <span class="c-flag">release</span>
-<span class="c-comment"># Team release policy</span>
-mode:    <span class="c-ok">restricted</span> (members need an allow edge)
-members: <span class="c-flag">reader, tester, maintainer</span>
+            <div class="install-tabs__panels">
+              <div class="install-tabs__panel install-tabs__panel--macos">
+<pre class="code" tabindex="0"><code><span class="t-n"># Installs supported Node if needed, then bazilion.</span>
+<span class="t-p">$</span> <span class="t-c">curl</span> <span class="t-f">-fsSL</span> https://bazilion.com/install.sh | bash
 
-from        to
-reader      maintainer
-tester      maintainer
-maintainer  <span class="c-rose">outside</span></pre>
+<span class="t-n"># Then open the local web dashboard.</span>
+<span class="t-p">$</span> <span class="t-c">bazilion dashboard</span></code></pre>
+              </div>
+
+              <div class="install-tabs__panel install-tabs__panel--npm">
+<pre class="code" tabindex="0"><code><span class="t-n"># Requires Node ^26.12.1.</span>
+<span class="t-p">$</span> <span class="t-c">npm install</span> <span class="t-f">-g</span> bazilion
+<span class="t-p">$</span> <span class="t-c">bazilion dashboard</span>
+<span class="t-n"># daemon on 127.0.0.1:4321, web UI on 127.0.0.1:4322,</span>
+<span class="t-n"># all state in ~/.bazilion</span></code></pre>
+              </div>
+
+              <div class="install-tabs__panel install-tabs__panel--hackable">
+<pre class="code" tabindex="0"><code><span class="t-n"># For people who want to read and change the code.</span>
+<span class="t-p">$</span> <span class="t-c">git clone</span> https://github.com/rullopat/bazilion
+<span class="t-p">$</span> <span class="t-c">cd</span> bazilion
+<span class="t-p">$</span> <span class="t-c">mise install</span>   <span class="t-n"># Node 26.12.1 and pnpm 12.15.0</span>
+<span class="t-p">$</span> <span class="t-c">pnpm install</span>
+
+<span class="t-n"># Start the source daemon, then the web UI in another terminal.</span>
+<span class="t-p">$</span> <span class="t-c">pnpm tsx</span> apps/cli/src/index.ts serve
+<span class="t-p">$</span> <span class="t-c">cd</span> apps/web && <span class="t-c">pnpm dev</span></code></pre>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- ───────────── rail ───────────── -->
-      <section class="section">
-        <div class="section__label">How shared context works</div>
-        <h2 class="section__title">
-          USER.md, memory, and policy make the Team <em>coherent</em>.
-        </h2>
-
-        <div class="rail">
-          <div class="rail__cell">
-            <h4>USER.md is shared</h4>
+      <!-- ───────────── why ───────────── -->
+      <section class="section page" id="manifesto" aria-labelledby="why-title">
+        <div class="manifesto">
+          <h2 class="section__title" id="why-title">
+            A runtime I built because I wanted agents that stayed home.
+          </h2>
+          <div class="manifesto__body">
             <p>
-              Each Team has one USER.md about you, the project, your preferences
-              and standing instructions. It is added to every member's system
-              prompt; you edit it on the Team page, and Agents update it with
-              their own tool.
+              Bazilion is my personal open source multi-agent runtime for one person. The engine is
+              Pi's coding agent; Bazilion wraps it in one daemon, a CLI, a web UI and a Telegram
+              bot, with Teams, shared memory, an inbox and schedules.
             </p>
-          </div>
-          <div class="rail__cell">
-            <h4>Memory is searchable markdown</h4>
             <p>
-              Team memory is qmd-backed: BM25 over markdown under the Team memory
-              folder. Agents write a decision once and retrieve it by search
-              instead of relying on chat history.
+              It is not a hosted platform. It runs on your machine, with your own keys, and the
+              code is MIT licensed.
             </p>
-          </div>
-          <div class="rail__cell">
-            <h4>Communication is explicit</h4>
-            <p>
-              An open Team lets its members message each other freely; a
-              restricted one needs an allow edge for each direction. A denied
-              message returns an error to the sender. You can always reach every
-              Agent.
+            <p class="manifesto__credit">
+              Engine credit: built on <code>@earendil-works/pi-coding-agent</code>, with Bazilion
+              orchestration around Pi's session, transcript, tool loop and coding tools.
             </p>
           </div>
         </div>
       </section>
 
       <!-- ───────────── dedication ───────────── -->
-      <section class="section">
-        <div class="dedication">
+      <section class="dedication-band" aria-label="In memoriam">
+        <div class="dedication page">
           <div class="glyph" aria-hidden="true">⁂</div>
           <p>
             <strong>Bazilion takes its name and its face</strong> from a Neva
@@ -401,45 +416,35 @@ maintainer  <span class="c-rose">outside</span></pre>
           <div class="sig">in memoriam · Baziu · the original local agent</div>
         </div>
       </section>
+    </main>
 
-      <!-- ───────────── footer ───────────── -->
-      <footer class="footer">
-        <div class="mark">Baz<span class="ink-eye">i</span>lion</div>
-        <div class="footer__meta">
-          <div class="row">
-            <a href="/docs">docs</a>
-            <a href="https://github.com/rullopat/bazilion" rel="noreferrer">github</a>
-            <a href="#manifesto">why</a>
-            <a href="https://www.patriziorullo.com/" rel="noreferrer">built by Patrizio Rullo ↗</a>
-          </div>
-          <div>© 2026 Patrizio Rullo · MIT licensed · <span class="imo">made slowly, in memory of a cat.</span></div>
+    <!-- ───────────── footer ───────────── -->
+    <footer class="footer page">
+      <div class="footer__mark">Baz<span class="ink-eye">i</span>lion</div>
+      <div class="footer__meta">
+        <div class="footer__row">
+          <a href="/docs/">Docs</a>
+          <a href="https://github.com/rullopat/bazilion" rel="noreferrer">GitHub</a>
+          <a href="#manifesto">Why</a>
+          <a href="https://www.patriziorullo.com/" rel="noreferrer">Built by Patrizio Rullo</a>
         </div>
-      </footer>
-    </div>
+        <div>© 2026 Patrizio Rullo · MIT licensed · <span class="imo">made slowly, in memory of a cat.</span></div>
+      </div>
+    </footer>
 
     <script is:inline>
-      // light intersection-observer reveal for sections below the fold.
+      // Progressive enhancement: show the copy button only where the clipboard API exists.
       (function () {
-        if (typeof IntersectionObserver === 'undefined') return;
-        const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduce) return;
-
-        const targets = document.querySelectorAll('section.section');
-        targets.forEach((el) => el.classList.add('in-view-hidden'));
-
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((e) => {
-              if (e.isIntersecting) {
-                e.target.classList.remove('in-view-hidden');
-                e.target.classList.add('in-view-shown');
-                io.unobserve(e.target);
-              }
+        if (!navigator.clipboard) return;
+        document.querySelectorAll('[data-copy]').forEach(function (button) {
+          button.hidden = false;
+          button.addEventListener('click', function () {
+            navigator.clipboard.writeText(button.getAttribute('data-copy')).then(function () {
+              button.textContent = 'Copied';
+              setTimeout(function () { button.textContent = 'Copy'; }, 1800);
             });
-          },
-          { rootMargin: '0px 0px -10% 0px', threshold: 0.05 },
-        );
-        targets.forEach((el) => io.observe(el));
+          });
+        });
       })();
     </script>
   </body>
