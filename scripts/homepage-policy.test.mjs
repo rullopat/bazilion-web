@@ -11,19 +11,14 @@ for (const text of ['built on Pi · your machine, your keys', 'Bazilion v0.23.0'
   test(`allow unversioned engine attribution: ${text}`, () => assert.equal(hasPiVersion(text), false));
 }
 
-// Execute only pure version predicates; never run either installer, curl, Volta or npm.
-// Predicate checks do not qualify Windows/PowerShell installation or execution.
-const predicates = ['install.sh', 'install.ps1'].map((file) => {
+// Execute only the pure version predicate; never run the installer, curl, Volta or npm.
+const predicates = ['install.sh'].map((file) => {
   const installer = readFileSync(new URL(`../public/${file}`, import.meta.url), 'utf8');
   const predicate = installer.match(/node -e '([^']+)' 2>/)?.[1];
   assert.ok(predicate, `${file} must expose its tested runtime predicate`);
-  const pin = file === 'install.sh'
-    ? /^INSTALL_NODE_VERSION=26\.12\.1$/m
-    : /^\$InstallNodeVersion = "26\.12\.1"$/m;
-  assert.match(installer, pin, `${file} must pin the admitted runtime baseline`);
+  assert.match(installer, /^INSTALL_NODE_VERSION=26\.12\.1$/m, `${file} must pin the Node baseline`);
   return [file, predicate];
 });
-test('installer runtime predicates agree', () => assert.equal(predicates[0][1], predicates[1][1]));
 const versions = [
   ['24.20.0', false], ['24.21.99', false], ['24.22.0', false], ['24.22.1', false],
   ['24.23.0', false], ['24.99.0', false], ['26.3.9', false], ['26.4.0', false],

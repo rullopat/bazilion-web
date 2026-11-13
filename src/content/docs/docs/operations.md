@@ -1,142 +1,103 @@
 ---
 title: Daily operations
-description: Diagnose Agent failures, inspect scheduled delivery and approvals, use Attention, and review or revoke learned lessons.
+description: Diagnose an Agent that does not answer, inspect schedules, work through Attention and review the lessons an Agent proposes.
 ---
 
-Start with the affected Agent and the way its turn was initiated. A local chat
-can work while Telegram or a scheduled turn fails protected-runtime preflight.
-
-## Diagnose an Agent that is not responding
+## Diagnose an Agent that is not answering
 
 ```sh
 bazilion doctor
 bazilion agent list
-bazilion attention summary
 bazilion attention list
 ```
 
-1. Confirm the CLI points at the intended daemon/home. Check provider enablement,
-   curated model selection, credentials, and the Agent's active/archive state.
-2. For Telegram, triggers, inbox, or private-gateway chat, inspect protected-work
-   readiness and the [tool boundary](/docs/tools/#which-tools-can-this-turn-use).
-3. Open the Agent's Chat and inspect the error or tool result. For Telegram,
-   also run `bazilion telegram health` and `bazilion telegram pairing status`.
-4. Check Operations → Approvals and the Team's Activity tab. A held attempt or
-   policy denial is different from a provider failure.
-5. If a turn is stuck, cancel it and inspect any partial work before retrying:
+1. `bazilion doctor` checks the home, the database, skills, providers, web search and the Docker
+   image. Make sure the CLI talks to the daemon you mean (`BAZILION_SERVER`, `BAZILION_HOME`).
+2. Check that the Agent's provider is enabled, has a saved model and a working credential:
+   `bazilion provider test <provider:model>`.
+3. Open the Agent's chat and read the error or the failed tool result. For Telegram, also run
+   `bazilion telegram health`.
+4. If a message to another Agent failed, check the Team's [policy](/docs/concepts/#team-policy):
+   a denied message is an error returned to the sender.
+5. If a turn is stuck, cancel it:
 
    ```sh
-   bazilion agent cancel <agent-id>
+   bazilion agent cancel <agent>
    ```
 
-Cancellation does not undo tool writes or sent messages. Retrying may repeat
-side effects; check the workspace and conversation first.
+Cancelling does not undo files the Agent wrote or messages it sent. Look at the workspace and the
+conversation before asking again.
 
-## Read installation and execution readiness separately
-
-Since 0.24, `bazilion doctor` exits successfully when structural installation checks pass.
-A missing protected baseline remains visible but does not by itself make that exit fail.
-`/config` separates installation health, platform support, ordinary chat (**Not checked**),
-and protected unattended prerequisites. Support labels do not run a provider or turn.
-
-Protected automation must separately inspect `protectedWorkBaselineReady` in the authenticated
-`/api/health/details` response and retain all per-turn admission checks. Public health is minimal
-liveness only. Mac protected coding reports **unavailable**; Linux native remains **Not checked**
-until real per-turn admission, not an image/global readiness badge. See
-[readiness semantics introduced in 0.24](/docs/whats-new/#installation-health-is-not-execution-readiness).
-
-## Inspect a schedule
+## Schedules
 
 ```sh
-bazilion trigger list <agent-id>
-bazilion trigger history <trigger-id>
-```
-
-The trigger's last-fired timestamp means an occurrence was recorded, not that
-the Agent completed it. Read dispatch history for attempts, errors, and terminal
-results. Busy Agents defer delivery; retries are bounded. Interval occurrences
-coalesce while a dispatch is open instead of building an unlimited queue.
-
-Before testing a new schedule on Linux, complete the selected native/Docker and provider
-prerequisites with all per-turn checks. Mac isolation-required scheduled coding is unavailable;
-it never reuses trusted host admission. Create a disabled trigger, inspect it, and explicitly
-enable it when ready:
-
-```sh
-bazilion trigger add <agent-id> --every 300 --message 'Summarize project status' --disabled
-bazilion trigger list <agent-id>
+bazilion trigger add <agent> --every 300 --message 'Summarise project status' --disabled
+bazilion trigger list <agent>
 bazilion trigger enable <trigger-id>
+bazilion trigger history <trigger-id>
+bazilion trigger disable <trigger-id>
 ```
 
-To pause future scheduled work, use `bazilion trigger disable <trigger-id>`.
-Disabling is not cancellation of an already active turn. After repairing a
-terminally failed occurrence, decide whether to run a new explicit turn or wait
-for the next occurrence; do not assume editing settings replays terminal work.
+On the web, use the Agent's **Triggers** tab. Each occurrence runs at most once and is never
+retried: a busy Agent leaves it pending, then it ends succeeded, failed or cancelled. The history
+shows each run with its real error, and a failure also shows in Attention. Disabling a trigger
+stops future runs, not a turn that is already running.
 
-## Held communication versus shell approval
+## Attention
 
-| What you see | Where to act | Meaning |
-| --- | --- | --- |
-| Pending communication | Operations → Approvals | One policy-gated attempt awaits a decision |
-| Team Activity denial | Team → Policy | Missing or invalid permission; fix policy before a new attempt |
-| Inline dangerous-command prompt | Interactive web chat or TTY CLI | Ephemeral shell decision for the active turn |
-| Trigger retry/error | Agent → Triggers | Inspect delivery failure and readiness |
-
-Inspect the payload and current policy before approving communication:
+**Attention** lists what needs you: lesson proposals, failed or cancelled learning reviews, failed
+triggers, stopped Agent message loops and Agent queues paused after a daemon restart. Open the
+**Attention** page (the badge in the top bar shows the count) or:
 
 ```sh
-bazilion approval list
-bazilion approval show <approval-id>
-bazilion approval approve <approval-id> --yes
+bazilion attention summary
+bazilion attention list
+bazilion attention acknowledge <key> --yes
+bazilion attention acknowledge-all --yes
 ```
 
-Use `deny` or `cancel` instead of `approve` when appropriate. Approval rechecks
-membership and policy and dispatches at most once. For a scheduled occurrence,
-approval grants that occurrence; the scheduler still executes it under its
-lease/retry rules. A communication approval never grants a shell command.
+Acknowledging a failure or loop break records that you saw it; it repairs nothing. Proposals and
+paused queues leave the list when you act on them. Attention items can also go to Telegram; see
+[Attention notifications](/docs/attention-notifications/).
 
-## Work through Attention
+## Reviewed learning
 
-Open Operations → Attention or use `bazilion attention list`. Follow an item's
-source to the failed turn, trigger, approval, or lesson. Resolve that source
-first. Acknowledging an informational item records that you saw it; it does not
-repair a failure or approve work. CLI acknowledgement requires the item's displayed key and
-`--yes`.
+An Agent can turn its recent conversations into lessons, but only the lessons you approve change
+its behaviour. Learning is off by default.
 
-## Review and apply a lesson
+1. On the Agent's **Learning** tab, switch reviews on and choose how often (every N completed turns
+   you started, default 8), a review model and a reasoning level. From the CLI:
 
-1. Open the Agent's **Learning** section. Check the review model and reasoning
-   settings and ensure protected/restricted review readiness is available.
-2. Choose **Review now**, or enable periodic reviews. Review inspects a bounded
-   set of successful user turns and may legitimately produce no proposals.
-3. Read each proposed lesson and its evidence. Edit its text and choose whether
-   it belongs to the Agent's future prompts or searchable Team memory. Click
-   **Save edit** before approving changed text or scope.
-4. Approve only the scoped lesson you intend to keep, or reject the proposal.
-   No proposed lesson is applied without approval.
-5. To withdraw an applied lesson, use **Revoke** and confirm the lesson removal. Agent-scoped revocation
-   removes it from future prompts; Team-scoped revocation removes the applied
-   memory note. Evidence and decision history remain. Previous conversations
-   and actions are not undone.
+   ```sh
+   bazilion agent review-config <agent> --enable --every 8 --model agent --reasoning low
+   bazilion agent review <agent>            # run one now
+   ```
 
-Stable information about the human or project belongs in Team Context
-(`USER.md`). A review proposal is not a replacement for that shared context.
+2. A review runs in a restricted worker whose only tool is `propose_lesson`, and proposes at most
+   five lessons. A review runs once; a failure shows in Attention.
+3. Read each proposal, edit its text or scope, then approve or reject it. A **private** lesson is
+   added to the Agent's system prompt; a **shared** one is written to the Team's memory as
+   `lessons/<id>.md`.
 
-## Before an upgrade or recovery
+   ```sh
+   bazilion agent lessons <agent> --status pending
+   bazilion agent lesson edit <proposal-id> --text '…' --scope private
+   bazilion agent lesson approve <proposal-id> --yes
+   bazilion agent lesson reject <proposal-id> --yes
+   ```
 
-Use [Backup and recovery](/docs/backup-recovery/) and the
-[version-specific upgrade steps](/docs/getting-started/#upgrade-to-0250).
-If Node changes, reinstall native dependencies with the runtime used by the
-daemon. Do not reset a healthy home just to update the model catalog.
+4. Revoke an approved lesson later with **Revoke** or `bazilion agent lesson revoke <id> --yes`.
+   Earlier conversations are not changed.
 
-## Follow up, answer and inspect retained work
+Reviews cost model calls; pick a cheap review model for busy Agents. Stable facts about you or the
+project belong in the Team's `USER.md`, not in a lesson.
 
-Use [Conversations](/docs/conversations/) to inspect prior work and start a new conversation safely.
-[Saved results](/docs/results/) are immutable outputs, independent of later workspace edits.
-When the Agent is busy, [queue a follow-up](/docs/follow-up-queue/) rather than assuming the current
-turn has consumed a new instruction. Stop pauses future claims before cancelling the active turn.
+## Around a running Agent
 
-An [Agent question](/docs/questions/) is live clarification; its accepted and consumed states are
-separate from task completion and from communication approval. Optional
-[Attention notifications](/docs/attention-notifications/) report existing sources without resolving
-them. An uncertain delivery needs an explicit retry and may duplicate a Telegram message.
+- [Conversations](/docs/conversations/): read earlier ones or start a new one.
+- [Follow-up queue](/docs/follow-up-queue/): messages sent while the Agent is busy.
+- [Agent questions](/docs/questions/): questions the Agent asks you during a turn.
+- [Saved results](/docs/results/): files the Agent delivered.
+
+Before an upgrade, read [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260) and
+[Backup and recovery](/docs/backup-recovery/).

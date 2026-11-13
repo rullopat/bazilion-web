@@ -1,127 +1,81 @@
 ---
 title: Backup and recovery
-description: Create encrypted backups, account for linked projects, rehearse an offline restore, and recover from failed upgrades or exposed credentials.
+description: Back up the Bazilion home while it runs, encrypted to an age key, restore it with the daemon stopped, and reset a home.
 ---
 
-A Bazilion backup protects the daemon's home and database. Plan separate backups
-for project directories linked into Teams, and keep the decryption identity
-available independently of the machine you are backing up.
+## Back up
 
-## What is covered?
+```sh
+bazilion backup create                                # bazilion-backup-<date>.tar.gz
+bazilion backup create ~/backups/home.tar.gz
+bazilion backup create --recipient age1…              # encrypted to an age recipient (.age)
+```
 
-| Data | Coverage |
+On the web, **Download backup** on `/config` saves the same archive, unencrypted.
+
+The backup works while the daemon runs: the archive is a tar.gz of the home around an online,
+integrity-checked SQLite snapshot. The database snapshot is consistent; files Agents are writing
+at that moment may not be, so prefer a moment when no turn runs.
+
+| Included | Left out |
 | --- | --- |
-| Database and paired `auth.json` | Included; SQLite uses a verified online snapshot |
-| Agent homes, transcripts, templates, installed skills, ordinary Team files | Included under the Bazilion home |
-| Team slot linked to an external project | The link is included; the external files are not |
-| Memory inside a linked project | External too; back it up with that project |
-| Live WAL state and rebuildable qmd indexes | Not copied as authoritative state |
-| Daemon-owned managed-browser profiles/cookies | Excluded; back up no browser login by implication |
-| age decryption identity | Store separately; do not place it inside the home |
+| `bazilion.db` and `auth.json`, Agent documents and conversations, uploads, Profiles, skills, Team workspaces and memory notes | Browser profiles (they hold site logins), the qmd search indexes (rebuilt from the notes) and the pidfile |
 
-Stop Agents writing project files when you need a consistent filesystem copy.
-The database snapshot is consistent, but the archive is not a transaction
-across concurrently changing project files and transcripts.
+A Team registered with `--link` is archived as the link only, not the project it points to: back
+that project up yourself.
 
-## Create an encrypted backup
+Without `--recipient` the archive is plaintext and holds every stored credential, together with
+the `auth.json` that decrypts them. Keep the age identity (private key) outside the home and away
+from the archive. The CLI refuses to overwrite a file or to write inside the home.
 
-Use an age recipient whose corresponding private identity you have saved in a
-separate secure location. The recipient is public and begins with `age1`.
-Replace the example recipient and paths with your own:
+## Restore
 
 ```sh
-bazilion backup create /path/to/backups/bazilion.tar.gz.age --recipient age1...
+bazilion backup restore bazilion-backup-2026-11-13.tar.gz
+bazilion backup restore home.tar.gz.age --identity ~/.config/age/key.txt
+bazilion backup restore home.tar.gz --home /srv/bazilion --force
 ```
 
-Run this while the daemon is available. Choose an output location outside
-`BAZILION_HOME`, then copy the archive to your backup storage. Back up linked
-projects separately at the same time. A successful archive write is not a
-restore rehearsal.
+Stop the daemon first: restore refuses while a daemon runs on the target home. It decrypts the
+archive if needed, refuses paths and links that leave the home (other than linked Teams) and
+special files, checks the database (integrity, the schema of this release, the `auth.json` pair)
+and only then swaps the restored home in. A non-empty target needs `--force`, which deletes its
+current data.
 
-The private age identity is required for decryption. On Unix, keep its file
-owner-readable only (`chmod 600 /path/to/age-identity.txt`). Use a real file,
-not a symlink. Keep a recoverable copy separately from the archive and host.
-Plaintext archives require an explicit `--plaintext` acknowledgement and contain
-sensitive authentication material.
+The schema check means a backup can be restored only by the release that wrote it. A 0.25 or
+older archive cannot be restored by 0.26.0; keep the release that wrote it if you need its data.
 
-## Rehearse an offline restore
-
-1. Stop the dashboard with Ctrl+C, or stop the managed daemon and web services.
-   Avoid two active copies of the same Telegram bot or scheduler.
-2. Restore into a new, empty, explicit directory. Use the Bazilion version
-   matching the archive's alpha schema:
-
-   ```sh
-   bazilion backup restore /path/to/backups/bazilion.tar.gz.age \
-     --identity /path/to/age-identity.txt --home /path/to/bazilion-restore-check
-   ```
-
-3. Read the result. Restore validates archive paths, the database/auth pairing,
-   SQLite integrity, foreign keys, and schema before installing the staged home.
-   A non-empty destination is refused unless `--force` is supplied. Do not add
-   that flag for a rehearsal: it replaces the destination's existing data.
-4. Check the restored Team links and separate project backups before starting
-   the restored copy. Links retain their external targets; restoring elsewhere
-   does not isolate them from the original project directories.
-5. Choose which home will be active. Before starting a restored home, disconnect
-   the host from external networks and use `BAZILION_SCHEDULER=off` to inspect
-   it without provider/Telegram activity or scheduled delivery. Do not start a
-   second copy against the same external integrations.
-6. With the chosen home running, inspect `bazilion doctor`, Agents, Teams,
-   transcripts, and a known memory note. Confirm linked project files are
-   present. Reconnect and re-enable scheduling only when ready to resume work.
-
-Commands must address the chosen home consistently. Set `BAZILION_HOME` in the
-daemon and CLI environments; remove stale `BAZILION_SERVER`/`BAZILION_TOKEN`
-overrides that point the CLI at a different instance. For example, on a Unix
-host disconnected for the inspection above:
+To try a restore without touching your home, restore into an empty directory and start it with
+the scheduler off, so no trigger or inbox turn runs:
 
 ```sh
-BAZILION_HOME=/path/to/bazilion-restore-check BAZILION_SCHEDULER=off bazilion dashboard
+bazilion backup restore home.tar.gz.age --identity key.txt --home /tmp/bazilion-check
+BAZILION_HOME=/tmp/bazilion-check BAZILION_SCHEDULER=off PORT=4331 bazilion serve
 ```
 
-The private age identity unlocks the archive; it does not replace Bazilion's
-restored bootstrap credential. Use the restored device credentials for browser
-login, or create a new one with the local CLI after startup.
+Do not run two copies of a home against the same Telegram bot.
 
-## Interrupted restore or incompatible schema
+## After a restore
 
-Keep the archive, the previous home, and any recovery paths named by the error.
-Do not manually delete recovery markers or edit database tables to force
-startup. Follow the reported recovery guidance before retrying a swap.
+A restored home is the home as it was when the backup was taken, access included: tokens and
+browser sessions revoked after the backup are valid again, so revoke them again
+(`bazilion token revoke`, `bazilion session revoke`). Follow-ups still waiting in the backup run
+again, and Attention notices sent after the backup may be sent again. Restore only archives you
+trust: the configuration it brings (MCP server commands, skills, Agent documents) runs as you.
 
-Do not assume an older archive is compatible: restore validates the current release's full
-migration chain and schema contract. **0.25 changes the canonical schema: genuine 0.24.0 and
-older homes/archives are not imported or rewritten.** Historical 0.23-to-0.24 continuity is not
-0.25 compatibility or a general archive-restore guarantee. Preserve the entire old home with
-paired DB/auth and external Team work; keep its matching old binary/runtime/schema to recover
-or export incompatible state. A fresh home does not import those bytes automatically.
-See [upgrading](/docs/getting-started/#upgrade-to-0250).
-If a reset is necessary, it removes Agents, Teams, templates, credentials, and
-the paired database/auth identity. Review the
-[reset consequences](/docs/getting-started/#reset-a-home) first.
-
-## If credentials were exposed
+## Reset and uninstall
 
 ```sh
-bazilion backup inventory
-bazilion backup recovery-guide
+bazilion uninstall                # asks once, then resets the home
+bazilion uninstall --yes          # reset without asking
+bazilion uninstall --yes --all    # also delete installed skills, then the emptied home
 ```
 
-Inventory lists credential classes without revealing their values. The recovery
-guide explains local token recovery and external credential rotation. Rotating
-Bazilion's bootstrap identity does not revoke Telegram, provider, OpenAI OAuth,
-or MCP credentials at their issuers. After recovery, create and rehearse a new
-encrypted backup.
+The reset deletes `bazilion.db` (and its journals), `auth.json`, `profiles/`, `agents/`, `teams/`
+and `browsers/`, and keeps `skills/`; the next `bazilion serve` bootstraps a fresh home. `--all`
+also deletes `skills/` and then the home directory, unless it holds files Bazilion does not
+manage (they are listed and kept).
 
-## Results, queues, questions and notifications after restore
-
-Current-schema backups include immutable result bytes, result receipts, conversation routing metadata
-and canonical transcripts. Restoring unresolved queued inputs pauses them as uncertain: inspect
-possible prior effects and reconcile before resubmitting. Previous live questions are closed, so
-answers cannot resume a lost worker. Notifications are paused because the restored snapshot may
-lack later Telegram receipts. Fresh enablement sends future items only; old-item inclusion requires
-an explicit preview warning about possible duplicates.
-
-See [queue recovery](/docs/follow-up-queue/#interrupted-and-restored-work) and
-[notification recovery](/docs/attention-notifications/) before resuming work.
+Uninstall refuses while the daemon runs, refuses your home directory itself, and refuses a
+directory without `bazilion.db` that holds other files. Linked Team slots are unlinked; the
+projects they point to are not touched. `--home <dir>` acts on another home.

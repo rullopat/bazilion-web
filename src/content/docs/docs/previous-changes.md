@@ -1,104 +1,71 @@
 ---
 title: Previous changes
-description: Summarised release history for everything older than the three most recent Bazilion releases. Each entry links to its GitHub release.
+description: A short summary of Bazilion releases older than the four on What's new, newest first, each with a link to its GitHub release.
 ---
 
-Release notes for the three most recent releases live in their own pages. Everything older is summarised
-here, newest first, with a link to the full GitHub release for each.
+[What's new](/docs/whats-new/) covers the latest four releases. Older ones are summarised here,
+newest first. Each entry describes its own release: several of the features named below, such as
+review packets, specialist verification, publication, approvals and the protected turn surface,
+were removed in 0.26.0.
 
-## 0.19.1 — a model newer than the catalogue
+## 0.22.0 — image generation
 
-A patch release that fixed the endpoint used for a model id newer than the bundled catalogue. An uncatalogued
-id is built for the OpenAI-compatible adapter, and its base URL needed a version segment the provider's own
-catalogue base does not: the call became a 404 instead of answering. The provider registry also never carried
-the endpoint, so `bazilion provider test` failed closed for exactly the models that endpoint was meant to
-admit. Verified against a real model newer than the catalogue, through both the verification and review
-loops. No schema change.
+Opt-in image generation through an OpenAI API key, the ChatGPT login or OpenRouter, saved as
+Results. A SearXNG-backed `web_search` for scheduled and inbox turns. Pi 0.87.1, with Meta and
+Radius providers.
 
-[GitHub release for 0.19.1](https://github.com/rullopat/bazilion/releases/tag/v0.19.1)
+[GitHub release for 0.22.0](https://github.com/rullopat/bazilion/releases/tag/v0.22.0)
 
-## 0.19.0 — a teammate can review a fixed revision
+## 0.20.0 and 0.21.0 — publication and beta checkpoints
 
-A coder can ask a teammate to **read** one captured change. The reviewer's entire capability is four read-only
-tools — no execution, no editing, no browsing, no publication — findings are append-only and resolution needs
-explicit proof, and an export is a publication held until policy releases it. The same release added
-`request_verification`, so a coding Agent can ask for specialist verification at all, and closed three gaps in
-specialist verification: a check now runs with the posture its receipt claims, declared output paths are
-*checked* rather than trusted, and a check can no longer write the Team's shared memory. Schema change.
+0.20.0 let the daemon commit a reviewed revision to a new branch and open a pull request. The
+0.21.0 checkpoints added failure visibility in Attention, a CI security gate, a growth guide and a
+UI consistency sweep.
 
-[GitHub release for 0.19.0](https://github.com/rullopat/bazilion/releases/tag/v0.19.0)
+[GitHub release for 0.20.0](https://github.com/rullopat/bazilion/releases/tag/v0.20.0) ·
+[last 0.21.0 checkpoint](https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.5)
 
-## 0.18.0 — hand a captured change to a specialist
+## 0.19.x — teammate review
 
-A coder hands one captured change to an existing member of its Team and gets back evidence naming the code, the
-commands, the environment and the outcomes. The specialist's capability is two tools — read the request, and
-run one declared check once — and it cannot widen them. Results are tied to the exact captured revision.
-Schema change.
+0.19.0 let a coder ask a teammate to read one captured change with read-only tools, and let a
+coding Agent request specialist verification. 0.19.1 fixed the endpoint used for a model id newer
+than the bundled catalogue.
+
+[GitHub release for 0.19.0](https://github.com/rullopat/bazilion/releases/tag/v0.19.0) ·
+[0.19.1](https://github.com/rullopat/bazilion/releases/tag/v0.19.1)
+
+## 0.18.0 — specialist verification
+
+A coder could hand one captured change to a Team member that ran its declared checks and reported
+the outcomes.
 
 [GitHub release for 0.18.0](https://github.com/rullopat/bazilion/releases/tag/v0.18.0)
 
-## 0.17.0 — coding work becomes reviewable
+## 0.17.0 — reviewable coding work
 
-Live command progress, retained diagnostics, and read-only Git change review with source-bound evidence.
+Live command progress, retained command output and read-only Git change review.
 
-- **Watch a command while it runs**, with output that arrives as it happens rather than when it finishes.
-- **Reopen what a command printed** after the container is gone — retained, bounded, redacted evidence with
-  an explicit expiry, and a truthful "not shared" state rather than an empty box.
-- **Review what changed**: a read-only Git review of the working tree against a pinned baseline, with source
-  snapshots that tie a result to the exact revision it tested.
-- **Schema change**: 0.17.0 could not be upgraded in place from 0.16.x.
+## 0.16.0 — agent-led coding
 
+Repository instructions and Git state at the start of a coding turn, scoped commands and handing
+work to a teammate.
 
-## 0.16.0 — coding work becomes agent-led
+## 0.15.0 — keep and follow up on work
 
-Repository context, scoped commands and prepared execution during ordinary Agent tasks — no check catalogue
-or readiness form first.
+Saved results, retained conversations, the follow-up queue, Agent questions and opt-in Attention
+notifications.
 
-- **Ask for the work, not a checklist.** At the start of a coding turn the Agent receives the applicable
-  repository instructions and can resolve a deeper scope itself.
-- **Run a finite command** in the turn's admitted environment, with the outcome observed rather than asserted.
-- **Hand work to a teammate**, with workspace preparation and recovery that survives interruption.
-- **Schema change**: 0.16.0 could not be upgraded in place.
+## 0.14.x — GPT-6 Astra and a smoother first run
 
+Pi 0.85.1 with GPT-6 Astra through OpenAI API keys and the ChatGPT login, clearer recovery when a
+home is incomplete, and first-run setup work.
 
-## 0.15.0 — retain, follow up and inspect work
+## 0.13 — security work
 
-Saved results, retained conversations, durable follow-ups, live questions and opt-in Attention notifications.
-
-- **Keep files and conversations**: deliverables are published into a Team results library instead of
-  scrolling away, and conversation threads are retained and named.
-- **Follow up while an Agent works**: a bounded queue for steering a running turn, and questions the Agent
-  can ask you without ending its work.
-- **Opt into operational notices**: Attention notifications are off by default and forbidden from leaking
-  any message payload into notification metadata.
-- **Schema change**: 0.15.0 could not be upgraded in place.
-
-
-## 0.14.x — GPT-6 Astra, and a safer first run
-
-- **0.14.2 upgraded the bundled engine** from Pi 0.84.3 to **Pi 0.85.1** and added GPT-6 Astra selection
-  through OpenAI API keys and ChatGPT OAuth.
-- **0.14.1 improved recovery and failures**: clearer recovery guidance when a home is incomplete, and
-  failures that name what was wrong instead of failing silently.
-- Earlier 0.14 work covered first-run setup, provider configuration at small screen sizes, mobile pairing
-  with trustworthy streamed chat, protected drafts with explicit consequences, and gateway reliability.
-
-
-## 0.13 — the security-focused release
-
-Credential-minimal protected execution, a private Tailscale gateway, encrypted recovery, hardened Telegram
-ownership, and Pi 0.84.3.
-
-- **Credential-minimal protected execution**: Agent turns run with only the selected provider credential
-  they need, never the daemon's ambient environment.
-- **Private HTTPS through Tailscale Serve**, with a strict production gateway profile and QR pairing over
-  the same origin.
-- **Encrypted backup and safer recovery**, with validated restore and rollback.
-- **Telegram owner pairing**, so only the paired owner drives an Agent.
-
+Credential-minimal execution, the private Tailscale gateway, encrypted backups, Telegram owner
+pairing and Pi 0.84.3.
 
 ## Older releases
 
-Everything before 0.13 is covered by the commit history and the tagged releases.
-
-[All Bazilion releases](https://github.com/rullopat/bazilion/releases)
+Everything before 0.13 is in the commit history and the
+[tagged releases](https://github.com/rullopat/bazilion/releases).

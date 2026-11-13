@@ -4,73 +4,63 @@ import '../styles/global.css';
 const features = [
   {
     n: '01',
-    title: 'Agent templates become agents',
-    body: 'A profile is a template — identity docs, tools, model, and behavior notes. Spawning makes it a permanent Agent in one Team.',
+    title: 'Profiles become Agents',
+    body: 'A profile is an Agent template: SOUL.md, IDENTITY.md, AGENTS.md, TOOLS.md, a default model and skills. Spawning one makes an Agent in a Team.',
   },
   {
     n: '02',
-    title: 'One canonical Team Template roster',
-    body: 'A Team Template owns one revisioned roster of stable slots, each pointing at a template with optional name, model, or reasoning overrides.',
+    title: 'Teams share a workspace',
+    body: 'A Team is a directory, or a link to your project, with a USER.md about you, shared memory and its members. Team templates spawn a whole Team at once.',
   },
   {
     n: '03',
-    title: 'One live policy per Team',
-    body: 'One effective revisioned policy per Team. One authorizer covers user, peer, cross-Team, scheduler, inbox, worker, and Telegram boundaries; missing edges deny.',
+    title: 'Simple messaging policy',
+    body: 'An open Team lets members message each other freely; a restricted one needs an allow edge. You can always chat with every Agent.',
   },
   {
     n: '04',
-    title: 'Approval means approve once',
-    body: 'An approval_required edge holds one typed attempt before its side effect. Approve, deny, or cancel once; approval revalidates membership and policy.',
+    title: 'A mailbox between agents',
+    body: 'send_message, read_inbox and wait_for_reply inside the loop; an idle Agent with unread mail wakes up, and a hop limit stops message loops.',
   },
   {
     n: '05',
-    title: 'A mailbox between agents',
-    body: 'Durable messaging inside the loop, plus CLI, API, and web inbox outside it. Coding work can hand a scoped request to a teammate and release the workspace.',
+    title: 'Shared memory, indexed by qmd',
+    body: 'One <team>/memory per Team, searched with qmd BM25 over Markdown, so decisions outlive the chat that produced them.',
   },
   {
     n: '06',
-    title: 'Shared memory, indexed by qmd',
-    body: 'One <team>/memory per Team, searched with qmd BM25 over markdown, so decisions outlive the chat that produced them.',
+    title: 'Schedules that run once',
+    body: 'Interval and cron triggers wake an Agent with a stored instruction. Each occurrence runs once; failures show in Attention with the real error.',
   },
   {
     n: '07',
-    title: 'USER.md stays explicit',
-    body: 'One USER.md per Team for the person, project, preferences, and standing instructions — injected into every prompt, never clobbered by file writes.',
+    title: 'Coding on the host or in Docker',
+    body: 'Agents run bash and file tools in the Team directory, guided by the repository\'s AGENTS.md. One setting moves every turn into a network-less Docker sandbox.',
   },
   {
     n: '08',
-    title: 'Everything stays on disk',
-    body: 'Agent homes, Team roots, sessions, skills, and memory live under ~/.bazilion, beside one daemon-owned SQLite database.',
+    title: 'Watch it work, review the diff',
+    body: 'Tool output streams live into the chat. The Team Review page shows the Git changes since any base and sends file feedback to an Agent.',
   },
   {
     n: '09',
-    title: 'Pi is the engine underneath',
-    body: 'Pi runs the per-turn loop, the JSONL transcript, replay and compaction, and the coding tools. Bazilion adds the multi-agent orchestration.',
+    title: 'Research, browse, connect',
+    body: 'Web search and fetch, a managed browser per Agent, MCP servers and image generation, with the same tools on every kind of turn.',
   },
   {
     n: '10',
-    title: 'Ask for the work, not a checklist',
-    body: 'Give an Agent a coding task: it discovers repository instructions, inspects its runtime, runs scoped commands, and reports bounded evidence in chat.',
+    title: 'Results and conversations persist',
+    body: 'Delivered files and generated images are saved as Team results. Earlier conversations stay readable when you start a new one.',
   },
   {
     n: '11',
-    title: 'Results and conversations persist',
-    body: 'Delivered files become immutable Team results tied to their source conversation. Conversations list, read, rename, and start fresh.',
+    title: 'Follow-ups, questions, Telegram',
+    body: 'Queue messages while an Agent works, answer its questions mid-turn, and talk to every Agent in its own Telegram topic.',
   },
   {
     n: '12',
-    title: 'Follow-ups, questions, and notices',
-    body: 'Queue instructions with attachments and edit them before dispatch. Answer an Agent mid-task from web, terminal, or paired Telegram, or opt into Attention notices.',
-  },
-  {
-    n: '13',
-    title: 'Protected outside your terminal',
-    body: 'Background, Telegram, and gateway coding requires admitted Linux isolation. Mac protected coding refuses; ordinary browser and MCP tools remain separate.',
-  },
-  {
-    n: '14',
-    title: 'Remote, recoverable, provider-flexible',
-    body: 'A paired phone reaches the private-HTTPS gateway. Encrypted backups restore matching schemas; configured providers and models remain your choice.',
+    title: 'Pi underneath, your machine around it',
+    body: 'Pi runs the turn loop, transcript and coding tools. One daemon owns ~/.bazilion; the web UI and the CLI offer the same features.',
   },
 ];
 ---
@@ -86,14 +76,14 @@ const features = [
     <title>Bazilion — personal open source multi-agent runtime</title>
     <meta
       name="description"
-      content="Bazilion is Patrizio Rullo's MIT-licensed, local-first multi-agent runtime built on Pi's coding agent — Team Templates, one live Team Policy, agent-led coding, durable results, and shared memory."
+      content="Bazilion is Patrizio Rullo's MIT-licensed, local multi-agent runtime for one person, built on Pi's coding agent — Agents in Teams with a shared workspace, memory and mailbox, on schedules, from a web UI, a CLI and Telegram."
     />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Bazilion — personal open source multi-agent runtime" />
     <meta
       property="og:description"
-      content="MIT-licensed and local-first, built on Pi's coding agent. Agent templates, one live Team Policy, agent-led coding, durable results, shared memory, and messaging."
+      content="MIT-licensed and local, built on Pi's coding agent. Teams of Agents with a shared workspace, memory and mailbox, schedules, coding on the host or in Docker, and saved results."
     />
     <meta property="og:url" content="https://bazilion.com" />
     <meta property="og:image" content="https://bazilion.com/baziu.svg" />
@@ -124,9 +114,9 @@ const features = [
       </nav>
 
       <a class="release-note" href="/docs/whats-new/" data-reveal="2">
-        <span class="release-note__badge">v0.25.0</span>
+        <span class="release-note__badge">v0.26.0</span>
         <span>
-          Alpha: trusted Mac coding, Linux native isolation, and explicit safety limits.
+          Simplified for one local operator. Back up your home and start fresh to upgrade.
         </span>
         <span class="release-note__arrow" aria-hidden="true">read what changed →</span>
       </a>
@@ -179,7 +169,7 @@ const features = [
           <input class="install-tabs__input" type="radio" name="install-method" id="install-hackable" />
 
           <div class="install-tabs__nav" aria-label="Installation methods">
-            <label class="install-tabs__tab" for="install-macos">macOS / Linux</label>
+            <label class="install-tabs__tab" for="install-macos">Linux / macOS</label>
             <label class="install-tabs__tab" for="install-npm">npm</label>
             <label class="install-tabs__tab" for="install-hackable">Hackable</label>
           </div>
@@ -205,7 +195,7 @@ const features = [
                 <div class="card-code__head">
                   <span>daemon + web UI</span>
                 </div>
-<pre><span class="c-comment"># Requires Node 26.12.1+ within 26.x only.</span>
+<pre><span class="c-comment"># Requires Node ^26.12.1.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">bazilion</span>
 <span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">dashboard</span>
 <span class="c-ok">*</span> daemon <span class="c-flag">127.0.0.1:4321</span>
@@ -222,7 +212,7 @@ const features = [
 <pre><span class="c-comment"># For people who want to read and change the code.</span>
 <span class="c-prompt">$</span> <span class="c-cmd">git</span> <span class="c-cmd">clone</span> https://github.com/rullopat/bazilion
 <span class="c-prompt">$</span> <span class="c-cmd">cd</span> bazilion
-<span class="c-prompt">$</span> <span class="c-cmd">npm</span> <span class="c-cmd">install</span> <span class="c-flag">-g</span> <span class="c-cmd">pnpm@12.15.0</span> <span class="c-comment"># product development baseline</span>
+<span class="c-prompt">$</span> <span class="c-cmd">mise</span> <span class="c-cmd">install</span> <span class="c-comment"># Node 26.12.1 and pnpm 12.15.0</span>
 <span class="c-prompt">$</span> <span class="c-cmd">pnpm</span> <span class="c-cmd">install</span>
 
 <span class="c-comment"># Start the source daemon, then run the web UI in another terminal.</span>
@@ -235,9 +225,10 @@ const features = [
       </section>
 
       <p class="showcase__copy">
-        Trusted Mac 27.x operation and Linux execution have <a href="/docs/whats-new/#bazilion-0250">explicit alpha limits</a>.
-        Read the <a href="/docs/getting-started/#upgrade-to-0250">0.25.0 upgrade guidance</a>
-        before updating. Preserve your complete home, paired DB/auth and linked Team work; older homes need an explicitly chosen clean rebootstrap.
+        Linux is the tested platform; macOS runs commands on the host and is untested.
+        Upgrading from an earlier release? A 0.25 home is refused: back it up, run
+        <code>bazilion uninstall --yes</code> and start fresh, as the
+        <a href="/docs/getting-started/#upgrade-to-0260">0.26.0 upgrade steps</a> describe.
       </p>
 
       <!-- ───────────── manifesto ───────────── -->
@@ -250,17 +241,16 @@ const features = [
         <div class="manifesto">
           <div class="manifesto__body">
             <p class="dropcap">
-              Bazilion is my personal open source attempt at a local-first
-              multi-agent runtime. The engine is Pi's coding agent; Bazilion wraps
-              it in a daemon, CLI, and web UI with templates, live policy,
-              approvals, shared memory, and a mailbox.
+              Bazilion is my personal open source multi-agent runtime for one
+              person. The engine is Pi's coding agent; Bazilion wraps it in one
+              daemon, a CLI, a web UI and a Telegram bot, with Teams, shared memory,
+              a mailbox and schedules.
             </p>
             <p>
-              It is mostly about templates. A profile defines one kind of agent; a
-              Team Template defines the only reusable roster — stable slots, roles,
-              optional overrides, and directed edges — saved as immutable revisions.
-              Spawning one creates permanent Agents in a single Team with one policy,
-              one USER.md, one memory, and one mailbox.
+              A profile defines one kind of agent; a Team template lists the
+              Agents of a whole Team and who may message whom. Spawning one puts
+              its Agents in a single Team with one workspace, one USER.md, one
+              memory and one mailbox, on your machine and with your own keys.
             </p>
           </div>
 
@@ -297,21 +287,21 @@ const features = [
       <section class="section" id="agents">
         <div class="section__label">Templates</div>
         <h2 class="section__title">
-          Profiles describe agents. Team Templates describe a <em>reviewed team</em>.
+          Profiles describe agents. Team templates describe a <em>whole team</em>.
         </h2>
 
         <div class="showcase">
           <div class="showcase__left">
             <p class="showcase__lead">
-              Draft the roles once.<br />
-              Review the communication edges.<br />
-              Spawn one revision into a Team.
+              Write the roles once.<br />
+              Decide who may message whom.<br />
+              Spawn the whole Team.
             </p>
             <p class="showcase__copy">
-              An Agent template is the reusable role; a Team Template is the
-              reusable roster and policy source. The web editor, HTTP API, and CLI
-              share the same stable slots and immutable revisions, and a live Team
-              keeps its source lineage without becoming a second template.
+              A profile is the reusable role; a Team template is the reusable
+              roster, with allow edges and an open or restricted mode. Spawn it into
+              a Team from the web UI, the CLI or Telegram, edit the live Team's
+              policy, and save a Team as a new template.
             </p>
           </div>
 
@@ -323,30 +313,28 @@ const features = [
               </div>
 <pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">team-template</span> <span class="c-cmd">show</span> <span class="c-flag">release-review</span>
 <span class="c-comment"># release-review — Release review</span>
-revision: <span class="c-ok">3</span>
-slots:    <span class="c-flag">3</span>
-edges:    <span class="c-flag">8</span>
+mode:  <span class="c-ok">restricted</span>
 
-slot  profile          Agent name   model  reasoning
-1     docs-reviewer    reader       -      high
-2     cli-tester       tester       -      medium
-3     release-captain  maintainer   -      high</pre>
+slot  profile          Agent name  model  reasoning
+0     docs-reviewer    reader      -      high
+1     cli-tester       tester      -      medium
+2     release-captain  maintainer  -      high</pre>
             </div>
 
             <div class="card-code">
               <div class="card-code__head">
-                <span>effective live policy</span>
+                <span>live Team policy</span>
                 <span class="pill">team</span>
               </div>
-<pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">team</span> <span class="c-cmd">policy</span> <span class="c-cmd">show</span> <span class="c-flag">bazilion-090</span>
-<span class="c-comment"># Team bazilion-090 policy</span>
-revision: <span class="c-ok">2</span>
-baseline: <span class="c-rose">release-review@3</span>
-members:  <span class="c-flag">3</span>
-edges:    <span class="c-flag">8</span>
+<pre><span class="c-prompt">$</span> <span class="c-cmd">bazilion</span> <span class="c-cmd">team</span> <span class="c-cmd">policy</span> <span class="c-cmd">show</span> <span class="c-flag">release</span>
+<span class="c-comment"># Team release policy</span>
+mode:    <span class="c-ok">restricted</span> (members need an allow edge)
+members: <span class="c-flag">reader, tester, maintainer</span>
 
-<span class="c-dim">  -></span> one effective policy · retained source lineage
-<span class="c-dim">  -></span> allow · approval required · missing edge denies</pre>
+from        to
+reader      maintainer
+tester      maintainer
+maintainer  <span class="c-rose">outside</span></pre>
             </div>
           </div>
         </div>
@@ -363,10 +351,10 @@ edges:    <span class="c-flag">8</span>
           <div class="rail__cell">
             <h4>USER.md is shared</h4>
             <p>
-              Each Team has one USER.md for the user, project, preferences, and
-              standing instructions. Agents share that briefing, and guarded
-              updates with concurrency checks replace clobbering it through file
-              writes.
+              Each Team has one USER.md about you, the project, your preferences
+              and standing instructions. It is added to every member's system
+              prompt; you edit it on the Team page, and Agents update it with
+              their own tool.
             </p>
           </div>
           <div class="rail__cell">
@@ -380,9 +368,10 @@ edges:    <span class="c-flag">8</span>
           <div class="rail__cell">
             <h4>Communication is explicit</h4>
             <p>
-              Directed edges define who may reach whom. A protected edge holds
-              exactly one attempt for approval, and denials keep policy evidence
-              without storing the payload.
+              An open Team lets its members message each other freely; a
+              restricted one needs an allow edge for each direction. A denied
+              message returns an error to the sender. You can always reach every
+              Agent.
             </p>
           </div>
         </div>

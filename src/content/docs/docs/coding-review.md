@@ -1,76 +1,48 @@
 ---
 title: Reviewing what changed
-description: Inspect the changes an Agent produced in read-only Git change review — pinned baselines, bounded diffs, source snapshots, and three-valued applicability from the Review page, the CLI and the API.
+description: Live tool output in the chat, and Git change review of a Team's repository from the Review tab and the CLI, with file feedback to an Agent.
 ---
 
-A coding Agent reports what it did. **Git change review** shows you what actually changed, and ties a
-result to the source version it was produced against. Everything here is read-only: Bazilion never
-stages, commits, checks out or reverts anything on your behalf.
+## Live tool output
 
-Available in Bazilion 0.17.0.
+While a tool runs, its output streams into the chat. The web chat shows a live tail under the tool
+call, and `bazilion agent chat --message` prints each new output line as it arrives. Any tool that
+reports progress takes part; in practice that is `bash`, on the host or in the Docker sandbox. The
+tool's result replaces the live tail when it finishes.
 
-## Where to look
+Known credential values (stored secrets and the turn's provider credentials) are redacted from tool
+output before it reaches a client, both live and in reloaded history.
 
-- **The Team page** — a **Review** section beside Context, Members, Policy, Memory and Results. Select a
-  file row to read its diff; the keyboard alone is enough (tab to a row, press Enter).
-- **The CLI** — `bazilion team review …`
-- **The authenticated API** — `GET /api/teams/:id/review`, `…/review/snapshots`, and the
-  `@bazilion/client` methods behind them.
+## Change review
 
-## Changes since a baseline
-
-```sh
-bazilion team review show my-team
-bazilion team review show my-team --base main --patch src/app.ts
-```
-
-The review always names the baseline it compared against, for example `main · base HEAD (a1b2c3d4e5f6)`.
-A branch name is resolved to a concrete commit **when the review loads**, so a tip that moves later
-cannot quietly rewrite what you are reviewing.
-
-You get a file list with status, line counts, rename source, mode changes and binary markers, plus a
-bounded diff for one file at a time. Untracked files are listed by name only; their content is read only
-when you include it explicitly:
+The Team **Review** tab and `bazilion team review` show what changed in a Team's Git repository
+since a base: `HEAD` by default, or any branch, tag, commit id or revision such as `HEAD~1`.
+Review is read-only: Bazilion never stages, commits, checks out or reverts anything.
 
 ```sh
-bazilion team review capture my-team --include notes.md --include config/local.yaml
+bazilion team review show <team>                             # changed files since HEAD
+bazilion team review show <team> --base main --patch src/app.ts
+bazilion team review show <team> --json                      # everything, diffs included
+bazilion team review feedback <team> --path src/app.ts --agent <agent> --note 'Handle the empty case'
 ```
 
-Ignored files never appear. Credential-shaped paths (`.env`, keys, `credentials*`, `.ssh/…`) and
-Bazilion-owned Team state are refused, recorded and **counted**, so a withheld file never looks like an
-absent one.
+- Select a file (or pass `--patch`) to see its diff. A new, untracked file shows as an added file.
+  Diffs are read only when asked for and are bounded.
+- Feedback sends one Team member a message with the file, its change, a diff excerpt and your note.
+  It goes through the ordinary [follow-up queue](/docs/follow-up-queue/), so it runs as that
+  Agent's next turn.
+- The Team's own `memory/` store and credential-shaped paths (`.env`, `*.pem`, `credentials.*`,
+  `.ssh/`, …) never show content; untracked ones are only counted.
+- A Team whose workspace is not a Git repository says so instead of showing an empty list.
 
-If the Team's directory is not a Git repository, the review says so. It does not show an empty list,
-because an empty list would read as "nothing changed".
+## How Git is read
 
-## Snapshots: what a result was tested against
+Inspection never modifies the repository and never runs repository-configured helpers. It copies
+the Git metadata into a scratch directory with a Bazilion-written config: hooks, external diff,
+textconv and fsmonitor are not used, and the original index is not refreshed or written. Git never
+searches for a repository above the Team directory.
 
-A snapshot is bounded **code evidence**, not a copy of your code:
-
-- the HEAD commit, which covers all committed content;
-- a digest of the index, which covers staged content exactly;
-- a digest of every path that differs from the pinned baseline;
-- a digest of each untracked file you explicitly included.
-
-It stores paths and digests, **never file content**, and modification times are never used — a file
-that was touched but not changed keeps its identity. The id is content-addressed, so the same tree
-always produces the same id, and an incomplete capture can never be mistaken for an exact one.
-
-A snapshot is captured for you when a command runs, and the Agent can capture one before it starts
-editing. Captured evidence is retained for seven days.
-
-## Does this result still apply?
-
-A command receipt records the source state at its own execution boundary. The chat card reports whether
-that version still matches the tree, in one of three states:
-
-- **unchanged** — the source is byte-identical to what was tested;
-- **changed** — the source moved. Whether that change was *relevant* to the result is unknowable, so no
-  claim is made either way;
-- **unknown** — no snapshot, an incomplete one, or it has expired.
-
-A result with no captured source reads **Not checked**. Nothing here is a pass or a badge, and a
-successful command still never certifies the whole repository — an exit code is not coverage.
-
-Read more in [coding during an Agent task](/docs/coding-environment/) and
-[the release it arrived in](/docs/previous-changes/#0170--coding-work-becomes-reviewable).
+Refused rather than followed: a config that uses includes, filters or `core.worktree`, alternates,
+links that leave the Team (a Team registered with `--link` is fine), special files, linked worktree
+and submodule metadata, and sparse or split-index layouts. One inspection has 5 seconds, each Git
+command 1 MiB of output, and the metadata copy at most 64 MiB in 16,384 entries.

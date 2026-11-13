@@ -1,109 +1,43 @@
 ---
 title: Growth and retention
-description: What grows in a Bazilion home, which parts are bounded by design, and what is safe to prune.
+description: What grows in a Bazilion home, what is pruned by itself, and what you can safely delete.
 ---
 
-Running Bazilion for months eventually raises the question: how big should this home
-be, and is that normal? Here is the per-artifact answer — what makes it grow, how to
-inspect it, and what is safe to delete. The short version: **the coding-evidence
-machinery is bounded by design; the conversation history is not, because it is the
-product's record.**
-
-## The layout
-
-A home (`~/.bazilion` by default) contains:
-
-| Path | What it is | Grows with |
+| Path | Holds | Grows with |
 | --- | --- | --- |
-| `bazilion.db` | The database: messages, agents, receipts, reviews, coding evidence | Usage (turns, coding commands) |
-| `bazilion.pre-migration-*.db` | Historical snapshots from earlier migration-capable releases | Earlier upgrades, not 0.23.0 refusal |
-| `agents/<id>/sessions/*.jsonl` | Canonical conversation transcripts | Turns |
-| `agents/<id>/uploads/` | User-attached files | Attachments |
-| `profiles/`, `skills/`, `teams/` | Your configuration | You |
-| `logs/` | *(empty — see below)* | Nothing |
+| `bazilion.db` | Agents, messages, saved results, settings, encrypted secrets | Use |
+| `agents/<id>/sessions/*.jsonl` | Conversation transcripts, tool output included | Turns |
+| `agents/<id>/uploads/` | Files attached to chats | Attachments |
+| `teams/<slug>/` | Team work tree and shared memory notes | The Agents' work |
+| `profiles/`, `skills/` | Agent templates and installed skills | You |
+| `browsers/<agent-id>/` | Managed browser profiles (cookies, logins) | Browsing |
 
-Inspect sizes with `du -sh ~/.bazilion/* ~/.bazilion/agents/*` and, for the
-database's table-level breakdown, any SQLite browser:
-`sqlite3 ~/.bazilion/bazilion.db` → `SELECT * FROM dbstat ORDER BY pgsz DESC;` or
-per-table `SELECT COUNT(*)` on the tables named below.
+Conversations, messages and uploads are never pruned: they are the record. Finished follow-ups and
+their attachments are deleted seven days after they end. Saved results are capped at 25 MiB per
+file and 1 GiB per home; they do not expire, and deleting one (Team → Results or
+`bazilion result rm`) frees its share.
 
-## The database: bounded evidence, unbounded history
+## Inspect
 
-**Bounded by design — the coding-evidence machinery prunes itself:**
+```sh
+du -sh ~/.bazilion/* ~/.bazilion/agents/*
+sqlite3 ~/.bazilion/bazilion.db "SELECT name, SUM(pgsize) FROM dbstat GROUP BY name ORDER BY 2 DESC"
+```
 
-- **Coding command logs** (`coding_command_logs`): every coding command's observable
-  output is retained for **7 days** and, on top of the TTL, the whole table is
-  evicted oldest-first under a **256 MB home-wide budget**. Pruning runs whenever a
-  coding command completes; a log belonging to a still-running command is never
-  evicted. Expired logs keep their row (id, provenance, state `expired`) but drop
-  the text — receipts stay meaningful while the bulk is reclaimed.
-- **Source snapshots** (`source_snapshots`): bounded code evidence for review.
-  Snapshots are **content-addressed** — capturing an identical tree state again
-  collapses onto the existing row rather than extending retention — and expire after
-  **7 days**. Manifests hold paths and digests only; file content is never stored in
-  the database.
+## Reclaim space
 
-**Unbounded by design — this is your history, not a leak:**
+- Delete an Agent you no longer need (`bazilion agent delete <id>`), which removes its directory
+  and conversations.
+- Reset an Agent's browser (`bazilion agent browser reset <agent>`).
+- Delete saved results you no longer need.
+- A Team's `memory/.qmd-index.sqlite` can be deleted at any time; it is rebuilt from the Markdown
+  notes.
 
-- **Messages** (`messages`): every turn's messages, growing with usage. This is the
-  conversation record the product exists to keep. Structural retention and
-  cold-archiving are deliberately deferred (planned post-1.0); today the honest
-  guidance is: the database grows with use, and a full backup (see
-  [backup and recovery](/docs/backup-recovery/)) is the way to snapshot it.
-- Audit rows (`trigger_dispatches`, `agent_loop_break_events`,
-  `communication_approval_events`, …) grow slowly — single rows per event, no blob
-  content.
+Do not delete session files by hand: the database still lists those conversations, and the active
+one's next turn continues from its file. SQLite reuses freed pages, so the database file does not
+shrink right away when you delete something.
 
-## Sessions JSONL
+## Logs
 
-Each agent's canonical transcript lives at
-`agents/<agentId>/sessions/<conversationId>.jsonl` and grows with every turn. The
-daemon appends transactionally (staging file + link) but never prunes: the transcript
-is the source of truth a session replays from.
-
-- **Safe:** archiving (moving/copying) the `sessions/` directory of an agent you have
-  removed.
-- **Not safe:** deleting or truncating a session file of a live agent — the next turn
-  replays from it.
-
-## Uploads
-
-User-attached files are persisted under `agents/<agentId>/uploads/`, one file per
-attachment, referenced by message metadata. They are not daemon-pruned; removing an
-agent removes its uploads with it (uninstall offers a full wipe of the home — see
-`bazilion uninstall`).
-
-## Pre-migration snapshots
-
-**Historical 0.21/0.22 migration behavior:** earlier supported upgrades could write a verified
-transactionally consistent database copy to `bazilion.pre-migration-<timestamp>.db`.
-Existing files may therefore remain beside an older database.
-
-**0.25 changes the canonical alpha schema: genuine 0.24.0 and older homes refuse unchanged,
-with no automatic pre-refusal snapshot or legacy importer.** Historical 0.23-to-0.24 continuity
-does not make those homes compatible with 0.25. Preserve the entire old home, paired DB/auth and
-external Team work before any separately authorized reset. Keep the matching old binary, runtime
-and schema for old snapshots and archives; they are not importable current-schema backups.
-See [upgrading](/docs/getting-started/#upgrade-to-0250) and
-[backup and recovery](/docs/backup-recovery/).
-
-Only consider pruning historical snapshots after a separate verified backup and confirmation that
-wanted data remains accessible with its matching release. A database-only snapshot is not a backup
-of the entire home; never delete the only recoverable copy.
-
-## Why `logs/` is empty
-
-The daemon **writes no log files**. The `logs/` directory is created at bootstrap and
-wiped by uninstall, but nothing in the daemon writes into it — daemon diagnostics go
-to stdout, so under systemd (or launchd on macOS) the service manager's journal holds
-the log and its rotation is the service manager's job (`journalctl -u bazilion`,
-size-capped by your distro's defaults). If `logs/` ever starts growing, that is a
-bug, not a configuration problem.
-
-## What is deliberately absent
-
-- **No automatic retention on messages or sessions** — the conversation record is the
-  product; structural retention/cold-archiving is post-1.0 work.
-- **No automatic log shipping or telemetry.** Configured provider and integration traffic,
-  including web research, browsing, MCP or Telegram, can leave the host within their capability
-  boundaries. Local-first is not a promise of no network traffic.
+The daemon writes no log files. It logs to stdout, so under a service manager such as systemd the
+journal holds and rotates the log.

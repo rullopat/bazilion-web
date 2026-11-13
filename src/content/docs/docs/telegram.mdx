@@ -1,425 +1,218 @@
 ---
 title: Connecting Telegram
-description: A complete, step-by-step guide to giving your agents their own Telegram forum topics — bot creation, the forum supergroup, credentials, activation, binding, and troubleshooting.
+description: Give every Agent its own topic in a private Telegram forum supergroup — creating the bot and the group, saving the credentials, pairing yourself as owner, and the bot commands.
 ---
 
 import { Steps, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-Bazilion can put each agent in its own **Telegram forum topic** inside a single
-supergroup: you chat with an agent by typing in its topic, and its replies
-mirror back there. A dedicated **⚙ bazilion** topic acts as the control plane
-where you spawn agents and run commands.
+One bot long-polls one private forum supergroup. A **⚙ bazilion** service topic takes commands,
+and every Agent gets its own topic: your messages there become Agent turns and the replies come
+back. The daemon does not need to be reachable from the internet.
 
-Setup has a fair number of manual Telegram-side steps that bazilion can't do for
-you (only a human can create a bot, enable forum Topics, and promote the bot to
-admin). This guide spells out every one of them.
-
-<Aside type="note">
-You only do the Telegram-side setup (Part 1) **once**. After that, spawning and
-binding agents is a single command.
+<Aside type="caution">
+Everyone you allow in the bot drives Agents with your rights. With `BAZILION_BASH_SANDBOX=off`
+(the default) their messages can run commands on the host as the daemon's user. Before you allow
+anyone else, set `BAZILION_BASH_SANDBOX=docker`, and `BAZILION_BASH_APPROVAL=dangerous` so
+Telegram turns deny flagged commands ([coding](/docs/coding-environment/)).
 </Aside>
 
-## What you'll end up with
-
-- A supergroup whose **General** topic is hidden, with a pinned **⚙ bazilion**
-  service topic.
-- One forum topic per agent, named after the agent, with its own icon.
-- Two-way chat: type in a topic → the agent runs a turn → its reply appears in
-  the same topic.
-
-## Before you start
-
-- A working bazilion daemon (see [Getting started](/docs/getting-started/)).
-- A private forum supergroup intended for you and your bot. Keep the paired
-  owner account distinct from anonymous/channel identities.
-- A Linux daemon host with the selected native Bubblewrap/seccomp or Docker backend admitted.
-  Telegram turns require [protected execution](/docs/tools/#prepare-protected-work-on-linux);
-  isolation-required Mac coding is unavailable and never becomes trusted host execution.
-- The Telegram app, signed in to the account that will **own** the supergroup.
-- About ten minutes.
-
----
-
 ## Part 1 — Telegram side
+
+Only a person can create a bot, enable Topics and promote the bot, so these steps are manual. You
+do them once.
 
 ### Step 1. Create a bot with @BotFather
 
 <Steps>
 
-1. Open a chat with **@BotFather** in Telegram and send `/newbot`.
-2. Follow the prompts: give it a display name and a username ending in `bot`.
-3. BotFather replies with a **bot token** that looks like
-   `1234567890:ABCdefGhIJKlmNoPQRsTUVwxyZ`. Copy it somewhere safe — you'll
-   paste it into bazilion later.
+1. Open a chat with **@BotFather** and send `/newbot`.
+2. Give it a display name and a username ending in `bot`.
+3. Copy the **bot token** it replies with, for example `1234567890:ABCdefGhIJKlmNoPQRsTUVwxyZ`.
+   If you lose it, `/token` in @BotFather gives you a new one.
 
 </Steps>
 
-If you ever lose the token, get a new one from **@BotFather → `/token`**.
-
-### Step 2. Turn OFF the bot's Privacy Mode
-
-Bazilion's preflight checks that Privacy Mode is off; configure it explicitly.
+### Step 2. Turn off Privacy Mode
 
 <Steps>
 
 1. In @BotFather, send `/mybots` and select your bot.
-2. Open **Bot Settings → Group Privacy**.
-3. Set it to **Turn off**.
+2. Open **Bot Settings → Group Privacy** and choose **Turn off**.
 
 </Steps>
 
-<Aside type="note" title="Telegram behavior and Bazilion preflight">
-Telegram administrator bots receive group messages even with Privacy Mode on.
-For non-admin bots, Privacy Mode limits which messages arrive. Bazilion still
-checks the explicit Privacy Mode setting during preflight, so turn it off as
-shown. See the [Telegram Bots FAQ](https://core.telegram.org/bots/faq#what-messages-will-my-bot-get).
-</Aside>
-
-### Step 3. Create a forum supergroup with Topics enabled
-
-Bazilion needs a **forum** supergroup — a group with **Topics** turned on.
+### Step 3. Create a forum supergroup
 
 <Steps>
 
-1. Create a new group (or use an existing one you own).
-2. Open the group's **settings → Edit**, and enable **Topics**. This converts
-   the group into a forum supergroup.
+1. Create a new group.
+2. Open its **settings → Edit** and enable **Topics**. This makes it a forum supergroup.
 
 </Steps>
-
-<Aside type="caution">
-Only the supergroup **owner** (a human) can enable Topics — the bot cannot do it.
-If Topics aren't enabled, bazilion can't create any topics and activation fails.
-</Aside>
 
 ### Step 4. Add the bot and make it an admin
 
 <Steps>
 
-1. Add your bot to the supergroup.
-2. Promote it to **administrator**.
-3. Grant it the **Manage Topics** permission. This is the one permission
-   bazilion strictly requires — it's used to create, rename, hide, and close
-   forum topics.
+1. Add your bot to the group.
+2. Promote it to **administrator** with the **Manage Topics** permission. Bazilion uses it to
+   create, rename, hide and close topics. Pinning messages is optional.
 
 </Steps>
 
-Other admin permissions are optional. (If you also want the directory message
-pinned, leave the bot's *pin messages* permission on — but it's best-effort and
-not required.)
+### Step 5. Get the group's chat id
 
-### Step 5. Get the supergroup's numeric chat ID
+The chat id is a negative number such as `-1001234567890`. Temporarily add a helper bot such as
+**@RawDataBot** or **@getidsbot**, copy the `-100…` id it posts, and remove it again. In Telegram
+Web, the group URL holds the same number without the `-100` prefix.
 
-Bazilion identifies the supergroup by its **numeric** chat ID, which looks like
-`-1001234567890`. Telegram doesn't show this in the UI, so use a helper:
-
-<Steps>
-
-1. Temporarily add a "get ID" bot to the group — e.g. **@RawDataBot** or
-   **@getidsbot**. It will post the chat's details, including an id beginning
-   with `-100`.
-2. Copy that `-100…` number.
-3. Remove the helper bot from the group.
-
-</Steps>
-
-<Aside type="tip">
-Alternatively, open the group in **Telegram Web** — the URL contains the internal
-id, and the full chat ID is that number prefixed with `-100`.
-</Aside>
-
-<Aside type="caution">
-Bazilion does **not** support the "forward a message to the bot to detect the
-chat ID" trick — messages from any chat other than the configured supergroup are
-ignored. You must get the ID using one of the methods above.
-</Aside>
-
----
-
-## Part 2 — Enter your credentials in bazilion
-
-You can do this in the web UI or the CLI.
+## Part 2 — Save the credentials
 
 <Tabs>
 <TabItem label="Web UI">
 
-Go to **config → Integrations → Telegram** (`/config/integrations/telegram`).
-In the **Credentials** card:
-
-<Steps>
-
-1. Paste your **Bot token**.
-2. Paste your **Supergroup chat ID** (the `-100…` number).
-3. Click **save credentials**.
-
-</Steps>
-
-Then click **run preflight** to check everything is wired up. You should see
-five green checks:
-
-- **Bot identity** — your bot's `@username`.
-- **Supergroup reachable** — the group's title.
-- **Forum topics enabled** — Topics are on.
-- **Manage Topics** — the bot is an admin with the permission.
-- **Privacy Mode is OFF** — the bot can read group messages.
+Open **Setup → Integrations** (`/config/integrations/telegram`), paste the **Bot token** and the
+**Supergroup chat ID**, and save. Then **run preflight**: it checks the bot identity, that the
+group is reachable and is a forum, that the bot can manage topics, and that Privacy Mode is off.
 
 </TabItem>
 <TabItem label="CLI">
 
 ```sh
-# save token + chat ID together
 bazilion telegram config set --token <BOT_TOKEN> --chat <CHAT_ID>
-
-# run the preflight checks
-bazilion telegram health
-
-# see what's stored (token is masked)
-bazilion telegram config show
+bazilion telegram health          # the preflight checks
+bazilion telegram config show     # the token is masked
 ```
 
 </TabItem>
 </Tabs>
 
-The bot token is stored encrypted; the chat ID is stored as plain config. Saving
-new credentials restarts the bot automatically (this can take ~25 seconds while
-the previous connection drains).
+The bot token is stored encrypted. The bot starts by itself: it creates the **⚙ bazilion**
+service topic, pins an Agent directory there, hides the General topic and registers its command
+menu. Hiding General makes Telegram post a one-off "closed the topic" message; that is expected.
 
----
+## Part 3 — Pair yourself as owner
 
-## Part 3 — Activation (automatic)
-
-Once credentials are saved, the daemon connects and **activates** the bot
-automatically. The first time it activates, it:
-
-1. Creates the **⚙ bazilion** service topic (your control plane).
-2. Posts and pins a **directory** message listing your agents.
-3. **Hides** Telegram's built-in *General* topic so the service topic is the
-   focus.
-4. Registers the bot's slash-command menu.
-
-Activation creates the service topic, but does not authorize a human. Pair the
-owner there before trying to spawn or talk to an Agent.
-
-<Aside type="note" title="“bazilion closed the topic”">
-The first time the bot hides *General*, Telegram posts a one-off
-**"bazilion closed the topic"** service message. This is expected and only
-happens once — not on every restart.
-</Aside>
-
----
-
-## Part 4 — Pair the owner and check readiness
-
-From the authenticated CLI on the Bazilion host:
+Until an owner is paired, the bot answers nobody. Create a one-time code on the web page or with:
 
 ```sh
 bazilion telegram pairing create
 ```
 
-In the configured supergroup, open **⚙ bazilion** and send `/pair <code>`
-from your intended owner account. Do not send it in a direct message to the
-bot, General, or an Agent topic: initial pairing only accepts the service topic.
-The code is short-lived, single-use, and bound to the configured bot/group.
+Send `/pair <code>` in the **⚙ bazilion** topic within ten minutes, from your own account (not a
+direct message to the bot). `bazilion telegram pairing status` shows the owner;
+`pairing cancel` drops an unused code, and `pairing reset --yes` removes the owner so you can pair
+again.
 
-Check the result locally:
-
-```sh
-bazilion telegram pairing status
-bazilion telegram health
-bazilion doctor
-```
-
-Confirm the intended owner, bot/group checks, and protected-work readiness.
-Health also reports membership and owner presence; the supported personal
-setup is one owner plus the bot. If a code expired, generate a fresh one.
-Use `bazilion telegram pairing cancel` to cancel an unused code.
-
-Telegram turns cannot use host coding tools, browser automation, or MCP.
-Pairing may succeed while protected Agent work cannot run. Follow
-[Linux backend preparation](/docs/tools/#prepare-protected-work-on-linux) before sending work;
-Mac isolation-required coding refuses, regardless of pairing or communication approval.
-
-## Part 5 — Spawn and bind agents
-
-An agent gets a Telegram topic when you **bind** it. The easiest way is from the
-**⚙ bazilion** topic itself:
+## Part 4 — Talk to your Agents
 
 <Tabs>
 <TabItem label="From Telegram">
 
 In the **⚙ bazilion** topic:
 
-- `/spawn` — pick a profile from the buttons, then send a name (or `-` to
-  auto-name). The new agent is created and its topic is bound automatically.
-- `/spawn <profile> <name>` — spawn immediately. Add `in <team-slug>` to target
-  a non-default Team.
-- `/spawn_team` — spawn a whole [Team Template](/docs/concepts/#team-templates)
-  at once, one topic per member. Add `in <team-slug>` to target a named Team.
-- `/talk <agent>` — open or create the topic for an agent that already exists.
+- `/talk <agent>` opens (or creates) an Agent's topic; use `<team>/<agent>` when names clash.
+- `/spawn` creates an Agent from a Profile, interactively or as
+  `/spawn <profile> [name] [in <team>]`.
+- `/spawn_team <template> [in <team>]` spawns a [Team template](/docs/concepts/#team-templates),
+  one topic per member.
 
 </TabItem>
 <TabItem label="Web UI">
 
-On the agent's detail page (`/agents/<id>`), open the **Telegram** section and
-click **bind a topic**. A deep link opens the new topic in Telegram.
+On the Agent's **Settings** tab, open the **Telegram** section and bind a topic. A link opens it
+in Telegram.
 
 </TabItem>
 <TabItem label="CLI">
 
 ```sh
-bazilion telegram bind <agent-id-or-prefix>
-bazilion telegram list          # see all agents and their topic bindings
+bazilion telegram bind <agent>
+bazilion telegram list            # every Agent and its topic
 bazilion telegram unbind <agent>
 ```
 
 </TabItem>
 </Tabs>
 
-Once an agent is bound, just **type in its topic** to talk to it. While it works
-you'll see a "typing…" indicator and a 👀 reaction on your message that clears
-when the reply lands. Accepted messages are stored individually in the durable FIFO
-[follow-up queue](/docs/follow-up-queue/), retaining their conversation and attachments.
-Use `/queue` for status and explicit pause/resume controls.
+In an Agent topic, plain messages, photos and files go to the Agent's
+[follow-up queue](/docs/follow-up-queue/) and run one turn at a time; a 👀 reaction shows the
+message was received. Photos reach the model as images; other files (up to 20 MB) are saved for
+the Agent to read.
 
-[Live questions](/docs/questions/) require a button response, a reply to the exact prompt, or
-`/answer <question-id> <text>`. Correlated answers bypass the follow-up queue.
-[Attention notifications](/docs/attention-notifications/) are separate, default-off notices sent
-to the paired group’s Bazilion service topic, with quiet hours and inspectable delivery receipts.
+Replies, errors, images and [delivered files](/docs/results/) are mirrored into the topic. An
+Agent's mirror mode (`bazilion agent edit <id> --mirror minimal|verbose`, or the Agent page) adds
+short tool-call lines in verbose mode, at most 30 a minute per Agent.
 
-### Team Policy and Telegram
+When an Agent [asks a question](/docs/questions/), it appears in its topic with one button per
+choice and **Skip**. Tap a button, or reply to the question message with your own answer.
 
-With `BAZILION_TEAM_POLICY_ENFORCEMENT=on`, Telegram uses the same live Team
-Policy as every other communication surface. Human ingress requires the Team's
-`user → Agent` edge; the reply requires `Agent → user`. A missing edge denies,
-and an `approval_required` edge holds that one attempt in the communication
-approval queue. Configure and preview the Team policy before enabling
-enforcement so a missing edge does not look like a Telegram connectivity issue.
-The Telegram allowlist and Team Policy are independent, cumulative gates:
-allowlisting a human never bypasses the Team's communication policy.
+## Who can use the bot
 
----
+The paired owner, plus the people the owner adds: `/allow <user id>` in Telegram, the allowlist
+card on the web page, or `bazilion telegram allow <user id>`. Someone who is not on the list gets a
+reply with their user id to pass on. `/deny`, `/allowed` and `bazilion telegram deny|allowed`
+manage the list. Everyone on the list can chat with Agents, answer their questions and run the
+commands; only the owner can `/allow` and `/deny`. Removing someone also cancels the messages they
+still have waiting in a queue.
 
-## Access control
+Anyone else in the group can still read the topics, so keep the group to people you trust.
+Messages from other bots and from anonymous admins are ignored.
 
-Initial access comes only from the pairing step above. Ordinary messages do
-not claim ownership, and DMs to the bot are ignored. Send commands from an
-identified human account in the configured supergroup; anonymous admin and
-channel-attributed messages are rejected.
+## Bot commands
 
-The CLI/API retain member allowlist management for existing setups. These
-controls do not turn the personal owner-plus-bot profile into a supported
-multi-user deployment, and they do not bypass Team Policy. `/allowed` lists
-entries; an owner can manage member IDs with `/allow` and `/deny` in the service
-topic. The API rejects creating an owner through `allow --owner`: owner
-creation uses pairing. Do not depend on an unpaired user's `/whoami` reaching
-the command handler; the identity gate runs first.
-
-To change the owner, first review `bazilion telegram pairing status`. The
-explicit `bazilion telegram pairing reset --yes` operation clears ownership
-and closes ingress until you pair again. The last owner cannot be removed
-through ordinary member deletion.
-
----
-
-## Bot command reference
-
-These run in the **⚙ bazilion** service topic and appear in Telegram's slash
-menu:
+In the **⚙ bazilion** service topic:
 
 | Command | What it does |
 | --- | --- |
-| `/spawn` | Create an agent from a profile (interactive or `/spawn <profile> <name>`). |
-| `/spawn_team` | Spawn a whole Team Template at once. Accepts `[in <team>]`; typed `/spawn-team` also works. |
-| `/talk <agent>` | Open or create an agent's topic. Accepts `<team>/<agent>`. |
-| `/list` (alias `/agents`) | List all Agents grouped by Bazilion Team. |
-| `/teams` | List Bazilion Teams with Agent counts. |
-| `/whoami` | Show the already-authorized sender's numeric Telegram user id in the service topic. |
-| `/pair <code>` | Claim initial ownership in the service topic with a locally generated one-use code. |
-| `/allowed` | List allowlisted users. |
-| `/allow <id> [label]` | Allow a user (owner only). |
-| `/deny <id>` | Remove a user (owner only). |
-| `/health` | Bot identity + polling state. |
-| `/help` | Command reference. |
+| `/talk <agent>` | Open or create an Agent's topic |
+| `/spawn` | Create an Agent from a Profile |
+| `/spawn_team` | Spawn a Team template (`/spawn-team` works too) |
+| `/list` (or `/agents`) | Agents grouped by Team |
+| `/teams` | Teams with Agent counts |
+| `/health` | Bot identity and polling state |
+| `/whoami` | Your Telegram user id |
+| `/allowed`, `/allow <id>`, `/deny <id>` | The allowlist (`/allow` and `/deny` are owner only) |
+| `/help` | The command reference |
 
-These run **inside an agent's topic** (hidden from the menu, shown in `/help`):
+In an Agent topic:
 
 | Command | What it does |
 | --- | --- |
-| `/close` | Close this topic (keeps the agent binding). |
-| `/rebind <agent>` | Point this topic at a different agent. |
-| `/unbind` | Clear this topic's agent binding (topic stays as an orphan). |
-
----
+| `/queue`, `/queue drop <n\|all>` | List or remove waiting messages |
+| `/stop` | Cancel the running turn; pauses the queue when messages wait |
+| `/resume` | Resume the queue |
+| `/close` | Close the topic |
+| `/rebind <agent>` | Point the topic at another Agent |
+| `/unbind` | Detach the topic from its Agent |
 
 ## Topic names and icons
 
-- In the **default** Team, a topic is named after the Agent (e.g. `researcher`).
-  In any other Team it is `team-slug › agent-name`.
-- A Team can override the format with a template using the tokens
-  `{agent.name}`, `{team.name}`, and `{team.slug}` (it must include
-  `{agent.name}`). Set it on the Team's detail page (**Telegram topic names**
-  card) or with `bazilion team topic-format set <team> "<template>"`. Saving a
-  new template renames existing topics you haven't manually renamed in Telegram.
-- Each agent gets an icon. You can override it per agent (the **topic icon**
-  field in the agent's Telegram section); otherwise bazilion picks a default
-  from the Agent template name and a per-Team color.
+Topic names follow the Team: set a template with the tokens `{agent.name}`, `{team.name}` and
+`{team.slug}` (it must include `{agent.name}`) on the Team page or with
+`bazilion team topic-format set <team> '{team.name} / {agent.name}'`. Topic icons follow the
+Profile, or the Agent's own `--topic-icon`.
 
----
-
-## Environment variables
-
-These tune Telegram behavior (set them in the daemon's environment):
-
-| Variable | Default | Effect |
-| --- | --- | --- |
-| `BAZILION_TELEGRAM_LOOP_BUDGET` | `20/60/60` | Per-agent **inbound** rate budget (`max/window/cooldown`, seconds). Over budget, new messages are paused for the cooldown with one notice. |
-| `BAZILION_TELEGRAM_AGENT_THROTTLE` | `30/60` | Per-agent **outbound noise** budget for verbose tool-call lines. The agent's actual reply, errors, and fatals always get through. |
-| `BAZILION_TELEGRAM_SEND_INTERVAL_MS` | `200` | Minimum gap between outbound sends to one supergroup (rate-limit pacing). |
-| `BAZILION_TELEGRAM_POLLING_STALL_MS` | `120000` | If no successful poll within this window, the bot self-restarts. Set to `0` to disable. |
-
----
+Telegram can also post new Attention items to the service topic; see
+[Attention notifications](/docs/attention-notifications/).
 
 ## Troubleshooting
 
-**The agent doesn't respond to plain messages.** Confirm the configured group
-and bound Agent topic, then check pairing status, `telegram health`, and
-`bazilion doctor`. A failed native/Docker/provider preflight, unavailable Mac isolation, policy hold, or unpaired
-sender can prevent a turn even when Telegram is connected. Also check the
-Privacy Mode setting from Step 2.
-
-**Pairing never succeeds.** Send a fresh code in **⚙ bazilion** inside the
-configured group, from a non-anonymous human account. DMs and other topics
-cannot complete pairing.
-
-**Browser or MCP tools are missing.** This is expected in Telegram protected
-turns. See the [capability table](/docs/tools/#which-tools-can-this-turn-use).
-
-**Preflight fails on "Forum topics enabled".** The group isn't a forum. The
-owner must enable **Topics** in group settings ([Step 3](#step-3-create-a-forum-supergroup-with-topics-enabled)).
-
-**Preflight fails on "Manage Topics".** The bot isn't an admin, or lacks the
-permission — redo [Step 4](#step-4-add-the-bot-and-make-it-an-admin).
-
-**Tapping a topic deep link on iOS opens the topic list, not the topic.** This is
-an iOS Telegram limitation with no bot-side workaround — open the topic manually
-from the list. Desktop, web, and Android work as expected.
-
-**Someone deleted an agent's topic.** Bazilion notices on the next send, clears
-the binding, and stops mirroring there. Re-bind with `/talk`, the web **bind a
-topic** button, or `bazilion telegram bind`.
-
-**The bot is healthy and the user is allowed, but a message is denied or held.**
-When Team Policy enforcement is on, inspect the Team's **Activity** tab for a
-durable denial or `/approvals` (or `bazilion approval list`) for a pending
-attempt. Telegram access control does not override policy.
-
-**A media file was rejected.** Bazilion downloads inbound media up to **20 MB**.
-Images become model vision input; documents, audio, and video become saved
-files. Audio/video are not native multimodal input. Larger downloads are rejected.
-
-**"Supergroup chat id changed" banner.** Telegram migrated your group to a new
-id. Click **Reconnect** in the web UI (or run `bazilion telegram reconnect`) to
-repoint bazilion and re-activate in the new group.
-
-**A 409 conflict in the logs.** Either a webhook is set on the token or a second
-process is polling the same bot. Don't run two daemons against one bot token.
+- **The bot does not answer.** Pair an owner first, then check `bazilion telegram health` and
+  `bazilion telegram bot status`. `bazilion telegram bot restart` (or **restart bot** on the web
+  page) restarts it.
+- **An Agent does not answer in its topic.** Read the error in the topic or in the web chat, and
+  check the Agent's provider with `bazilion provider test <provider:model>`.
+- **Preflight fails on forum topics or Manage Topics.** Enable Topics
+  ([Step 3](#step-3-create-a-forum-supergroup)) or give the bot the permission
+  ([Step 4](#step-4-add-the-bot-and-make-it-an-admin)).
+- **"Supergroup chat id changed".** Telegram migrated the group to a new id. Use **Reconnect** on
+  the web page or `bazilion telegram reconnect`.
+- **Someone deleted an Agent's topic.** Bazilion notices on the next send and clears the binding.
+  Bind it again with `/talk`, the web page or `bazilion telegram bind`.
+- **Topic links on iOS open the topic list.** That is a Telegram iOS limitation; open the topic
+  from the list.
+- **A 409 conflict in the daemon log.** A webhook is set on the token, or another process polls the
+  same bot. Do not run two daemons against one bot token.
+- Clearing the credentials (`bazilion telegram config clear`) stops the bot and everything it
+  sends.

@@ -19,7 +19,7 @@ export default defineConfig({
   redirects: {
     '/docs/whats-new-0-24/': '/docs/whats-new/#bazilion-0240',
     '/docs/whats-new-0-23/': '/docs/whats-new/#bazilion-0230',
-    '/docs/whats-new-0-22/': '/docs/whats-new/#bazilion-0220',
+    '/docs/whats-new-0-22/': 'https://github.com/rullopat/bazilion/releases/tag/v0.22.0',
     // The plain 0.21 npm final has no umbrella GitHub release; use its final published checkpoint.
     '/docs/whats-new-0-21/': 'https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.5',
     '/docs/whats-new-0-21-beta-1/': 'https://github.com/rullopat/bazilion/releases/tag/v0.21.0-beta.5',
@@ -27,6 +27,10 @@ export default defineConfig({
     '/docs/whats-new-0-20/': 'https://github.com/rullopat/bazilion/releases/tag/v0.20.0',
     '/docs/whats-new-0-19-1/': 'https://github.com/rullopat/bazilion/releases/tag/v0.19.1',
     '/docs/whats-new-0-19/': 'https://github.com/rullopat/bazilion/releases/tag/v0.19.0',
+    // Guides for features removed in 0.26.0 point at the surviving change review page.
+    '/docs/coding-verification/': '/docs/coding-review/',
+    '/docs/coding-review-packets/': '/docs/coding-review/',
+    '/docs/publication/': '/docs/coding-review/',
   },
   build: {
     inlineStylesheets: 'auto',
@@ -56,7 +60,7 @@ export default defineConfig({
         starlightLlmsTxt({
           projectName: 'Bazilion',
           description:
-            "Bazilion is an MIT-licensed, local-first multi-agent runtime built on Pi's coding agent as its core engine. It runs as a daemon on your own machine, owns a workspace under ~/.bazilion, and lets you build Agent templates, revisioned Team Templates, one effective live Team Policy per Team, shared files, qmd-indexed memory, and a mailbox.",
+            "Bazilion is an MIT-licensed, local multi-agent runtime for one person, built on Pi's coding agent. One daemon on your machine owns all state in ~/.bazilion; Agents work in Teams that share a workspace, qmd-indexed memory and a mailbox, run on schedules, and are reachable from a web UI, a CLI and Telegram.",
           promote: ['docs'],
         }),
       ],
@@ -98,11 +102,8 @@ export default defineConfig({
           items: [
             { label: 'The web interface', slug: 'docs/web-interface' },
             { label: 'Tools & integrations', slug: 'docs/tools' },
-            { label: 'Coding during an Agent task', slug: 'docs/coding-environment' },
+            { label: 'Coding with Agents', slug: 'docs/coding-environment' },
             { label: 'Reviewing what changed', slug: 'docs/coding-review' },
-            { label: 'Requesting verification', slug: 'docs/coding-verification' },
-            { label: 'Requesting review from a teammate', slug: 'docs/coding-review-packets' },
-            { label: 'Publishing a reviewed change', slug: 'docs/publication' },
             { label: 'Connecting Telegram', slug: 'docs/telegram' },
             { label: 'Saved Agent results', slug: 'docs/results' },
             { label: 'Conversations', slug: 'docs/conversations' },
