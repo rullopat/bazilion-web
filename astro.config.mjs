@@ -2,6 +2,30 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import starlightLlmsTxt from 'starlight-llms-txt';
 
+// One warm-dark code theme for both colour schemes, built only from the Neva
+// Masquerade palette, so docs code blocks match the homepage terminal.
+const bazilionNight = {
+  name: 'bazilion-night',
+  type: 'dark',
+  colors: {
+    'editor.background': '#2A1F16',
+    'editor.foreground': '#E8E2D8',
+    'editorLineNumber.foreground': '#7A6555',
+    'editor.selectionBackground': '#3A658066',
+  },
+  tokenColors: [
+    { scope: ['comment', 'punctuation.definition.comment'], settings: { foreground: '#9E8E7E', fontStyle: 'italic' } },
+    { scope: ['string', 'string.quoted', 'markup.inline.raw'], settings: { foreground: '#6BA3C2' } },
+    { scope: ['constant', 'constant.numeric', 'constant.language', 'support.constant'], settings: { foreground: '#D4CAB8' } },
+    { scope: ['keyword', 'storage', 'keyword.control', 'keyword.operator'], settings: { foreground: '#C4878A' } },
+    { scope: ['entity.name.function', 'support.function', 'entity.name.command'], settings: { foreground: '#FFFFFF' } },
+    { scope: ['variable', 'variable.other', 'entity.name.tag'], settings: { foreground: '#FAF8F4' } },
+    { scope: ['entity.other.attribute-name', 'support.type.property-name', 'meta.object-literal.key'], settings: { foreground: '#6BA3C2' } },
+    { scope: ['punctuation', 'meta.brace'], settings: { foreground: '#D4CAB8' } },
+    { scope: ['markup.heading', 'entity.name.section'], settings: { foreground: '#FFFFFF', fontStyle: 'bold' } },
+  ],
+};
+
 // Static build. Deployed to Cloudflare Workers via the Assets-only worker
 // pattern (no adapter required) — see wrangler.jsonc.
 //
@@ -53,6 +77,37 @@ export default defineConfig({
         },
       ],
       customCss: ['./src/styles/docs.css'],
+      expressiveCode: {
+        themes: [bazilionNight],
+        useStarlightDarkModeSwitch: false,
+        useStarlightUiThemeColors: false,
+        styleOverrides: {
+          borderRadius: '12px',
+          borderColor: '#3D2B1F',
+          codeFontFamily: "'JetBrains Mono', 'Fira Code', ui-monospace, monospace",
+          codeFontSize: '0.84rem',
+          codeLineHeight: '1.75',
+          codePaddingBlock: '1.1rem',
+          codePaddingInline: '1.35rem',
+          uiFontFamily: "'DM Sans', 'Helvetica Neue', system-ui, sans-serif",
+          frames: {
+            shadowColor: 'transparent',
+            editorTabBarBackground: '#3D2B1F',
+            editorActiveTabBackground: '#2A1F16',
+            editorActiveTabIndicatorTopColor: '#6BA3C2',
+            editorTabBarBorderBottomColor: '#3D2B1F',
+            terminalTitlebarBackground: '#3D2B1F',
+            terminalTitlebarForeground: '#D4CAB8',
+            terminalTitlebarDotsForeground: '#7A6555',
+            terminalTitlebarBorderBottomColor: '#3D2B1F',
+            terminalBackground: '#2A1F16',
+            inlineButtonBackground: '#FAF8F4',
+            inlineButtonForeground: '#FAF8F4',
+            inlineButtonBorder: '#9E8E7E',
+            tooltipSuccessBackground: '#3A6580',
+          },
+        },
+      },
       // Agent-readable docs: emits /llms.txt, /llms-full.txt, /llms-small.txt
       // so an LLM can ingest the whole corpus in one fetch. Slugs are prefixed
       // with `docs/` because the content is nested under src/content/docs/docs/.

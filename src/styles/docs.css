@@ -1,13 +1,15 @@
 /* ------------------------------------------------------------------
-   Starlight theme overrides — make the /docs section wear the same
-   editorial skin as the Bazilion landing page (Neva Masquerade palette:
-   cream paper, chocolate ink, sapphire eye-color accent, rose; DM Serif
-   Display + DM Sans + JetBrains Mono; the paper-grain signature).
+   Starlight theme overrides — the /docs section wears the same skin as
+   the Bazilion homepage: Neva Masquerade palette (cream paper, chocolate
+   ink, sapphire for the cat's eye, rose for warnings), DM Serif Display
+   headings over DM Sans, and warm-dark code blocks like the homepage
+   terminal (the code theme lives in astro.config.mjs).
    Loaded via the `customCss` option in astro.config.mjs.
 
    Starlight keeps its DARK theme on :root and overrides LIGHT under
-   [data-theme='light']. We brand both, plus the primitive gray scale so
-   every derived token follows.
+   [data-theme='light']. Both are branded, including the primitive
+   colour scales, so every derived token (asides, badges) stays inside
+   the palette.
 ------------------------------------------------------------------ */
 
 :root {
@@ -24,9 +26,21 @@
   --bz-sapphire-deep: #3a6580;
   --bz-sapphire-light: #6ba3c2;
   --bz-rose: #c4878a;
+  --bz-snow: #ffffff;
+
+  --bz-display: 'DM Serif Display', 'Hoefler Text', Georgia, serif;
 
   --sl-font: 'DM Sans', 'Helvetica Neue', system-ui, sans-serif;
   --sl-font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, monospace;
+
+  --sl-text-h1: 2.75rem;
+  --sl-text-h2: 2rem;
+  --sl-text-h3: 1.45rem;
+  --sl-text-h4: 1.2rem;
+  --sl-line-height-headings: 1.15;
+  --sl-content-width: 46rem;
+  --sl-nav-height: 4rem;
+  --bz-radius: 14px;
 }
 
 /* ---------- DARK theme (default): warm chocolate paper ---------- */
@@ -40,24 +54,48 @@
   --sl-color-gray-6: #352720;
   --sl-color-black: #211810;
 
-  --sl-color-accent-low: #1b2c37;
-  --sl-color-accent: #5e96b6;
-  --sl-color-accent-high: #d3e6f1;
+  --sl-color-accent-low: color-mix(in srgb, var(--bz-sapphire) 22%, var(--bz-charcoal));
+  --sl-color-accent: var(--bz-sapphire-light);
+  --sl-color-accent-high: color-mix(in srgb, var(--bz-sapphire-light) 35%, var(--bz-ivory));
 
   --sl-color-text: #e6dccd;
-  --sl-color-text-accent: #8fc0db;
+  --sl-color-text-accent: color-mix(in srgb, var(--bz-sapphire-light) 75%, var(--bz-ivory));
+  --sl-color-text-invert: var(--bz-charcoal);
   --sl-color-bg: #211810;
-  --sl-color-bg-nav: #2a1f16;
-  --sl-color-bg-sidebar: #251b13;
-  --sl-color-bg-inline-code: #322419;
-  --sl-color-bg-accent: #5e96b6;
+  --sl-color-bg-nav: #211810;
+  --sl-color-bg-sidebar: #211810;
+  --sl-color-bg-inline-code: #352720;
+  --sl-color-bg-accent: var(--bz-sapphire-light);
 
   --sl-color-hairline: #352720;
-  --sl-color-hairline-light: #3a2b1f;
-  --sl-color-hairline-shade: #2f2319;
+  --sl-color-hairline-light: #3d2b1f;
+  --sl-color-hairline-shade: #2a1f16;
+
+  /* aside / badge scales, kept inside the palette */
+  --sl-color-blue-low: color-mix(in srgb, var(--bz-sapphire) 22%, var(--bz-charcoal));
+  --sl-color-blue: var(--bz-sapphire-light);
+  --sl-color-blue-high: color-mix(in srgb, var(--bz-sapphire-light) 40%, var(--bz-ivory));
+  --sl-color-purple-low: var(--sl-color-blue-low);
+  --sl-color-purple: var(--sl-color-blue);
+  --sl-color-purple-high: var(--sl-color-blue-high);
+  --sl-color-green-low: var(--sl-color-blue-low);
+  --sl-color-green: var(--sl-color-blue);
+  --sl-color-green-high: var(--sl-color-blue-high);
+  --sl-color-orange-low: color-mix(in srgb, var(--bz-rose) 18%, var(--bz-charcoal));
+  --sl-color-orange: var(--bz-rose);
+  --sl-color-orange-high: color-mix(in srgb, var(--bz-rose) 45%, var(--bz-ivory));
+  --sl-color-red-low: color-mix(in srgb, var(--bz-rose) 26%, var(--bz-charcoal));
+  --sl-color-red: var(--bz-rose);
+  --sl-color-red-high: color-mix(in srgb, var(--bz-rose) 35%, var(--bz-ivory));
+
+  --bz-card-bg: color-mix(in srgb, var(--bz-chocolate) 55%, #211810);
+  --bz-card-border: #3d2b1f;
+  --bz-current-bg: color-mix(in srgb, var(--bz-sapphire) 24%, #211810);
+  --bz-current-text: color-mix(in srgb, var(--bz-sapphire-light) 70%, var(--bz-ivory));
+  --bz-heading: var(--bz-cream);
 }
 
-/* ---------- LIGHT theme: the cream landing-page look ---------- */
+/* ---------- LIGHT theme: the cream homepage look ---------- */
 :root[data-theme='light'] {
   --sl-color-white: #2a1f16; /* highest-contrast text (headings) */
   --sl-color-gray-1: #3d2b1f;
@@ -69,46 +107,264 @@
   --sl-color-gray-7: #f0eae0;
   --sl-color-black: #f5f0e8;
 
-  --sl-color-accent-low: #dceaf1;
-  --sl-color-accent: #4a7c9b;
-  --sl-color-accent-high: #25424f;
+  --sl-color-accent-low: color-mix(in srgb, var(--bz-sapphire) 14%, var(--bz-ivory));
+  --sl-color-accent: var(--bz-sapphire);
+  --sl-color-accent-high: color-mix(in srgb, var(--bz-sapphire-deep) 70%, var(--bz-charcoal));
 
   --sl-color-text: #3d2b1f;
   --sl-color-text-accent: #3a6580;
+  --sl-color-text-invert: var(--bz-snow);
   --sl-color-bg: #f5f0e8; /* cream paper */
-  --sl-color-bg-nav: #faf8f4; /* ivory */
-  --sl-color-bg-sidebar: #faf8f4;
+  --sl-color-bg-nav: #f5f0e8;
+  --sl-color-bg-sidebar: #f5f0e8;
   --sl-color-bg-inline-code: #e8e2d8;
   --sl-color-bg-accent: #3a6580;
 
   --sl-color-hairline: #e1d8cb;
-  --sl-color-hairline-light: #ece5da;
-  --sl-color-hairline-shade: #efe9df;
+  --sl-color-hairline-light: #e1d8cb;
+  --sl-color-hairline-shade: #ece5da;
+
+  --sl-color-blue-low: color-mix(in srgb, var(--bz-sapphire) 10%, var(--bz-ivory));
+  --sl-color-blue: var(--bz-sapphire);
+  --sl-color-blue-high: color-mix(in srgb, var(--bz-sapphire-deep) 80%, var(--bz-charcoal));
+  --sl-color-purple-low: var(--sl-color-blue-low);
+  --sl-color-purple: var(--sl-color-blue);
+  --sl-color-purple-high: var(--sl-color-blue-high);
+  --sl-color-green-low: var(--sl-color-blue-low);
+  --sl-color-green: var(--sl-color-blue);
+  --sl-color-green-high: var(--sl-color-blue-high);
+  --sl-color-orange-low: color-mix(in srgb, var(--bz-rose) 13%, var(--bz-ivory));
+  --sl-color-orange: var(--bz-rose);
+  --sl-color-orange-high: color-mix(in srgb, var(--bz-rose) 45%, var(--bz-charcoal));
+  --sl-color-red-low: color-mix(in srgb, var(--bz-rose) 18%, var(--bz-ivory));
+  --sl-color-red: var(--bz-rose);
+  --sl-color-red-high: color-mix(in srgb, var(--bz-rose) 40%, var(--bz-charcoal));
+
+  --bz-card-bg: color-mix(in srgb, var(--bz-ivory) 60%, var(--bz-snow));
+  --bz-card-border: #e1d8cb;
+  --bz-current-bg: color-mix(in srgb, var(--bz-sapphire) 12%, var(--bz-ivory));
+  --bz-current-text: var(--bz-sapphire-deep);
+  --bz-heading: var(--bz-charcoal);
 }
 
 /* ---------- typography ---------- */
-/* Editorial serif headings + wordmark, matching the landing page. */
 .sl-markdown-content :is(h1, h2, h3, h4),
-.content-panel h1,
-h1[data-page-title],
+h1#_top,
 .site-title {
-  font-family: 'DM Serif Display', 'Hoefler Text', Georgia, serif;
+  font-family: var(--bz-display);
   font-weight: 400;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
+  color: var(--bz-heading);
+}
+h1#_top {
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+.sl-markdown-content h2 {
+  margin-top: 3rem;
+  text-wrap: balance;
+}
+.sl-markdown-content h3 { margin-top: 2.25rem; }
+.sl-markdown-content h4,
+.sl-markdown-content h5 {
+  font-family: var(--sl-font);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.sl-markdown-content a:not(:where(.not-content *)) {
+  color: var(--sl-color-text-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
+}
+.sl-markdown-content a:not(:where(.not-content *)):hover {
+  text-decoration-color: currentColor;
+}
+
+.sl-markdown-content :not(pre) > code {
+  border-radius: 6px;
+  padding: 0.1em 0.38em;
+  font-size: 0.86em;
+}
+
+.sl-markdown-content :is(table) {
+  font-size: 0.94rem;
+}
+.sl-markdown-content :is(th) {
+  font-weight: 600;
+  color: var(--bz-heading);
 }
 
 ::selection {
-  background: rgba(74, 124, 155, 0.18);
+  background: rgba(74, 124, 155, 0.2);
   color: var(--sl-color-text-accent);
 }
 
+:focus-visible {
+  outline: 2px solid var(--sl-color-text-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- header ---------- */
+.header {
+  border-bottom-color: var(--sl-color-hairline);
+}
+.site-title {
+  gap: 0.6rem;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+/* Baziu, the mark — same file as the favicon, so it is already cached. */
+.site-title::before {
+  content: '';
+  flex: none;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: url('/baziu.svg') center / cover no-repeat, var(--bz-ivory);
+  box-shadow: 0 0 0 1px var(--sl-color-hairline);
+}
+.site-title:hover { color: var(--bz-heading); }
+
+site-search button[data-open-modal] {
+  border-radius: 999px;
+  background: var(--bz-card-bg);
+  border-color: var(--bz-card-border);
+}
+site-search button[data-open-modal]:hover {
+  border-color: var(--sl-color-gray-4);
+}
+
+/* ---------- sidebar ---------- */
+.sidebar-content summary .large,
+.sidebar-content .large {
+  font-size: 0.95rem;
+}
+.sidebar-content summary .group-label .large {
+  font-weight: 600;
+  color: var(--bz-heading);
+}
+.sidebar-content ul ul {
+  border-inline-start-color: var(--sl-color-hairline);
+}
+.sidebar-content a {
+  border-radius: 8px;
+  padding-block: 0.3rem;
+  transition: background-color .15s ease, color .15s ease;
+}
+.sidebar-content a:hover {
+  color: var(--bz-heading);
+  background-color: var(--sl-color-hairline-shade);
+}
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover,
+.sidebar-content a[aria-current='page']:focus {
+  background-color: var(--bz-current-bg);
+  color: var(--bz-current-text);
+  font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--sl-color-accent);
+}
+
+/* table of contents */
+starlight-toc a[aria-current='true'],
+mobile-starlight-toc a[aria-current='true'] {
+  color: var(--sl-color-text-accent);
+  font-weight: 600;
+}
+
+/* ---------- cards ---------- */
+.card,
+.sl-link-card {
+  background: var(--bz-card-bg);
+  border: 1px solid var(--bz-card-border);
+  border-radius: var(--bz-radius);
+  box-shadow: none;
+}
+.card { padding: 1.25rem 1.35rem; }
+.card .title {
+  font-family: var(--bz-display);
+  font-weight: 400;
+  font-size: 1.3rem;
+  color: var(--bz-heading);
+}
+.card .icon {
+  color: var(--sl-color-accent);
+  background: var(--sl-color-accent-low);
+  border: none;
+  border-radius: 10px;
+  padding: 0.3rem;
+}
+
+.sl-link-card {
+  transition: border-color .2s ease, background-color .2s ease;
+}
+.sl-link-card:hover {
+  border-color: var(--sl-color-accent);
+  background: var(--bz-card-bg);
+}
+.sl-link-card a .title,
+.sl-link-card .title {
+  font-family: var(--bz-display);
+  font-weight: 400;
+  font-size: 1.3rem;
+  color: var(--bz-heading);
+}
+.sl-link-card .description { color: var(--sl-color-gray-3); }
+.sl-link-card .icon { color: var(--sl-color-accent); }
+
+/* ---------- asides, steps, tabs ---------- */
+.starlight-aside {
+  border-radius: 0 var(--bz-radius) var(--bz-radius) 0;
+  border-inline-start-width: 3px;
+}
+.starlight-aside__title {
+  font-family: var(--sl-font);
+  font-weight: 600;
+}
+
+.sl-steps > li::before {
+  font-family: var(--sl-font);
+  font-weight: 600;
+  background-color: var(--sl-color-accent-low);
+  color: var(--sl-color-text-accent);
+  box-shadow: inset 0 0 0 1.5px var(--sl-color-accent);
+}
+.sl-steps > li::after {
+  background-color: var(--sl-color-hairline);
+}
+
+starlight-tabs [role='tab'][aria-selected='true'] {
+  color: var(--sl-color-text-accent);
+  border-color: var(--sl-color-accent);
+}
+
+/* ---------- code blocks: the homepage terminal ---------- */
+.expressive-code .frame {
+  box-shadow: 0 12px 30px -20px rgba(42, 31, 22, 0.45);
+}
+
+/* ---------- pagination ---------- */
+.pagination-links a {
+  border-radius: var(--bz-radius);
+  border-color: var(--bz-card-border);
+  background: var(--bz-card-bg);
+  box-shadow: none;
+}
+.pagination-links a:hover { border-color: var(--sl-color-accent); }
+.pagination-links .link-title {
+  font-family: var(--bz-display);
+  font-size: 1.3rem;
+  color: var(--bz-heading);
+}
+
 /* ---------- paper grain — the brand signature ---------- */
-/* Fixed fractal-noise wash, multiplied over the page like the landing site. */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  opacity: 0.04;
+  opacity: 0.035;
   pointer-events: none;
   z-index: 9999;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
@@ -116,22 +372,14 @@ body::before {
   background-size: 256px;
   mix-blend-mode: multiply;
 }
-
-/* Soft cream sunlight wash — light theme only (it's tuned for cream paper). */
-:root[data-theme='light'] body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  background:
-    radial-gradient(60% 50% at 20% 0%, rgba(196, 135, 138, 0.1), transparent 70%),
-    radial-gradient(50% 40% at 100% 30%, rgba(107, 163, 194, 0.08), transparent 70%),
-    radial-gradient(70% 60% at 50% 110%, rgba(122, 101, 85, 0.1), transparent 70%);
+:root:not([data-theme='light']) body::before {
+  mix-blend-mode: screen;
+  opacity: 0.025;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body::before {
-    display: none;
+  .sidebar-content a,
+  .sl-link-card {
+    transition: none;
   }
 }
