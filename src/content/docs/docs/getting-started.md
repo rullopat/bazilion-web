@@ -74,8 +74,13 @@ bazilion agent chat <agent-id> --message "say hi"
 ## Upgrade to 0.26.0
 
 There are no database migrations. A release opens a home only when its schema matches the one it
-ships; otherwise the daemon refuses to start and leaves the home untouched. 0.26.0 reset the
-schema, so a home from 0.25.0 or any earlier release is refused. To move to 0.26.0:
+ships; otherwise the daemon refuses to start and leaves the home untouched.
+
+**From 0.26.0:** 0.26.1 uses the same schema, so the home opens as it is. Stop the daemon, run
+`npm install -g bazilion@0.26.1` and start Bazilion again.
+
+**From 0.25.0 or earlier:** 0.26.0 reset the schema, so the home is refused. To move to the
+current release:
 
 1. Stop the daemon and copy the whole home somewhere safe, with any project a linked Team points
    to. A `bazilion backup create` archive works too, but only the release that wrote it can
@@ -89,7 +94,7 @@ schema, so a home from 0.25.0 or any earlier release is refused. To move to 0.26
    removes them too.
 
    ```sh
-   npm install -g bazilion@0.26.0
+   npm install -g bazilion@0.26.1
    bazilion uninstall --yes
    ```
 

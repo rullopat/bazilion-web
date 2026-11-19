@@ -10,7 +10,7 @@ CLI and the web UI are clients of its HTTP API.
 
 Models are written `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-6-astra` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
-catalog; Bazilion 0.26.0 bundles Pi 1.4.0. An id that is not in the catalog is refused as
+catalog; Bazilion 0.26.1 bundles Pi 1.5.2. An id that is not in the catalog is refused as
 "Unknown model" unless the provider has an endpoint you configured, so a typo never sends a key to
 another vendor.
 
@@ -42,8 +42,14 @@ bazilion provider test anthropic:claude-opus-5  # one real request
 
 The ChatGPT sign-in is stored encrypted and refreshed by the daemon; a worker only ever gets a
 short-lived access token. After connecting, enable `openai-codex` and save a model such as
-`gpt-6-astra`. Saved Agent and Profile model choices are never rewritten for you; change them in
-the Agent's **Settings** or with `bazilion agent edit <id> --model …`.
+`gpt-6-astra`.
+
+New Agents use their Profile's default model unless you pick another. Saving a provider's list
+without a model that a Profile defaults to moves the Profile to the provider's first remaining
+model (or to the first available model of another provider when none remains), and the save
+reports each move. A Profile on a model that was never listed and an Agent's own model override
+are not rewritten; change them with `bazilion profile update <id> --model …`, in the Agent's
+**Settings** or with `bazilion agent edit <id> --model …`.
 
 ## Settings and secrets
 

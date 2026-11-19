@@ -1,12 +1,54 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.26.0 bundles Pi 1.4.0.
+description: The latest four Bazilion releases, newest first; Bazilion 0.26.1 bundles Pi 1.5.2.
 ---
 
 The latest four releases, newest first. Older releases are summarised on
 [Previous changes](/docs/previous-changes/) and in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.26.1
+
+Published **2026-11-19**. A patch release: a fix in model selection, current model catalogs and a
+ChatGPT sign-in fix on macOS. The embedded Pi engine moves from 1.4.0 to 1.5.2. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.26.1).
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26.0 home opens as it is. Stop the daemon, then:
+
+```sh
+npm install -g bazilion@0.26.1
+bazilion dashboard
+```
+
+A 0.25 or older home still needs the reset described in
+[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
+
+### Fixed
+
+- **Model list edits reach Agent templates.** The `default` Profile is created with the first
+  model on a provider's list and used to keep it, so correcting a mistyped model id on `/config`
+  left new Agents on the old one. Saving a list without a model that a Profile defaults to now
+  moves the Profile to the provider's first remaining model, or to the first available model of
+  another provider when none remains. The web save message and `bazilion provider models-set`
+  report each move. A Profile on a model that was never listed and an Agent's own model override
+  are not changed.
+- **ChatGPT sign-in on macOS.** **Connect ChatGPT** on `/config` opens the sign-in page with the
+  system `open`. A terminal app that puts its own `open` first on the daemon's `PATH` could keep
+  the page in its built-in browser and leave the button on "opening browser…".
+
+If a Profile already points at a model you removed before upgrading, set it once:
+`bazilion profile update default --model <provider:model>`.
+
+### Changed
+
+- The embedded Pi engine moved to 1.5.2 (AI, agent core, coding agent and MCP client). The model
+  catalogs on `/config` follow Pi's: GPT-6.1 Terra, Claude Fable 5.2 and Kimi K3.1 Pro are among
+  the additions, and ids Pi dropped are no longer offered.
+- New provider: Qwen Token Plan (Individual, CN), `qwen-token-plan-individual-cn`, with
+  `QWEN_TOKEN_PLAN_CN_API_KEY`.
 
 ## Bazilion 0.26.0
 
@@ -18,16 +60,9 @@ on both the CLI and the web UI. The embedded Pi engine stays at 1.4.0. See the
 ### Upgrade: back up, reset, start fresh
 
 The database schema was reset to one clean-install schema, and a 0.25 (or older) home is refused
-at startup. Nothing is migrated or imported. With the old daemon stopped:
-
-```sh
-cp -a ~/.bazilion ~/.bazilion-0.25     # keep the old home, and any linked Team projects
-npm install -g bazilion@0.26.0
-bazilion uninstall --yes
-bazilion dashboard                     # bootstraps a fresh home
-```
-
-Then connect a provider again and recreate the Teams and Agents you need. See
+at startup. Nothing is migrated or imported: back up the old home, run
+`bazilion uninstall --yes` and start Bazilion again to bootstrap a fresh one, then connect a
+provider and recreate the Teams and Agents you need. The current commands are in
 [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
 
 ### Removed
@@ -87,15 +122,3 @@ Published 2026-10-23. See the
 - The embedded Pi engine moved to 1.4.0 (AI, agent core, coding agent and MCP client).
 - `bazilion doctor` and `/config` separated installation health from execution readiness.
 - The 0.23 schema was unchanged, so a 0.23 home opened as it was.
-
-## Bazilion 0.23.0
-
-Published 2026-10-21, with Pi 1.0.0. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.23.0).
-
-- Native OpenAI and ChatGPT web search, with guarded reading of the cited pages.
-- Recovery for generated images whose delivery was interrupted.
-- Workspace blocker reporting with limited cleanup attempts (removed in 0.26.0).
-- Legacy MCP SSE retired; Streamable HTTP and stdio remained.
-- Node 24.22.0+ or 26.4.0+ required. The schema changed: 0.22.0 and older homes needed a fresh
-  home.
