@@ -41,7 +41,7 @@ export default defineConfig({
   // keeping duplicate content. Releases outside the window live on GitHub.
   // trailingSlash: 'ignore' serves both forms; duplicate keys collide in Astro.
   redirects: {
-    '/docs/whats-new-0-24/': '/docs/whats-new/#bazilion-0240',
+    '/docs/whats-new-0-24/': 'https://github.com/rullopat/bazilion/releases/tag/v0.24.0',
     '/docs/whats-new-0-23/': 'https://github.com/rullopat/bazilion/releases/tag/v0.23.0',
     '/docs/whats-new-0-22/': 'https://github.com/rullopat/bazilion/releases/tag/v0.22.0',
     // The plain 0.21 npm final has no umbrella GitHub release; use its final published checkpoint.
