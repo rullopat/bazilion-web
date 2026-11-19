@@ -42,8 +42,9 @@ special files, checks the database (integrity, the schema of this release, the `
 and only then swaps the restored home in. A non-empty target needs `--force`, which deletes its
 current data.
 
-The schema check means a backup can be restored only by the release that wrote it. A 0.25 or
-older archive cannot be restored by 0.26.0; keep the release that wrote it if you need its data.
+The schema check means a backup can be restored only by a release with the same schema: 0.26.1
+restores a 0.26.0 archive, but a 0.25 or older archive cannot be restored by 0.26; keep the
+release that wrote it if you need its data.
 
 To try a restore without touching your home, restore into an empty directory and start it with
 the scheduler off, so no trigger or inbox turn runs:
