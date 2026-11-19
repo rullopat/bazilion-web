@@ -55,7 +55,11 @@ reads at most 3 MiB of a page and returns 20,000 characters by default.
 ## Managed browser
 
 Each Agent has its own browser: the Chrome, Brave, Edge or Chromium installed on the machine,
-running on a persistent profile, so cookies and logins carry over between turns. The Agent reads
+running on a persistent profile, so cookies and logins carry over between turns. Bazilion looks in
+the usual install places on Linux and in `/Applications` and `~/Applications` on macOS. When no
+browser is installed, the daemon downloads Chromium once (a few hundred MB), at startup or at the
+first browser action; `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` in the daemon's environment turns that
+off. The Agent reads
 pages as accessibility snapshots with refs such as `[ref=e5]` and acts on them with
 `browser_navigate`, `browser_snapshot`, `browser_click`, `browser_type`, `browser_fill_form`,
 `browser_select`, `browser_hover`, `browser_press_key`, `browser_go_back`, `browser_tabs`,
@@ -67,13 +71,15 @@ inactivity. Settings are on `/config/services` (**Browser Automation**):
 | Key | Default | |
 | --- | --- | --- |
 | `BROWSER_ENABLED` | `true` | Give Agent turns the browser tools |
-| `BROWSER_EXECUTABLE_PATH` | discovery | Browser binary; otherwise the first installed Chrome, Brave, Edge or Chromium |
-| `BROWSER_HEADLESS` | `true` | `false` opens a visible window |
+| `BROWSER_EXECUTABLE_PATH` | discovery | Browser binary; otherwise the first installed Chrome, Brave, Edge or Chromium, then the downloaded Chromium |
+| `BROWSER_ATTACH` | `false` | `true` makes Agents work in [your running browser](#your-running-browser) |
+| `BROWSER_ATTACH_URL` | found | DevTools address of the running browser, such as `http://127.0.0.1:9222` |
+| `BROWSER_HEADLESS` | `true` | `false` opens a visible window; not used with a running browser |
 | `BROWSER_ALLOW_PRIVATE_NETWORK` | `false` | Turn the SSRF proxy off; local development only |
 | `BROWSER_IDLE_MS` | `900000` | Stop a browser after 15 minutes idle |
 | `BROWSER_MAX_SESSIONS` | `4` | Browsers running at once |
 
-All browser traffic goes through a proxy in the daemon that refuses loopback, private and
+In an Agent's own browser, all traffic goes through a proxy in the daemon that refuses loopback, private and
 link-local addresses. Downloads are refused and WebRTC and QUIC are off, so nothing goes around the
 proxy.
 
@@ -88,7 +94,38 @@ bazilion agent browser reset <agent>    # deletes the profile; --yes skips the p
 ```
 
 Archiving an Agent stops its browser; deleting it deletes the profile. Sites may still block the
-browser or show CAPTCHAs and logins; the Agent is told to stop and tell you.
+browser or show CAPTCHAs and logins; the Agent is told to stop and tell you. To sign an Agent in to
+a site, set `BROWSER_HEADLESS=false`, let the Agent open the site and sign in in the window that
+appears; the login stays in that Agent's profile.
+
+### Your running browser
+
+With `BROWSER_ATTACH=true`, Agents do not get browsers of their own. They work in the Chrome or
+Chromium you have open, signed in wherever you are.
+
+1. In Chrome 144 or later, open `chrome://inspect/#remote-debugging` and allow remote debugging.
+2. Set `BROWSER_ATTACH` to `true` on `/config/services` or with `bazilion config set`.
+3. At an Agent's first browser action, Chrome asks whether to allow the connection. Allow it
+   within a minute.
+
+For another Chromium-family browser, or a profile outside the default place, start it with
+`--remote-debugging-port=9222 --user-data-dir=<directory>` and set
+`BROWSER_ATTACH_URL=http://127.0.0.1:9222`.
+
+- An Agent sees and drives only the tabs it opens and the tabs those open. Your own tabs are never
+  listed, read or closed.
+- All Agents share one connection. When the last Agent's session ends, its tabs close, the
+  connection is dropped and your browser keeps running; the next browser action asks Chrome again.
+- An Agent's saved profile is left as it is for when you turn the mode off.
+
+<Aside type="caution">
+In your running browser the Agent acts as you on every site you are signed in to. It is told to
+post, send, buy, delete or change settings only when you asked for exactly that. The daemon's proxy
+cannot cover this mode: each request of an Agent's tab is checked against the same rules instead,
+which misses a service worker's requests, the first request of a tab that a page opened and a host
+name whose address changes after the check. Downloads are refused in the Agent's tabs only. Use the
+mode with Agents and tasks you trust.
+</Aside>
 
 <Aside type="caution">
 `BROWSER_ALLOW_PRIVATE_NETWORK=true` lets pages reach your local network and `file:` URLs. Use it

@@ -1,12 +1,56 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.26.1 bundles Pi 1.5.2.
+description: The latest four Bazilion releases, newest first; Bazilion 0.27.0 bundles Pi 1.5.2.
 ---
 
 The latest four releases, newest first. Older releases are summarised on
 [Previous changes](/docs/previous-changes/) and in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.27.0
+
+Published **2026-11-19**. The managed browser works from the first start on Linux and macOS, and
+Agents can work in the browser you already have open. The embedded Pi engine stays at 1.5.2. See
+the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.27.0).
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26 home opens as it is. Stop the daemon, then:
+
+```sh
+npm install -g bazilion@0.27.0
+bazilion dashboard
+```
+
+A 0.25 or older home still needs the reset described in
+[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
+
+### Fixed
+
+- **macOS found no browser.** The lookup only knew Linux install paths. Chrome, Brave, Edge and
+  Chromium are now found in `/Applications` and `~/Applications`. A `BROWSER_EXECUTABLE_PATH` set
+  as a workaround keeps working and is no longer needed.
+- **A machine without Chrome had no browser.** Playwright's Chromium came from an npm install
+  script, which current npm and pnpm skip. The daemon now downloads Chromium itself when no
+  browser is installed, at startup or at the first browser action. The Agent page shows the
+  download or why it failed, and `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` turns it off.
+- **Crash cleanup on macOS.** A browser left on an Agent's profile by a daemon that crashed is
+  killed on macOS as well.
+
+### Added
+
+- **Your running browser.** With `BROWSER_ATTACH=true`, Agents work in the Chrome or Chromium you
+  have open, signed in as you, in tabs of their own. Your own tabs are never listed, read or
+  closed. The daemon's network proxy cannot cover this mode and the Agent acts as you on every
+  site you are signed in to: read [Your running browser](/docs/tools/#your-running-browser)
+  before turning it on.
+
+### Limits
+
+- Attaching is tested against a Chromium started with a debugging port. Chrome's own
+  remote-debugging switch and approval prompt need a person and are not covered by tests.
+- The browser suites pass on macOS against real Chrome but run in CI on Linux only.
 
 ## Bazilion 0.26.1
 
@@ -16,14 +60,7 @@ ChatGPT sign-in fix on macOS. The embedded Pi engine moves from 1.4.0 to 1.5.2. 
 
 ### Upgrade: install and start again
 
-The database schema is unchanged, so a 0.26.0 home opens as it is. Stop the daemon, then:
-
-```sh
-npm install -g bazilion@0.26.1
-bazilion dashboard
-```
-
-A 0.25 or older home still needs the reset described in
+The database schema was unchanged, so a 0.26.0 home opened as it was. The current commands are in
 [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
 
 ### Fixed
@@ -112,13 +149,3 @@ See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.25
 - A Linux native sandbox (unprivileged Bubblewrap with seccomp) next to the Docker sandbox.
   0.26.0 removed the native sandbox again.
 - The schema changed: 0.24.0 and older homes were refused and needed a fresh home.
-
-## Bazilion 0.24.0
-
-Published 2026-10-23. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.24.0).
-
-- Ordinary interactive Agent chat on macOS, with guarded repository-instruction reads.
-- The embedded Pi engine moved to 1.4.0 (AI, agent core, coding agent and MCP client).
-- `bazilion doctor` and `/config` separated installation health from execution readiness.
-- The 0.23 schema was unchanged, so a 0.23 home opened as it was.

@@ -10,7 +10,7 @@ CLI and the web UI are clients of its HTTP API.
 
 Models are written `provider:model`, for example `anthropic:claude-opus-5`,
 `openai-codex:gpt-6-astra` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
-catalog; Bazilion 0.26.1 bundles Pi 1.5.2. An id that is not in the catalog is refused as
+catalog; Bazilion 0.27.0 bundles Pi 1.5.2. An id that is not in the catalog is refused as
 "Unknown model" unless the provider has an endpoint you configured, so a typo never sends a key to
 another vendor.
 
@@ -77,6 +77,7 @@ The settings you are most likely to change:
 | `BAZILION_WEB_SEARCH_ROUTE` | `auto` | `brave`, `searxng`, `native` or `off` ([web research](/docs/tools/#web-research)) |
 | `BAZILION_IMAGE_MODEL` | `off` | the image model and account ([image generation](/docs/tools/#image-generation)) |
 | `BROWSER_ENABLED` | `true` | the managed browser ([browser](/docs/tools/#managed-browser)) |
+| `BROWSER_ATTACH` | `false` | `true` makes Agents work in [your running browser](/docs/tools/#your-running-browser) |
 
 Read only from the process environment:
 
