@@ -38,10 +38,10 @@ bazilion trigger history <trigger-id>
 bazilion trigger disable <trigger-id>
 ```
 
-On the web, use the Agent's **Triggers** tab. Each occurrence runs at most once and is never
-retried: a busy Agent leaves it pending, then it ends succeeded, failed or cancelled. The history
-shows each run with its real error, and a failure also shows in Attention. Disabling a trigger
-stops future runs, not a turn that is already running.
+On the web, open **Schedules** in the Agent's side panel. Each occurrence runs at most once and
+is never retried: a busy Agent leaves it pending, then it ends succeeded, failed or cancelled. The
+history shows each run with its real error, and a failure also shows in Attention. Disabling a
+trigger stops future runs, not a turn that is already running.
 
 ## Attention
 
@@ -65,8 +65,8 @@ paused queues leave the list when you act on them. Attention items can also go t
 An Agent can turn its recent conversations into lessons, but only the lessons you approve change
 its behaviour. Learning is off by default.
 
-1. On the Agent's **Learning** tab, switch reviews on and choose how often (every N completed turns
-   you started, default 8), a review model and a reasoning level. From the CLI:
+1. Under **Learning** in the Agent's side panel, switch reviews on and choose how often (every N
+   completed turns you started, default 8), a review model and a reasoning level. From the CLI:
 
    ```sh
    bazilion agent review-config <agent> --enable --every 8 --model agent --reasoning low

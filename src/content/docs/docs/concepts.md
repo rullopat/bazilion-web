@@ -12,7 +12,7 @@ Bazilion is built on
 [Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent). Pi runs the
 turn loop and the provider calls, compacts history and writes the JSONL transcript under each
 Agent's `sessions/` directory. Bazilion supplies Agents and Teams, credentials, the tool list, the
-worker processes and the long-lived browser and MCP connections. Version 0.27.0 bundles Pi 1.5.2,
+worker processes and the long-lived browser and MCP connections. Version 0.50.0 bundles Pi 1.5.2,
 with Pi's own discovery of extensions, skills, prompt templates and context files switched off.
 
 ## Profiles (Agent templates)
@@ -77,18 +77,22 @@ bazilion team policy allow <team> <from> <to>
 bazilion team policy deny <team> <from> <to>
 ```
 
-On the web, open the Team's **Policy** tab and use the Flow or Matrix editor.
+On the web, **Connections** in the workspace's side panel shows who may message whom, and the
+Connections view edits it on a map or in a table
+([the web interface](/docs/web-interface/#connections)). `bazilion team messages <team>` lists what
+a Team's Agents said to each other.
 
 ## USER.md and memory
 
-Each Team has one `USER.md` for stable context about you and the project. You edit it on the
-Team page or with `bazilion team user-md set`; Agents read and update it with `user_md_get` and
-`user_md_write`.
+Each Team has one `USER.md` for stable context about you and the project. You edit it under
+**Team** in the workspace's side panel or with `bazilion team user-md set`; Agents read and update
+it with `user_md_get` and `user_md_write`.
 
 Memory is **Team-shared** Markdown notes in `<team>/memory/`, searched with
 [qmd](https://github.com/tobilu/qmd) (BM25). Agents use the `memory_*` tools; keys are Markdown
-paths such as `notes/topic.md`. You can browse and edit the notes on the Team's **Memory** tab or
-with `bazilion memory`. Personal notes belong in the Agent's own `IDENTITY.md` instead.
+paths such as `notes/topic.md`. You can search, browse and edit the notes under **Team** in the
+side panel or with `bazilion memory`. Personal notes belong in the Agent's own `IDENTITY.md`
+instead.
 
 ## Mailbox
 
@@ -96,7 +100,7 @@ Agents message each other with `send_message`, `read_inbox` and `wait_for_reply`
 with unread mail wakes up and gets one turn with those messages. Every message carries a hop
 count, and a chain is stopped after 8 hops (`BAZILION_AGENT_LOOP_MAX_HOPS`); stopped chains show
 in Attention and in `bazilion inbox loop-breaks <agent>`. From outside the loop:
-`bazilion send`, `bazilion inbox` and the Agent's **Inbox** tab.
+`bazilion send`, `bazilion inbox` and **Mailbox** in the Agent's side panel.
 
 ## Triggers
 
