@@ -1,6 +1,6 @@
 ---
 title: The web interface
-description: A tour of the Bazilion web UI — sign-in and setup, the chat, Agents, Teams, templates, skills, Setup and Attention.
+description: A tour of the Bazilion web UI — sign-in and setup, the workspace with its list, conversation, side panel and full-width views, and the Manage pages.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -23,70 +23,144 @@ Create a token per browser or phone under **Setup → Tokens**. Revoking a token
 sessions opened with it. The bootstrap token cannot be revoked.
 </Aside>
 
-## Navigation
+## The workspace (`/`)
 
-The top bar has **Chat**, **Agents** and **Teams**, a **Manage** menu with **Templates**,
-**Skills** and **Setup**, the **Attention** badge, the theme toggle and logout.
+The home screen is one workspace: your Teams and their Agents on the left, the open Agent's
+conversation in the middle, and everything about the work on the right. Agents and Teams have no
+pages of their own.
 
-## Chat (`/`)
+![The workspace: the list of Teams and Agents with a state each, Dev's conversation with its steps, and the Changes tab with a diff.](/screenshots/workspace.webp)
 
-The sidebar lists Agents grouped by Team. Its **+** menu spawns an Agent from a Profile or a whole
-Team from a Team template. The main pane streams the selected Agent's conversation: Markdown, tool
-calls with a live output tail, delivered files and generated images.
+The top bar has **Jump to** (Ctrl+K, or ⌘K on a Mac), which opens any Agent, Team, view or page by
+name, the **Attention** badge, the **Manage** menu, the theme switch and logout.
 
+### The list
+
+Every Team is listed with its Agents, and every Agent has a line that says what it is doing:
+
+| Line | Meaning |
+| --- | --- |
+| `Needs you: 1 question` | The Agent asked a [question](/docs/questions/) and waits for your answer |
+| `Needs you: 1 command to approve` | A flagged shell command waits for **Allow once** or **Deny** |
+| `Working: writing theme.js` | A turn is running; the line follows its latest step |
+| `Follow-ups paused` | Its [follow-up queue](/docs/follow-up-queue/) is paused with messages waiting |
+| `2 new files`, `New activity` | Something happened since this browser last had its conversation open |
+| `Idle`, `No conversation yet` | Nothing is running |
+
+A Team's header sums its Agents up (`1 waiting · 2 working`). **New** spawns an Agent from a
+Profile or a whole Team from a Team template, or registers a Team. The menu beside an Agent
+renames or archives it. What counts as "new" is remembered in the browser, so another browser has
+its own markers.
+
+### The conversation
+
+The middle pane streams the open Agent's conversation.
+
+- Tool calls read as steps in words: `Ran`, `Read`, `Wrote` with the lines added and removed.
+  Click a step for its input and output; a running step shows a live tail.
+- A message to a teammate is a hand-off card with the teammate's name, the message and what that
+  teammate is doing now.
+- Delivered files show where they were delivered, pictures as pictures
+  ([results](/docs/results/)).
+- When a turn wrote files, **Review changes** under it opens their diff.
+- A question from the Agent has one button per choice.
 - Attach files with the button, by pasting or by dragging them in. Images reach the model as
   images; other files are saved for the Agent to read.
-- While a turn runs, **Send** becomes **Queue follow-up** and **Stop** cancels the turn
-  ([follow-up queue](/docs/follow-up-queue/)).
-- A question from the Agent appears under the chat ([questions](/docs/questions/)).
+- While a turn runs, **Send** becomes **Queue follow-up** and **Stop** cancels the turn.
 - With `BAZILION_BASH_APPROVAL=dangerous`, a flagged shell command shows **Allow once** and
   **Deny**.
-- **Conversations** lists earlier conversations and starts a new one
-  ([conversations](/docs/conversations/)).
 - Composer commands: `/new` (conversations), `/compact` (summarise older history) and `/context`
   (what the next turn would carry).
 
-## Agents (`/agents`)
+The bar above the conversation names the Agent, its Team and its model. Its menu lists the Agent's
+[conversations](/docs/conversations/): read an earlier one, continue it, start a new one or rename
+one.
 
-The list shows active and archived Agents and a spawn form with the destination Team. Each Agent
-has these tabs:
+![Mira's conversation with a hand-off card for three teammates, and the Connections tab beside it.](/screenshots/handoffs.webp)
 
-- **Chat**: the conversation.
-- **Inbox**: messages from other Agents, with unread state.
-- **Triggers**: interval and cron schedules and their run history.
-- **Learning**: reviewed learning settings and lesson proposals
-  ([daily operations](/docs/operations/#reviewed-learning)).
-- **Settings**: model and reasoning, Team, skills, Telegram, the managed browser, archive and
-  delete.
+![A question from an Agent with one button per choice, and the Files tab with delivered pictures.](/screenshots/question.webp)
 
-## Teams (`/teams`)
+### The side panel
 
-**Register a team** creates a workspace at `~/.bazilion/teams/<slug>/`, or links one to an existing
-project directory. Each Team has these tabs:
+The panel has five tabs and remembers the last one; the button at the right of the conversation's
+bar hides it.
 
-- **Context**: `USER.md`, Telegram topic names, **Docker sandbox defaults** and spawning a Team
-  template.
-- **Members**: the Team's Agents.
-- **Policy**: the open/restricted toggle and the allow edges in a **Flow** or **Matrix** editor;
-  **Save as Team template** saves the Team as a new template
-  ([Team Policy](/docs/concepts/#team-policy)).
-- **Memory**: search, read and edit the shared Markdown notes.
-- **Review**: Git changes since a base, diffs and file feedback
-  ([reviewing what changed](/docs/coding-review/)).
-- **Results**: saved files and images ([results](/docs/results/)).
+- **Agent**: model and reasoning, the Team the Agent belongs to, rename, archive and delete, and
+  the ways into its schedules, learning, mailbox, skills, Telegram topic and managed browser.
+- **Team**: the members with their states, `USER.md`, the shared memory with a search, and
+  settings (Docker sandbox defaults, Telegram topic names, **Save as Team template**).
+- **Connections**: whether the Team is open or restricted, who may message whom, and the latest
+  messages between its Agents ([Team Policy](/docs/concepts/#team-policy)).
+- **Changes**: the files the Team's workspace changed since a commit, with the Agent that wrote
+  each, and one file's diff ([reviewing what changed](/docs/coding-review/)).
+- **Files**: what the Team's Agents delivered, for the whole Team, the open Agent or the
+  conversation on screen.
 
-## Templates (`/templates`)
+The deeper pages open as sheets over the workspace: an Agent's **Schedules**, **Learning**
+([daily operations](/docs/operations/#reviewed-learning)), **Mailbox**, **Skills**, **Telegram**
+and **Browser**; a Team's `USER.md`, memory and settings.
 
-- **Agent templates** (`/templates/agents`) are Profiles: the default model, skills and the
-  `SOUL.md`, `IDENTITY.md`, `BOOTSTRAP.md`, `AGENTS.md` and `TOOLS.md` files new Agents start with.
-  Edits affect future spawns only.
-- **Team templates** (`/templates/teams`) are rosters: one slot per Agent (Profile, name, optional
-  model and reasoning), allow edges between slots and a policy mode.
+## Full-width views
 
-## Skills (`/skills`)
+Connections, Changes and Files also open across the whole width, with the list folded to avatars.
+Switch between them at the top of the view; the arrow leads back to the conversation.
 
-Import skills from a local OpenClaw install, a directory or a `.zip`, see their scan findings, and
-remove them. Attach skills through a Profile or on one Agent's **Settings** tab.
+### Connections
+
+The Team as a map. Every Agent is a node with what it is doing; every pair that is connected or
+that talked is one line, with an arrowhead for each allowed direction and the number of recent
+messages. Drag from one Agent to another to connect them. Select an Agent or a line to switch
+each direction and to read what they said to each other. **Open** and **Restricted** set the
+Team's mode, **Table** shows the same connections as a matrix, and nothing changes until **Save**.
+
+![The Connections map of a Team, with the line between two Agents selected and their messages beside it.](/screenshots/connections.webp)
+
+### Changes
+
+The changed files on the left, and the selected file's diff with the old and the new file side by
+side (or in one column). Click a line number to comment on that line, or **Comment on the file**.
+Comments gather into one review; **Send review** sends them to one Agent as a single message,
+which it runs as its next turn.
+
+![The Changes view: a side-by-side diff with two line comments and the review about to be sent.](/screenshots/changes.webp)
+
+### Files
+
+A gallery of everything the Team's Agents delivered. Filter by Agent and by kind, open a file for
+its details and the conversation it came from, put two files side by side, delete one, or
+download them all as one zip.
+
+![The Files gallery with a picture open: who delivered it, when, its size and checksum.](/screenshots/files.webp)
+
+## On a phone, and in the dark
+
+On a narrow screen the list, the conversation and the panel take turns: pick an Agent to see its
+conversation, and open the panel from the conversation's bar. The theme switch follows the system
+or stays light or dark.
+
+![The workspace in the dark theme.](/screenshots/workspace-dark.webp)
+
+## The address
+
+Everything on screen is in the query string of `/`, so a link or the back button lands on the same
+screen: `agent`, `team`, `panel` (`agent`, `team`, `connections`, `changes`, `files` or `none`),
+`view` (`connections`, `changes`, `files`), `conversation`, `file`, `result`, `note`, and `section`
+for an open sheet. [Attention](/docs/operations/#attention) items link into the workspace, for
+example `/?agent=<id>&section=learning`.
+
+## Manage
+
+- **Agents** (`/agents`): every Agent, archived ones too, with spawn, archive, restore and delete.
+- **Teams** (`/teams`): **Register a team** creates a workspace at `~/.bazilion/teams/<slug>/`, or
+  links one to an existing project directory; an empty Team can be removed.
+- **Templates** (`/templates`): **Agent templates** (`/templates/agents`) are Profiles: the default
+  model, skills and the `SOUL.md`, `IDENTITY.md`, `BOOTSTRAP.md`, `AGENTS.md` and `TOOLS.md` files
+  new Agents start with. Edits affect future spawns only. **Team templates** (`/templates/teams`)
+  are rosters: one slot per Agent (Profile, name, optional model and reasoning), allow edges
+  between slots and a policy mode.
+- **Skills** (`/skills`): import skills from a local OpenClaw install, a directory or a `.zip`,
+  see their scan findings, and remove them. Attach skills through a Profile or under **Skills** in
+  an Agent's side panel.
 
 ## Setup (`/config`)
 
@@ -105,4 +179,5 @@ A blank secret field keeps the stored value; removing a credential is a separate
 ## Attention (`/attention`)
 
 What needs you: lesson proposals, failed learning reviews and triggers, stopped message loops and
-queues paused after a restart. See [daily operations](/docs/operations/#attention).
+queues paused after a restart. Each item links to the Agent's conversation or sheet in the
+workspace. See [daily operations](/docs/operations/#attention).

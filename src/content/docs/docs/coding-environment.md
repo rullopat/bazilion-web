@@ -15,9 +15,8 @@ directory:
 bazilion team add my-app --link /path/to/my-app
 ```
 
-On the web, use **Register a team** on the Teams page with a link target. Review the changes on
-the Team's
-**Review** tab ([Reviewing what changed](/docs/coding-review/)).
+On the web, use **New → Create a team** in the workspace with a link target. Review the changes
+under **Changes** ([Reviewing what changed](/docs/coding-review/)).
 
 ## Repository instructions
 

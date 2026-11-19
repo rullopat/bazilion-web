@@ -359,6 +359,13 @@ starlight-tabs [role='tab'][aria-selected='true'] {
   color: var(--bz-heading);
 }
 
+/* ---------- screenshots ---------- */
+.sl-markdown-content img {
+  border: 1px solid var(--sl-color-hairline);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px -24px rgba(42, 31, 22, 0.45);
+}
+
 /* ---------- paper grain — the brand signature ---------- */
 body::before {
   content: '';

@@ -1,6 +1,6 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.27.0 bundles Pi 1.5.2.
+description: The latest four Bazilion releases, newest first; Bazilion 0.50.0 bundles Pi 1.5.2.
 ---
 
 The latest four releases, newest first. Older releases are summarised on
@@ -8,22 +8,85 @@ The latest four releases, newest first. Older releases are summarised on
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
 
-## Bazilion 0.27.0
+## Bazilion 0.50.0
 
-Published **2026-11-19**. The managed browser works from the first start on Linux and macOS, and
-Agents can work in the browser you already have open. The embedded Pi engine stays at 1.5.2. See
-the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.27.0).
+Published **2026-11-20**. The web UI becomes one workspace: the conversation, the Team, who may
+message whom, the diff of what was written and the delivered files are on one screen, and the list
+of Agents says what each one is doing. The version jumps from 0.27 to 0.50 to mark the rework. The
+embedded Pi engine stays at 1.5.2. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.50.0) and the
+[tour of the web interface](/docs/web-interface/).
+
+![The workspace: the list of Teams and Agents with a state each, a conversation with its steps, and the Changes tab with a diff.](/screenshots/workspace.webp)
 
 ### Upgrade: install and start again
 
-The database schema is unchanged, so a 0.26 home opens as it is. Stop the daemon, then:
+The database schema is unchanged, so a 0.26 or 0.27 home opens as it is. Stop the daemon, then:
 
 ```sh
-npm install -g bazilion@0.27.0
+npm install -g bazilion@0.50.0
 bazilion dashboard
 ```
 
 A 0.25 or older home still needs the reset described in
+[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
+
+### Added
+
+- **One workspace on `/`.** Teams and their Agents on the left, the open Agent's conversation in
+  the middle, and a side panel with five tabs: Agent, Team, Connections, Changes and Files. The
+  address holds what is on screen, so links and the back button work.
+- **What each Agent is doing.** Every Agent has a line of its own: `Needs you: 1 question`,
+  `Working: writing theme.js`, `Follow-ups paused`, `2 new files` or `Idle`. Before, the list
+  showed the lifecycle status, which read `IDLE` for an Agent in the middle of a turn.
+- **A transcript that reads.** Tool calls are steps in words with the lines added and removed,
+  instead of escaped JSON. A message to a teammate is a hand-off card that shows what the teammate
+  is doing now. Delivered pictures show as pictures, a turn that wrote files links to their diff,
+  and a question has one button per choice.
+- **Connections.** The Team as a map: one line per pair of Agents, an arrowhead for each allowed
+  direction and the number of recent messages. Select an Agent or a line to switch each direction
+  and to read what they said to each other.
+- **Changes.** Changed files with the Agent that wrote each, the diff in one column or with the
+  old and the new file side by side, comments on a line or a file, and all comments sent to one
+  Agent as one review ([reviewing what changed](/docs/coding-review/)).
+- **Files.** A gallery of everything a Team's Agents delivered, by Agent and by kind, with
+  details, two files side by side and one zip of the lot ([results](/docs/results/)).
+- **Conversations.** An earlier conversation can be continued, not only read, and a conversation
+  is named after the first message you send in it ([conversations](/docs/conversations/)).
+- **Jump to.** Ctrl+K (⌘K on a Mac) opens any Agent, Team, view or page by name.
+- **CLI.** `bazilion activity`, `bazilion team messages <team>`, `bazilion conversation select`,
+  `bazilion result archive`, `bazilion result list --conversation` and
+  `bazilion team review feedback --line`; `team review show` names who wrote each file.
+
+### Changed
+
+- The Agent pages (`/agents/<id>` with its Inbox, Triggers, Learning and Settings tabs) and the
+  Team pages (`/teams/<id>` with its Members, Policy, Memory, Review and Results tabs) are gone.
+  Their content is in the side panel and in sheets that open over the workspace. The old addresses
+  are not redirected; [Attention](/docs/operations/#attention) items link into the workspace.
+- `POST /api/teams/:id/review/feedback` takes
+  `{ agentId, comments: [{ path, line?, note? }], note?, base? }`. The 0.27 body with a single
+  `path` is refused.
+
+### Limits
+
+- The live states come from polling every three seconds, not from a push channel.
+- "New" markers and the layout of the Connections map are kept in the browser, per browser.
+- A changed file's author is the Agent whose `write` or `edit` last touched it in its five newest
+  conversations. Changes made by shell commands have no author.
+- A review that is not sent yet lives in the page and is lost on a reload.
+- The workspace was checked by hand in Chrome on macOS with a scripted model. The automated tests
+  cover its logic and rendering on Linux but do not drive a browser.
+
+## Bazilion 0.27.0
+
+Published **2026-11-19**. The managed browser works from the first start on Linux and macOS, and
+Agents can work in the browser you already have open. The embedded Pi engine stayed at 1.5.2. See
+the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.27.0).
+
+### Upgrade: install and start again
+
+The database schema was unchanged, so a 0.26 home opened as it was. The current commands are in
 [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
 
 ### Fixed
@@ -138,14 +201,3 @@ provider and recreate the Teams and Agents you need. The current commands are in
 Many fixes came along the way, including a path traversal in skill deletion, CSRF and Origin
 checks for web server functions, attachments over 1.5 MB, Fireworks endpoints, files lost in queued
 follow-ups, Telegram members unable to chat and a hung MCP server slowing every turn.
-
-## Bazilion 0.25.0
-
-Published 2026-10-30, with Pi 1.4.0. An alpha that required Node `^26.12.1` and retired Node 24.
-See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.25.0).
-
-- Apple Silicon Mac coding as explicitly unisolated host execution, with private-worktree Git
-  inspection, daemon-owned MCP stdio and managed browsing on an Agent-private keychain.
-- A Linux native sandbox (unprivileged Bubblewrap with seccomp) next to the Docker sandbox.
-  0.26.0 removed the native sandbox again.
-- The schema changed: 0.24.0 and older homes were refused and needed a fresh home.
