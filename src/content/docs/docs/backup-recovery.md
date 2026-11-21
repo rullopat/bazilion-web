@@ -11,7 +11,8 @@ bazilion backup create ~/backups/home.tar.gz
 bazilion backup create --recipient age1…              # encrypted to an age recipient (.age)
 ```
 
-On the web, **Download backup** on `/config` saves the same archive, unencrypted.
+On the web, **Download backup** under **Setup → System** (`/config/system`) saves the same
+archive, unencrypted.
 
 The backup works while the daemon runs: the archive is a tar.gz of the home around an online,
 integrity-checked SQLite snapshot. The database snapshot is consistent; files Agents are writing

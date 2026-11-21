@@ -65,8 +65,8 @@ const features = [
   },
   {
     title: 'The model you already use',
-    body: 'Sign in with ChatGPT, use an API key for Anthropic, OpenAI, Google and many others, or run a local LM Studio or Ollama.',
-    tells: ['bazilion auth openai login'],
+    body: 'Sign in with ChatGPT, use an API key for Anthropic, OpenAI, Google and many others, or run a local LM Studio or Ollama. Connecting tests the provider before anything is saved.',
+    tells: ['bazilion provider connect'],
   },
 ];
 ---
@@ -126,9 +126,10 @@ const features = [
       <!-- ───────────── hero ───────────── -->
       <header class="hero page">
         <a class="release-note" href="/docs/whats-new/" data-reveal="1">
-          <span class="release-note__badge">v0.50.0</span>
+          <span class="release-note__badge">v0.51.0</span>
           <span class="release-note__text">
-            One workspace for the chat, the Team, the diff and the files. Upgrades in place.
+            Models sorted by what they do, and providers connected in one tested step. Upgrades in
+            place.
           </span>
           <span class="release-note__more">Read what changed</span>
         </a>
@@ -321,8 +322,8 @@ const features = [
             <h2 class="section__title" id="session-title">A first session, in the terminal</h2>
             <div class="session__notes">
             <p>
-              Start the dashboard, point a Team at a project, spawn an Agent and ask it something.
-              It checks the Team’s memory before it answers.
+              Start the dashboard, connect a provider, point a Team at a project, spawn an Agent
+              and ask it something. It checks the Team’s memory before it answers.
             </p>
             <p>
               The web UI does all of this too: the dashboard and the CLI offer the same management
@@ -338,8 +339,8 @@ const features = [
               <em>~/code/site</em>
             </div>
             <figcaption class="visually-hidden">
-              A terminal session: starting the dashboard, registering a Team, spawning an Agent,
-              chatting with it and adding a schedule.
+              A terminal session: starting the dashboard, connecting a provider, registering a
+              Team, spawning an Agent, chatting with it and adding a schedule.
             </figcaption>
 <pre class="terminal__body" tabindex="0"><code><span class="t-p">$</span> <span class="t-c">bazilion dashboard</span>
 <span class="t-o">starting bazilion daemon at http://127.0.0.1:4321
@@ -348,7 +349,12 @@ starting bazilion web UI at http://127.0.0.1:4322
 dashboard: http://127.0.0.1:4322
 sign in:   the token in /home/you/.bazilion/auth.json (print it: bazilion token show-local)</span>
 
-<span class="t-n"># Connect a provider on /config, then:</span>
+<span class="t-p">$</span> <span class="t-c">bazilion provider connect anthropic</span>
+<span class="t-o">Anthropic API key:
+anthropic: connected
+  claude-haiku-5-5 answered in 0.9 s (2026-11-21T09:14:07Z)
+  models: claude-fable-5-2, claude-haiku-5-5</span>
+
 <span class="t-p">$</span> <span class="t-c">bazilion team add site</span> <span class="t-f">--link /home/you/code/site</span>
 <span class="t-o">registered team site at /home/you/.bazilion/teams/site</span>
 
@@ -402,7 +408,7 @@ newest first. Older releases link to their GitHub release notes.</span>
             </p>
             <p class="install__note">
               Linux is the tested platform; macOS runs commands on the host and is untested.
-              Upgrading from 0.26 or 0.27? Install the new version and start it again. A 0.25 or
+              Upgrading from 0.26 or later? Install the new version and start it again. A 0.25 or
               older home is refused: back it up, run
               <code>bazilion uninstall --yes</code> and start fresh, as the
               <a href="/docs/getting-started/#upgrade-to-0260">0.26.0 upgrade steps</a> describe.

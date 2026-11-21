@@ -8,48 +8,107 @@ CLI and the web UI are clients of its HTTP API.
 
 ## Providers and models
 
-Models are written `provider:model`, for example `anthropic:claude-opus-5`,
-`openai-codex:gpt-6-astra` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
-catalog; Bazilion 0.50.0 bundles Pi 1.5.2. An id that is not in the catalog is refused as
+Models are written `provider:model`, for example `anthropic:claude-fable-5-2`,
+`openai-codex:gpt-6.1-sol` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
+catalog; Bazilion 0.51.0 bundles Pi 1.5.2. An id that is not in the catalog is refused as
 "Unknown model" unless the provider has an endpoint you configured, so a typo never sends a key to
 another vendor.
 
-| Provider | Credential |
-| --- | --- |
-| ChatGPT login (`openai-codex`) | **Connect ChatGPT** on `/config`, or `bazilion auth openai login` (`--device-code` when headless) |
-| OpenAI | `OPENAI_API_KEY` |
-| Anthropic | `ANTHROPIC_API_KEY` |
-| Google Gemini | `GEMINI_API_KEY` |
-| OpenRouter | `OPENROUTER_API_KEY` |
-| LM Studio | `LMSTUDIO_URL` (default `http://127.0.0.1:1234/v1`), optional `LMSTUDIO_API_KEY` |
-| Ollama | `OLLAMA_URL` (default `http://127.0.0.1:11434/v1`) |
-| llama.cpp | `LLAMACPP_URL` (default `http://127.0.0.1:8080/v1`) |
+**Setup → Models** (`/config`) is sorted by what a model does for your Agents:
 
-Many more have a card on `/config`: Azure OpenAI, Amazon Bedrock, Google Vertex, GitHub
-Copilot, DeepSeek, Mistral, xAI, Groq, Cerebras, Fireworks, Together, Baseten, Moonshot, Kimi,
-MiniMax, Qwen Token Plan, Xiaomi MiMo, NVIDIA, zAI, Meta, Radius, Hugging Face, Cloudflare,
-Vercel AI Gateway and OpenCode.
+- **Chat**: the models Agents think with. Each Agent and each Agent template uses one of them.
+- **Images**: the model Agents draw with, or off
+  ([image generation](/docs/tools/#image-generation)).
+- **Providers**: the accounts and local servers those models run on.
 
-A credential alone does not make a provider usable. Enable it and save at least one model:
+![Setup, Models: six chat models with their size, price and who uses them, the image model, and three providers that each say when they were last tested.](/screenshots/models.webp)
+
+### Connect a provider
+
+A provider is connected in one step. Press **Add a provider**, choose one, paste its key (or sign
+in with ChatGPT, or give a local server's address), keep the suggested models or choose others,
+and press **Connect and test**. From a terminal:
 
 ```sh
-bazilion provider list
-bazilion provider enable anthropic
-bazilion provider models anthropic             # curated, catalog and live model ids
-bazilion provider models-set anthropic claude-opus-5,claude-sonnet-5
-bazilion provider test anthropic:claude-opus-5  # one real request
+bazilion provider connect anthropic       # asks for the key, without echo
+bazilion provider connect openai --key sk-… --models gpt-6.1-sol,gpt-6-luna
+bazilion provider connect lmstudio --url http://127.0.0.1:1234/v1
+# A ChatGPT plan: sign in, then connect.
+bazilion auth openai login && bazilion provider connect openai-codex
 ```
 
-The ChatGPT sign-in is stored encrypted and refreshed by the daemon; a worker only ever gets a
-short-lived access token. After connecting, enable `openai-codex` and save a model such as
-`gpt-6-astra`.
+Connecting asks the cheapest chosen model for a short reply first. Only when it answers are the
+key and the models saved and the provider switched on, so a key that does not work is never
+stored. A model the provider refuses for your account is left out and the next one is asked. A
+local server that is switched off is reported as such, and nothing is saved. **Save without
+testing** (`--no-test`) skips the request and leaves the provider "Not tested yet".
 
-New Agents use their Profile's default model unless you pick another. Saving a provider's list
-without a model that a Profile defaults to moves the Profile to the provider's first remaining
-model (or to the first available model of another provider when none remains), and the save
-reports each move. A Profile on a model that was never listed and an Agent's own model override
-are not rewritten; change them with `bazilion profile update <id> --model …`, under **Agent** in
-the side panel or with `bazilion agent edit <id> --model …`.
+![The connect form on a first run: the API key, the two suggested Claude models with their size and price, and the Connect and test button.](/screenshots/connect.webp)
+
+| Provider | Id | Connects with |
+| --- | --- | --- |
+| ChatGPT (a Plus, Pro or Team plan) | `openai-codex` | **Sign in**, or `bazilion auth openai login` (`--device-code` when headless) |
+| OpenAI | `openai` | `OPENAI_API_KEY` |
+| Anthropic | `anthropic` | `ANTHROPIC_API_KEY` |
+| Google Gemini | `google` | `GEMINI_API_KEY` |
+| OpenRouter | `openrouter` | `OPENROUTER_API_KEY` |
+| LM Studio | `lmstudio` | `LMSTUDIO_URL` (default `http://127.0.0.1:1234/v1`), optional `LMSTUDIO_API_KEY` |
+| Ollama | `ollama` | `OLLAMA_URL` (default `http://127.0.0.1:11434/v1`) |
+| llama.cpp | `llamacpp` | `LLAMACPP_URL` (default `http://127.0.0.1:8080/v1`) |
+
+Many more are behind **Add a provider** (`bazilion provider list --all`): Azure OpenAI, Amazon
+Bedrock, Google Vertex AI, GitHub Copilot, DeepSeek, Mistral, xAI, Groq, Cerebras, Fireworks,
+Together, Baseten, Moonshot, Kimi, MiniMax, Qwen Token Plan, Xiaomi MiMo, NVIDIA, zAI, Meta,
+Radius, Hugging Face, Cloudflare, Vercel AI Gateway and OpenCode. `--set NAME=value` sets a
+provider's other fields; `bazilion provider models <id>` lists their names.
+
+The ChatGPT sign-in is stored encrypted and refreshed by the daemon; a worker only ever gets a
+short-lived access token.
+
+### What a provider's state means
+
+| State | |
+| --- | --- |
+| Working | Its last test got a reply; the page says when |
+| Key rejected, Not answering, Model unavailable, Limit reached | Its last test failed; the provider's sheet says what to do and shows the provider's own message |
+| Not tested yet | Saved without a test, or its key or models changed since |
+| Needs a key | Switched on, but its credentials are gone |
+| Turned off | Paused; what is saved stays saved |
+| Saved, not in use | A key was saved but no model chosen, as 0.50 allowed; **Connect** chooses its models and tests it |
+
+Nothing tests a provider on its own. A state is the outcome of connecting, of **Test again**
+(`bazilion provider test <id>`) or of `bazilion provider test <provider:model>`, and changing a
+provider's key or address makes it "Not tested yet" again.
+
+```sh
+bazilion provider list                   # the providers in use, with their state
+bazilion provider test anthropic         # ask its cheapest chat model
+bazilion provider disable anthropic      # pause it; enable switches it back on
+bazilion provider disconnect anthropic   # remove its key, its models and its test
+```
+
+A provider cannot be switched on without credentials. Disconnecting removes the stored key or
+sign-in; a key two providers share stays while the other one is on.
+
+### Chat models
+
+**Add models** lists every model of the connected providers with its name, how much it can read,
+whether it takes images, whether it reasons and its list price per million tokens. These facts
+come from Pi's catalog; a model the catalog does not know is listed by its id, and a local server
+lists what it has loaded.
+
+```sh
+bazilion provider models anthropic       # in use, and offered
+bazilion provider models-set anthropic claude-fable-5-2,claude-haiku-5-5
+```
+
+Each row on the page says who uses the model. New Agents use their Profile's default model unless
+you pick another. Saving a provider's list without a model that a Profile defaults to moves the
+Profile to the provider's first remaining model (or to the first available model of another
+provider when none remains), and the save reports each move. A Profile on a model that was never
+listed and an Agent's own model override are not rewritten; change them with
+`bazilion profile update <id> --model …`, under **Agent** in the side panel or with
+`bazilion agent edit <id> --model …`.
 
 ## Settings and secrets
 

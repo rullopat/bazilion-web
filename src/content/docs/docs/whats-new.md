@@ -1,6 +1,6 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.50.0 bundles Pi 1.5.2.
+description: The latest four Bazilion releases, newest first; Bazilion 0.51.0 bundles Pi 1.5.2.
 ---
 
 The latest four releases, newest first. Older releases are summarised on
@@ -8,12 +8,85 @@ The latest four releases, newest first. Older releases are summarised on
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
 
+## Bazilion 0.51.0
+
+Published **2026-11-21**. Setup is sorted by what a model does for your Agents, and a provider is
+connected in one step that tests it before anything is saved. The embedded Pi engine stays at
+1.5.2. See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.51.0) and
+[providers and models](/docs/configuration/#providers-and-models).
+
+![Setup, Models: the chat models with their size, price and who uses them, the image model, and three providers that each say when they were last tested.](/screenshots/models.webp)
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26, 0.27 or 0.50 home opens as it is. Stop the daemon,
+then:
+
+```sh
+npm install -g bazilion@0.51.0
+bazilion dashboard
+```
+
+Providers you had switched on keep working. They read "Not tested yet" until you press **Test
+them** on the Models page or run `bazilion provider test <id>`. A key that was saved but never
+switched on shows as "Saved, not in use", with a **Connect** button. A 0.25 or older home still
+needs the reset described in [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
+
+### Added
+
+- **Setup opens on Models (`/config`).** One page with three cards: **Chat**, the models Agents
+  think with; **Images**, the model they draw with, or off; and **Providers**, the accounts and
+  local servers behind them. Only the providers in use are listed; the others are behind **Add a
+  provider**.
+- **What a model is.** Each chat model shows its name, how much it can read, whether it takes
+  images, its list price per million tokens and which Agents and templates use it. These facts
+  come from the catalog bundled with Pi.
+- **Connect in one step.** Paste the key (or sign in with ChatGPT, or give a local server's
+  address), keep the suggested models or choose others, and press **Connect and test**. The
+  cheapest chosen model is asked for a short reply. Only when it answers are the key and the
+  models saved and the provider switched on, so a key that does not work is never stored.
+- **A state that was checked.** A provider is "Working", "Key rejected", "Not answering", "Model
+  unavailable", "Limit reached", "Not tested yet", "Needs a key" or "Turned off". A failed test
+  says what happened and what to do, with the provider's own message beside it. A line above the
+  cards names the provider that does not answer.
+- **First run on one screen.** `/welcome` is choose, connect, start chatting. **On this computer**
+  finds LM Studio, Ollama and llama.cpp at their usual addresses, and **Start chatting** opens
+  your first Agent ([getting started](/docs/getting-started/#sign-in-and-connect-a-provider)).
+- **Model picker.** **Add models** searches every connected provider, filters by image input or
+  reasoning, and folds dated copies of a model away. Removing a model that Agents use says so
+  first.
+- **CLI.** `bazilion provider connect <id>`, `bazilion provider disconnect <id>` and
+  `bazilion provider test <id>`; `bazilion provider list` shows each provider's state.
+
+### Changed
+
+- Installation health, the runtime summary and **Download backup** moved from the top of the
+  providers page to **Setup → System** (`/config/system`).
+- The image model is chosen under **Images** on the Models page. The Services page no longer has
+  a card for it.
+- `bazilion provider list` shows only the providers in use; `--all` lists every one.
+- A provider cannot be switched on without credentials: `bazilion provider enable` and
+  `PUT /api/config/providers/:id/enabled` refuse it.
+- `GET /api/config/providers` has a new shape and asks no provider for its model list, so the
+  page opens at once whatever a local server is doing. `GET /api/config/providers/:id/models` is
+  gone; `GET /api/config/providers/:id/catalog` replaces it.
+- The ChatGPT sign-in is shown as "ChatGPT" and Google as "Google Gemini". Provider ids and
+  setting names are unchanged.
+
+### Limits
+
+- Prices are list prices from the bundled catalog, not what your account was billed.
+- Nothing tests a provider on its own. A state is as old as its last test, and the page says how
+  old that is.
+- The new pages were checked by hand in Chrome on macOS with a stand-in model server. The
+  automated tests cover their logic on Linux but do not drive a browser.
+
 ## Bazilion 0.50.0
 
-Published **2026-11-20**. The web UI becomes one workspace: the conversation, the Team, who may
+Published **2026-11-20**. The web UI became one workspace: the conversation, the Team, who may
 message whom, the diff of what was written and the delivered files are on one screen, and the list
-of Agents says what each one is doing. The version jumps from 0.27 to 0.50 to mark the rework. The
-embedded Pi engine stays at 1.5.2. See the
+of Agents says what each one is doing. The version jumped from 0.27 to 0.50 to mark the rework.
+The embedded Pi engine stayed at 1.5.2. See the
 [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.50.0) and the
 [tour of the web interface](/docs/web-interface/).
 
@@ -21,15 +94,8 @@ embedded Pi engine stays at 1.5.2. See the
 
 ### Upgrade: install and start again
 
-The database schema is unchanged, so a 0.26 or 0.27 home opens as it is. Stop the daemon, then:
-
-```sh
-npm install -g bazilion@0.50.0
-bazilion dashboard
-```
-
-A 0.25 or older home still needs the reset described in
-[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
+The database schema was unchanged, so a 0.26 or 0.27 home opened as it was. The current commands
+are in [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
 
 ### Added
 
@@ -149,55 +215,3 @@ If a Profile already points at a model you removed before upgrading, set it once
   the additions, and ids Pi dropped are no longer offered.
 - New provider: Qwen Token Plan (Individual, CN), `qwen-token-plan-individual-cn`, with
   `QWEN_TOKEN_PLAN_CN_API_KEY`.
-
-## Bazilion 0.26.0
-
-Published **2026-11-13**. Bazilion 0.26.0 simplifies the whole product for a single local
-operator: about 186,000 lines of code, tests and docs were removed, and the features you use stay
-on both the CLI and the web UI. The embedded Pi engine stays at 1.4.0. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.26.0).
-
-### Upgrade: back up, reset, start fresh
-
-The database schema was reset to one clean-install schema, and a 0.25 (or older) home is refused
-at startup. Nothing is migrated or imported: back up the old home, run
-`bazilion uninstall --yes` and start Bazilion again to bootstrap a fresh one, then connect a
-provider and recreate the Teams and Agents you need. The current commands are in
-[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
-
-### Removed
-
-- Review packets, specialist verification and publication to a code host. The Team **Review**
-  diff page and file feedback stay ([Reviewing what changed](/docs/coding-review/)).
-- The communication approval queue, Team Policy template lineage and denial history. Team Policy
-  is now plain allow edges with an open or restricted mode per Team, and Team templates are plain
-  rosters.
-- The workspace lease and its recovery commands. Teammates run concurrently again, and
-  `wait_for_reply` works between them.
-- The coding evidence layer: the `coding_*` tools, receipts, retained command logs and source
-  snapshots. Live output now streams for every tool, in the web UI and the CLI.
-- The native Bubblewrap sandbox and the separate protected turn surface.
-- Device pairing codes and token scopes.
-- macOS-specific process, keychain and Git layers.
-- `@bazilion/client` and `@bazilion/api-types` are no longer published to npm; only the
-  `bazilion` package is.
-
-### Changed
-
-- Docker is the only sandbox. `BAZILION_BASH_SANDBOX=off|docker` applies to every turn: chat,
-  Telegram, follow-ups, schedules and inbox wakes. With `off`, unattended turns run on the host
-  with the same tools as chat.
-- The bootstrap token works at the web login. Browser sessions last until 30 days without use,
-  and device tokens do not expire unless created with `--expires-days`.
-- Scheduled triggers and learning reviews run once per occurrence, without retries. Failures show
-  in Attention and in the trigger history with the real error.
-- Bazilion's own credentials (ChatGPT sign-in, MCP tokens, Telegram bot token, bootstrap token) no
-  longer reach agent shells or MCP stdio servers.
-- A chat sent while its Agent is compacting, resetting or archiving is refused as busy.
-- CLI flags renamed: `bazilion token create --expires-days` and `bazilion login --skip-verify`.
-- Team memory keys must end in `.md`.
-- Linux is the tested platform; macOS runs commands on the host and is untested.
-
-Many fixes came along the way, including a path traversal in skill deletion, CSRF and Origin
-checks for web server functions, attachments over 1.5 MB, Fireworks endpoints, files lost in queued
-follow-ups, Telegram members unable to chat and a hung MCP server slowing every turn.

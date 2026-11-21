@@ -41,27 +41,33 @@ starts only the daemon.
 Sign in to the web UI with the bootstrap token; `bazilion token show-local` prints it. The CLI
 reads it by itself.
 
-Until one provider is enabled with a saved model, every page leads to setup. On `/config`,
-connect ChatGPT or paste an API key, enable the provider and pick at least one model. The
-connection test sends one real request, which the provider may bill. Bazilion then creates a
-`default` Profile and a `default` Team.
+Until one provider is connected, every page leads to the first-run screen (`/welcome`). It is
+one step: choose a provider, paste its API key (or sign in with ChatGPT, or use a model server
+found **On this computer**), keep the suggested models and press **Connect and test**. The test
+asks the cheapest chosen model for a short reply, which the provider may bill, and nothing is
+saved unless it answers. Bazilion then creates a `default` Profile and a `default` Team.
+
+![The first-run screen: tiles for a ChatGPT account, OpenAI, Anthropic, Google Gemini, a model server on this computer and another provider.](/screenshots/first-run.webp)
 
 The same from a terminal:
 
 ```sh
-bazilion auth openai login                       # ChatGPT account (--device-code when headless)
-bazilion config set ANTHROPIC_API_KEY sk-ant-…   # or an API key, stored encrypted
-bazilion provider enable anthropic
-bazilion provider models-set anthropic claude-opus-5
+bazilion provider connect anthropic     # asks for the key, without echo
+bazilion provider connect lmstudio      # a model server at its usual address
+# A ChatGPT plan: sign in, then connect.
+bazilion auth openai login && bazilion provider connect openai-codex
 ```
 
 `bazilion auth openai login` opens a browser and waits for the callback on `localhost:1455`; use
-`--device-code` on a remote or headless machine. A key passed to `config set` can land in your
-shell history; the `/config` page avoids that.
+`--device-code` on a remote or headless machine. `provider connect` also takes `--key`, but a key
+on the command line can land in your shell history; its prompt and the web page avoid that.
+[Providers and models](/docs/configuration/#providers-and-models) has the other providers, how
+to choose models and what a provider's state means.
 
 ## First Agent
 
-Spawn one from the home screen (**Spawn first agent**, or **New**), or:
+**Start chatting** on the first-run screen spawns an Agent from the `default` template and opens
+its conversation. From the workspace, use **Spawn first agent** or **New**, or:
 
 ```sh
 bazilion agent spawn --profile default --name first
@@ -76,9 +82,11 @@ bazilion agent chat <agent-id> --message "say hi"
 There are no database migrations. A release opens a home only when its schema matches the one it
 ships; otherwise the daemon refuses to start and leaves the home untouched.
 
-**From 0.26 or 0.27:** 0.50.0 uses the same schema, so the home opens as it is. Stop the daemon,
-run `npm install -g bazilion@0.50.0` and start Bazilion again. The web UI is laid out anew: see the
-[tour of the web interface](/docs/web-interface/).
+**From 0.26, 0.27 or 0.50:** 0.51.0 uses the same schema, so the home opens as it is. Stop the
+daemon, run `npm install -g bazilion@0.51.0` and start Bazilion again. Coming from 0.26 or 0.27,
+the web UI is laid out anew: see the [tour of the web interface](/docs/web-interface/). Providers
+you had switched on keep working and read "Not tested yet" under **Setup → Models** until their
+first test.
 
 **From 0.25.0 or earlier:** 0.26.0 reset the schema, so the home is refused. To move to the
 current release:
@@ -95,7 +103,7 @@ current release:
    removes them too.
 
    ```sh
-   npm install -g bazilion@0.50.0
+   npm install -g bazilion@0.51.0
    bazilion uninstall --yes
    ```
 
