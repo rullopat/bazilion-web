@@ -29,6 +29,28 @@ answer. Learning reviews run separately with a single `propose_lesson` tool.
 While a tool runs, its output streams into the chat; see
 [live tool output](/docs/coding-review/#live-tool-output).
 
+## Setting the tools
+
+Web search, the page reader, the browser, how commands run and how long a chain of messages
+between Agents may get are set on one page: **Setup → Tools** (`/config/tools`). Each has a card
+that says what is in effect now, and what a choice would meet on this machine before you save
+it: a key that is missing, or whether Docker has the image. A setting that only matters with
+another choice appears with it.
+
+![Setup, Tools: the Web search card with its five choices, a saved Brave key and the SearXNG address, the Web pages card and the Browser card with its switch and two choices.](/screenshots/tools.webp)
+
+A card is saved whole. Every value is checked first, and when one is refused nothing of the card
+is stored. The same settings from a terminal, one or several together:
+
+```sh
+bazilion config list                                # every setting, and what is in effect
+bazilion config set BAZILION_WEB_SEARCH_ROUTE brave
+bazilion config set BROWSER_ATTACH=true BROWSER_ATTACH_URL=http://127.0.0.1:9222
+```
+
+A setting that the daemon's own environment carries wins over the stored one: its card shows the
+value in effect and leaves it alone.
+
 ## Web research
 
 - `web_search` finds sources. The daemon runs the search, so backend URLs and keys never reach
@@ -37,8 +59,8 @@ While a tool runs, its output streams into the chat; see
   redirects, and caches pages for 15 minutes. With `FIRECRAWL_API_KEY` set, a page whose text comes
   out nearly empty is fetched again through Firecrawl.
 
-`BAZILION_WEB_SEARCH_ROUTE` picks the search backend (**Web search** on `/config/services`, or
-`bazilion config set BAZILION_WEB_SEARCH_ROUTE <value>`):
+`BAZILION_WEB_SEARCH_ROUTE` picks the search backend: the **Web search** card under
+[**Setup → Tools**](#setting-the-tools), or `bazilion config set BAZILION_WEB_SEARCH_ROUTE <value>`:
 
 | Value | Backend |
 | --- | --- |
@@ -66,7 +88,8 @@ pages as accessibility snapshots with refs such as `[ref=e5]` and acts on them w
 `browser_take_screenshot`, `browser_console` and `browser_network`.
 
 The browser starts at the Agent's first browser action and stops after `BROWSER_IDLE_MS` of
-inactivity. Settings are on `/config/services` (**Browser Automation**):
+inactivity. Its settings are on the **Browser** card under
+[**Setup → Tools**](#setting-the-tools), the rarer ones under **More settings**:
 
 | Key | Default | |
 | --- | --- | --- |
@@ -104,7 +127,8 @@ With `BROWSER_ATTACH=true`, Agents do not get browsers of their own. They work i
 Chromium you have open, signed in wherever you are.
 
 1. In Chrome 144 or later, open `chrome://inspect/#remote-debugging` and allow remote debugging.
-2. Set `BROWSER_ATTACH` to `true` on `/config/services` or with `bazilion config set`.
+2. Choose **My running Chrome** on the **Browser** card under **Setup → Tools**, or run
+   `bazilion config set BROWSER_ATTACH true`.
 3. At an Agent's first browser action, Chrome asks whether to allow the connection. Allow it
    within a minute.
 

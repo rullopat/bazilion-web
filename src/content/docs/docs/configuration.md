@@ -10,7 +10,7 @@ CLI and the web UI are clients of its HTTP API.
 
 Models are written `provider:model`, for example `anthropic:claude-fable-5-2`,
 `openai-codex:gpt-6.1-sol` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
-catalog; Bazilion 0.51.0 bundles Pi 1.5.2. An id that is not in the catalog is refused as
+catalog; Bazilion 0.52.0 bundles Pi 1.5.2. An id that is not in the catalog is refused as
 "Unknown model" unless the provider has an endpoint you configured, so a typo never sends a key to
 another vendor.
 
@@ -102,6 +102,10 @@ bazilion provider models anthropic       # in use, and offered
 bazilion provider models-set anthropic claude-fable-5-2,claude-haiku-5-5
 ```
 
+Wherever a model is chosen (an Agent's **Agent** tab, **Spawn an agent**, an Agent template) the
+menu shows these names by provider, with how much each model reads and whether it sees images.
+The CLI and the API keep the `provider:model` id.
+
 Each row on the page says who uses the model. New Agents use their Profile's default model unless
 you pick another. Saving a provider's list without a model that a Profile defaults to moves the
 Profile to the provider's first remaining model (or to the first available model of another
@@ -112,13 +116,19 @@ listed and an Agent's own model override are not rewritten; change them with
 
 ## Settings and secrets
 
-Settings are environment-variable-shaped keys. Set them on the `/config` pages, or:
+Settings are environment-variable-shaped keys. Set them under **Setup** (the tools on
+[**Setup → Tools**](/docs/tools/#setting-the-tools)), or:
 
 ```sh
-bazilion config list
+bazilion config list                              # every setting, and what is in effect
 bazilion config set BAZILION_BASH_SANDBOX docker
-bazilion config rm BAZILION_BASH_SANDBOX
+bazilion config set BROWSER_ATTACH=true BROWSER_ATTACH_URL=http://127.0.0.1:9222
+bazilion config rm BAZILION_BASH_SANDBOX          # back to its default
 ```
+
+A value is checked before it is stored, on the page and by `config set`: a choice must be one of
+its values, a switch `true` or `false`, a number whole and in range, an address `http://` or
+`https://`. With `NAME=value` pairs, either all are stored or none.
 
 Secrets (API keys, tokens) are stored as AES-256-GCM envelopes in the `secrets` table, with a key
 derived from the bootstrap token in `auth.json`; other values are plain text in `config`. Anyone
@@ -154,7 +164,7 @@ Read only from the process environment:
 
 The bootstrap token in `auth.json` is created on first start. The CLI uses it by itself, the web
 login accepts it, and it cannot be revoked. Give every other browser, phone or remote CLI its own
-device token, on **Setup → Tokens** (`/config/tokens`) or:
+device token, on **Setup → Access** (`/config/access`) or:
 
 ```sh
 bazilion token create personal-laptop          # --expires-days 90 for one that expires
