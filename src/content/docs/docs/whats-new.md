@@ -1,6 +1,6 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.51.0 bundles Pi 1.5.2.
+description: The latest four Bazilion releases, newest first; Bazilion 0.52.0 bundles Pi 1.5.2.
 ---
 
 The latest four releases, newest first. Older releases are summarised on
@@ -8,29 +8,100 @@ The latest four releases, newest first. Older releases are summarised on
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
 
-## Bazilion 0.51.0
+## Bazilion 0.52.0
 
-Published **2026-11-21**. Setup is sorted by what a model does for your Agents, and a provider is
-connected in one step that tests it before anything is saved. The embedded Pi engine stays at
-1.5.2. See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.51.0) and
-[providers and models](/docs/configuration/#providers-and-models).
+Published **2026-11-21**. The Services page becomes **Tools**: one card per tool, settings that
+are checked before they are stored, and one Save per card. Model menus show names. The embedded
+Pi engine stays at 1.5.2. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.52.0) and
+[setting the tools](/docs/tools/#setting-the-tools).
 
-![Setup, Models: the chat models with their size, price and who uses them, the image model, and three providers that each say when they were last tested.](/screenshots/models.webp)
+![Setup, Tools: the Web search card with its five choices and a saved Brave key, the Web pages card and the Browser card with its switch and two choices.](/screenshots/tools.webp)
 
 ### Upgrade: install and start again
 
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 home opens as it is. Stop the daemon,
-then:
+The database schema is unchanged, so a 0.26, 0.27, 0.50 or 0.51 home opens as it is. Stop the
+daemon, then:
 
 ```sh
-npm install -g bazilion@0.51.0
+npm install -g bazilion@0.52.0
 bazilion dashboard
 ```
 
-Providers you had switched on keep working. They read "Not tested yet" until you press **Test
-them** on the Models page or run `bazilion provider test <id>`. A key that was saved but never
-switched on shows as "Saved, not in use", with a **Connect** button. A 0.25 or older home still
-needs the reset described in [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
+Stored settings are read as before. A value that an older version stored and the daemon cannot
+use, such as a mistyped mode, is pointed out on its card, and saving the card replaces it.
+Bookmarks of `/config/services`, `/config/tokens` and `/config/integrations/telegram` need the new
+addresses. A 0.25 or older home still needs the reset described in
+[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
+
+### Added
+
+- **Setup → Tools (`/config/tools`).** Web search, Web pages, Browser, Commands and Messages
+  between Agents are one card each, in place of 18 text boxes with a save button each. A setting
+  is entered as what it is: a choice with what each option means, a switch, a number in the unit
+  people use (minutes, not milliseconds), a key shown as saved.
+- **What is in effect.** A card says what the tool is doing now (`Using Brave`,
+  `On: a browser per Agent`, `Runs in Docker, asks first`) and what a choice would meet on this
+  machine before it is saved: a key that is missing, or whether Docker has the image. A setting
+  that only matters with another choice appears with it.
+- **One Save per card.** Every value is checked first, and when one is refused nothing of the
+  card is stored. A key is replaced or removed with the same Save.
+- **Model names in the menus.** The Agent tab, **Spawn an agent** and Agent templates choose a
+  model from a menu with names by provider, how much each reads and whether it sees images. A
+  provider that is not working is marked. The CLI and the API keep `provider:model`.
+- **CLI.** `bazilion config set NAME=value NAME=value` saves several settings together or none.
+  `config list` shows defaults, what is in effect for each tool and what each setting takes.
+
+![The Spawn an agent dialog with its model menu open: the template's model first, then models by provider with how much each reads and whether it sees images.](/screenshots/model-menu.webp)
+
+### Changed
+
+- Settings are checked before they are stored, by the page and by `bazilion config set`. A choice
+  must be one of its values, a switch `true` or `false` (`yes`, `no`, `on`, `off`, `1` and `0`
+  are stored as `true` or `false`), a number whole and in range, an address `http://` or
+  `https://`. A mistyped `BAZILION_BASH_APPROVAL` used to be stored and then failed every turn.
+- The Setup tabs are Models, Tools, MCP, Telegram, Access and System. `/config/tools`,
+  `/config/telegram` and `/config/access` replace `/config/services`,
+  `/config/integrations/telegram` and `/config/tokens`, which are not redirected.
+- `GET /api/config/services` and `GET /api/config/available-models` are gone: use
+  `GET /api/config/tools` and the `chat` list of `GET /api/config/models`. Setting names are
+  unchanged.
+
+### Fixed
+
+- **Changes sees a file rewritten in the second it was staged.** A file rewritten at the same
+  size within the second it was staged could go unseen in Changes and in a review until it was
+  touched again.
+- **The browser's first start has 60 s instead of 15.** A first start from a cold disk on a small
+  or busy machine could take longer than the old limit.
+- **A tool call cut short by a lost MCP session says "MCP session expired"** whichever request
+  noticed first; it could say "MCP connection closed".
+- **A conversation renamed in the millisecond it was created keeps its name** when the first
+  message arrives.
+
+### Limits
+
+- Telegram and MCP keep their own pages and forms.
+- Outside the menus a model is still shown by its id: template lists, the conversation header
+  and the CLI.
+- Docker is asked whether it has the image each time the Tools page opens, for at most 3 s.
+- The new pages were checked by hand in Chrome on macOS with a stand-in model server. The
+  automated tests cover their logic on Linux but do not drive a browser.
+
+## Bazilion 0.51.0
+
+Published **2026-11-21**. Setup became sorted by what a model does for your Agents, and
+connecting a provider became one step that tests it before anything is saved. The embedded Pi
+engine stayed at 1.5.2. See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.51.0) and
+[providers and models](/docs/configuration/#providers-and-models).
+
+### Upgrade: install and start again
+
+The database schema was unchanged, so a 0.26, 0.27 or 0.50 home opened as it was. Providers that
+were switched on keep working and read "Not tested yet" until you press **Test them** on the
+Models page or run `bazilion provider test <id>`. A key that was saved but never switched on shows
+as "Saved, not in use", with a **Connect** button. The current commands are in
+[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
 
 ### Added
 
@@ -180,38 +251,3 @@ The database schema was unchanged, so a 0.26 home opened as it was. The current 
 - Attaching is tested against a Chromium started with a debugging port. Chrome's own
   remote-debugging switch and approval prompt need a person and are not covered by tests.
 - The browser suites pass on macOS against real Chrome but run in CI on Linux only.
-
-## Bazilion 0.26.1
-
-Published **2026-11-19**. A patch release: a fix in model selection, current model catalogs and a
-ChatGPT sign-in fix on macOS. The embedded Pi engine moves from 1.4.0 to 1.5.2. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.26.1).
-
-### Upgrade: install and start again
-
-The database schema was unchanged, so a 0.26.0 home opened as it was. The current commands are in
-[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
-
-### Fixed
-
-- **Model list edits reach Agent templates.** The `default` Profile is created with the first
-  model on a provider's list and used to keep it, so correcting a mistyped model id on `/config`
-  left new Agents on the old one. Saving a list without a model that a Profile defaults to now
-  moves the Profile to the provider's first remaining model, or to the first available model of
-  another provider when none remains. The web save message and `bazilion provider models-set`
-  report each move. A Profile on a model that was never listed and an Agent's own model override
-  are not changed.
-- **ChatGPT sign-in on macOS.** **Connect ChatGPT** on `/config` opens the sign-in page with the
-  system `open`. A terminal app that puts its own `open` first on the daemon's `PATH` could keep
-  the page in its built-in browser and leave the button on "opening browser…".
-
-If a Profile already points at a model you removed before upgrading, set it once:
-`bazilion profile update default --model <provider:model>`.
-
-### Changed
-
-- The embedded Pi engine moved to 1.5.2 (AI, agent core, coding agent and MCP client). The model
-  catalogs on `/config` follow Pi's: GPT-6.1 Terra, Claude Fable 5.2 and Kimi K3.1 Pro are among
-  the additions, and ids Pi dropped are no longer offered.
-- New provider: Qwen Token Plan (Individual, CN), `qwen-token-plan-individual-cn`, with
-  `QWEN_TOKEN_PLAN_CN_API_KEY`.

@@ -33,7 +33,8 @@ discovery of extensions, skills and context files stays off, so a repository's `
 ## Host or Docker
 
 `BAZILION_BASH_SANDBOX` applies to every turn: chat, Telegram, follow-ups, schedules and inbox
-wakes. Set it on `/config/services` (**Agent Runtime → Agent Shell Security**) or with
+wakes. Set it on the **Commands** card under [**Setup → Tools**](/docs/tools/#setting-the-tools),
+which says whether Docker has the image before you save, or with
 `bazilion config set BAZILION_BASH_SANDBOX docker`.
 
 | Setting | What runs |

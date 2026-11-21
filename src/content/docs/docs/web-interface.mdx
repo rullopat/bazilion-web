@@ -21,7 +21,7 @@ Profile and a `default` Team, and **Start chatting** opens your first Agent
 ([getting started](/docs/getting-started/#sign-in-and-connect-a-provider)).
 
 <Aside type="tip">
-Create a token per browser or phone under **Setup → Tokens**. Revoking a token ends the browser
+Create a token per browser or phone under **Setup → Access**. Revoking a token ends the browser
 sessions opened with it. The bootstrap token cannot be revoked.
 </Aside>
 
@@ -89,6 +89,8 @@ bar hides it.
 
 - **Agent**: model and reasoning, the Team the Agent belongs to, rename, archive and delete, and
   the ways into its schedules, learning, mailbox, skills, Telegram topic and managed browser.
+  The model is chosen by name, under its provider, with how much it reads and whether it sees
+  images.
 - **Team**: the members with their states, `USER.md`, the shared memory with a search, and
   settings (Docker sandbox defaults, Telegram topic names, **Save as Team template**).
 - **Connections**: whether the Team is open or restricted, who may message whom, and the latest
@@ -170,18 +172,19 @@ example `/?agent=<id>&section=learning`.
   with, and the providers behind them, each with what its last test found. **Add a provider**
   connects one in a single step that tests it before anything is saved; **Add models** searches
   every connected provider ([providers and models](/docs/configuration/#providers-and-models)).
-- **Services** (`/config/services`): the shell sandbox and approval, web search, Firecrawl and
-  the managed browser.
+- **Tools** (`/config/tools`): web search, the page reader, the browser, how commands run and
+  message chains, one card each. A card says what is in effect and is saved whole
+  ([setting the tools](/docs/tools/#setting-the-tools)).
 - **MCP** (`/config/mcp`): stdio and Streamable HTTP servers ([MCP](/docs/tools/#mcp-servers)).
-- **Integrations** (`/config/integrations/telegram`): Telegram credentials, preflight, pairing,
-  the allowlist and Attention notifications ([Telegram](/docs/telegram/)).
-- **Tokens** (`/config/tokens`): device tokens and browser sessions.
+- **Telegram** (`/config/telegram`): Telegram credentials, preflight, pairing, the allowlist
+  and Attention notifications ([Telegram](/docs/telegram/)).
+- **Access** (`/config/access`): device tokens and browser sessions.
 - **System** (`/config/system`): the installation's health, how Agents run commands, and
   **Download backup**, which saves an archive of the home.
 
 ![Setup, Models: six chat models with their size, price and who uses them, the image model, and three providers that each say when they were last tested.](/screenshots/models.webp)
 
-A blank secret field keeps the stored value; removing a credential is a separate action.
+A key is shown as saved, never in full. Replacing or removing one is its own action.
 
 ## Attention (`/attention`)
 

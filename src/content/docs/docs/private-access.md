@@ -36,8 +36,8 @@ Open the HTTPS origin on a tailnet device and log in with a token: the bootstrap
 (`bazilion token show-local` on the host) or a device token. The daemon turns it into a session
 cookie; the browser does not keep the token. A session ends after 30 days without use.
 
-Give each browser, phone or remote CLI its own device token, on **Setup → Tokens**
-(`/config/tokens`) or with the CLI. The plaintext is shown once. Every token has full access (with
+Give each browser, phone or remote CLI its own device token, on **Setup → Access**
+(`/config/access`) or with the CLI. The plaintext is shown once. Every token has full access (with
 `BAZILION_BASH_SANDBOX=off` that includes running host commands through an Agent) and expires only
 when you ask:
 

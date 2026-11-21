@@ -14,8 +14,8 @@ is published at `BAZILION_PUBLIC_ORIGIN` the notice links to the item; otherwise
 
 ## Configure
 
-On the web: **Attention notifications** on `/config/integrations/telegram`. Switch it on, pick the
-kinds, optionally set quiet hours, and save. From the CLI:
+On the web: **Attention notifications** under **Setup → Telegram** (`/config/telegram`). Switch
+it on, pick the kinds, optionally set quiet hours, and save. From the CLI:
 
 ```sh
 bazilion notification settings
