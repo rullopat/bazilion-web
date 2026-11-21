@@ -14,9 +14,11 @@ Sign in on `/login` with the bootstrap token (`bazilion token show-local` prints
 token. The daemon gives the browser a session cookie; the token itself is not stored. A session
 ends after 30 days without use.
 
-Until one provider is enabled with a saved model, every page leads to `/welcome` and the setup
-page. Connect ChatGPT or paste an API key, enable the provider and pick a model; Bazilion then
-creates a `default` Profile and a `default` Team and offers to spawn your first Agent.
+Until one provider is connected, every page leads to `/welcome`. Choose a provider, paste its
+API key (or sign in with ChatGPT, or use a model server found on this computer) and press
+**Connect and test**: nothing is saved unless a model answers. Bazilion then creates a `default`
+Profile and a `default` Team, and **Start chatting** opens your first Agent
+([getting started](/docs/getting-started/#sign-in-and-connect-a-provider)).
 
 <Aside type="tip">
 Create a token per browser or phone under **Setup → Tokens**. Revoking a token ends the browser
@@ -164,15 +166,20 @@ example `/?agent=<id>&section=learning`.
 
 ## Setup (`/config`)
 
-- **Providers** (`/config`): search the provider list, add credentials or a local endpoint,
-  enable the provider, choose models and run a connection test. **Connect ChatGPT** signs in with
-  your ChatGPT account. **Download backup** saves an archive of the home.
-- **Services** (`/config/services`): the shell sandbox and approval, web search, image
-  generation, Firecrawl and the managed browser.
+- **Models** (`/config`): the chat models your Agents think with, the image model they draw
+  with, and the providers behind them, each with what its last test found. **Add a provider**
+  connects one in a single step that tests it before anything is saved; **Add models** searches
+  every connected provider ([providers and models](/docs/configuration/#providers-and-models)).
+- **Services** (`/config/services`): the shell sandbox and approval, web search, Firecrawl and
+  the managed browser.
 - **MCP** (`/config/mcp`): stdio and Streamable HTTP servers ([MCP](/docs/tools/#mcp-servers)).
 - **Integrations** (`/config/integrations/telegram`): Telegram credentials, preflight, pairing,
   the allowlist and Attention notifications ([Telegram](/docs/telegram/)).
 - **Tokens** (`/config/tokens`): device tokens and browser sessions.
+- **System** (`/config/system`): the installation's health, how Agents run commands, and
+  **Download backup**, which saves an archive of the home.
+
+![Setup, Models: six chat models with their size, price and who uses them, the image model, and three providers that each say when they were last tested.](/screenshots/models.webp)
 
 A blank secret field keeps the stored value; removing a credential is a separate action.
 

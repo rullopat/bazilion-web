@@ -13,8 +13,8 @@ bazilion attention list
 
 1. `bazilion doctor` checks the home, the database, skills, providers, web search and the Docker
    image. Make sure the CLI talks to the daemon you mean (`BAZILION_SERVER`, `BAZILION_HOME`).
-2. Check that the Agent's provider is enabled, has a saved model and a working credential:
-   `bazilion provider test <provider:model>`.
+2. Check the Agent's provider. **Setup → Models** and `bazilion provider list` say what its last
+   test found; `bazilion provider test <provider:model>` asks the Agent's own model now.
 3. Open the Agent's chat and read the error or the failed tool result. For Telegram, also run
    `bazilion telegram health`.
 4. If a message to another Agent failed, check the Team's [policy](/docs/concepts/#team-policy):
