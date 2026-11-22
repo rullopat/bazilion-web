@@ -9,8 +9,8 @@ CLI and the web UI are clients of its HTTP API.
 ## Providers and models
 
 Models are written `provider:model`, for example `anthropic:claude-fable-5-2`,
-`openai-codex:gpt-6.1-sol` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
-catalog; Bazilion 0.54.0 bundles Pi 1.5.2. An id that is not in the catalog is refused as
+`openai-codex:gpt-6.2-sol` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
+catalog; Bazilion 0.55.0 bundles Pi 1.6.0. An id that is not in the catalog is refused as
 "Unknown model" unless the provider has an endpoint you configured, so a typo never sends a key to
 another vendor.
 
@@ -31,7 +31,7 @@ and press **Connect and test**. From a terminal:
 
 ```sh
 bazilion provider connect anthropic       # asks for the key, without echo
-bazilion provider connect openai --key sk-… --models gpt-6.1-sol,gpt-6-luna
+bazilion provider connect openai --key sk-… --models gpt-6.2-sol,gpt-6-luna
 bazilion provider connect lmstudio --url http://127.0.0.1:1234/v1
 # A ChatGPT plan: sign in, then connect.
 bazilion auth openai login && bazilion provider connect openai-codex
@@ -54,11 +54,12 @@ testing** (`--no-test`) skips the request and leaves the provider "Not tested ye
 | OpenRouter | `openrouter` | `OPENROUTER_API_KEY` |
 | LM Studio | `lmstudio` | `LMSTUDIO_URL` (default `http://127.0.0.1:1234/v1`), optional `LMSTUDIO_API_KEY` |
 | Ollama | `ollama` | `OLLAMA_URL` (default `http://127.0.0.1:11434/v1`) |
-| llama.cpp | `llamacpp` | `LLAMACPP_URL` (default `http://127.0.0.1:8080/v1`) |
+| llama.cpp | `llamacpp` | `LLAMACPP_URL` (default `http://127.0.0.1:9931/v1`, llama-server's own default) |
 
 Many more are behind **Add a provider** (`bazilion provider list --all`): Azure OpenAI, Amazon
 Bedrock, Google Vertex AI, GitHub Copilot, DeepSeek, Mistral, xAI, Groq, Cerebras, Fireworks,
-Together, Baseten, Moonshot, Kimi, MiniMax, Qwen Token Plan, Xiaomi MiMo, NVIDIA, zAI, Meta,
+Together, Baseten, Moonshot, Kimi, MiniMax, Qwen Token Plan (Team and Individual, each with its
+own key), Xiaomi MiMo, NVIDIA, zAI, Meta,
 Radius, Hugging Face, Cloudflare, Vercel AI Gateway and OpenCode. `--set NAME=value` sets a
 provider's other fields; `bazilion provider models <id>` lists their names.
 

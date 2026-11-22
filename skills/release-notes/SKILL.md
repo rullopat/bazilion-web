@@ -8,7 +8,7 @@ metadata:
     - release
     - documentation
     - starlight
-  version: 2.0.0
+  version: 2.1.0
 ---
 
 # Release notes and site docs
@@ -90,8 +90,8 @@ When adopting this policy in a site that still has `whats-new-0-XY.md` pages:
    `trailingSlash: 'ignore'`, one redirect key covers both URL forms; do not add duplicate static
    routes. Test both forms. Keep retired links useful without retaining duplicate content pages.
 4. Repoint internal links, including docs index and upgrade references. Keep any separately needed
-   schema-history guidance accurate; `previous-changes.md` is not a second What's new feed and
-   must not receive automatically archived release sections.
+   schema-history guidance accurate in the upgrade guide. There is no archive page for older
+   releases (the former Previous changes page redirects to GitHub Releases); do not recreate one.
 5. Update `scripts/check-docs.mjs` for the rolling-page contract below in the same change. Its
    legacy version-specific frontmatter parser must not dictate creating another release page.
 6. Build and check all links, redirect destinations, retained section anchors, navigation and

@@ -17,9 +17,10 @@ learning reviews) do not get the tool.
 
 ## Answering
 
-- **Web:** the question appears under the chat, the Agent's line in the list says
-  `Waiting for you: a question`, and it is the first item of **Attention**, with the time it stops
-  waiting. Click a choice to answer with it, write your own answer and **Send answer**, or
+- **Web:** the question appears under the chat the moment it is asked, the Agent's line in the
+  list says `Waiting for you: a question`, and it is the first item of **Attention**, with the
+  time it stops waiting. With [desktop notifications](/docs/web-interface/#live-and-notifications)
+  on, the browser shows one when no Bazilion tab has the focus. Click a choice to answer with it, write your own answer and **Send answer**, or
   **Skip**.
 - **Terminal chat:** `bazilion agent chat` prompts for a number, `o` for your own text or `s` to
   skip. Blank input picks nothing.

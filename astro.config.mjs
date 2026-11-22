@@ -51,6 +51,8 @@ export default defineConfig({
     '/docs/whats-new-0-20/': 'https://github.com/rullopat/bazilion/releases/tag/v0.20.0',
     '/docs/whats-new-0-19-1/': 'https://github.com/rullopat/bazilion/releases/tag/v0.19.1',
     '/docs/whats-new-0-19/': 'https://github.com/rullopat/bazilion/releases/tag/v0.19.0',
+    // The summary of releases before 0.23 gave way to GitHub Releases.
+    '/docs/previous-changes/': 'https://github.com/rullopat/bazilion/releases',
     // Guides for features removed in 0.26.0 point at the surviving change review page.
     '/docs/coding-verification/': '/docs/coding-review/',
     '/docs/coding-review-packets/': '/docs/coding-review/',
@@ -148,7 +150,6 @@ export default defineConfig({
             { label: 'Overview', slug: 'docs' },
             { label: 'Getting started', slug: 'docs/getting-started' },
             { label: "What's new", slug: 'docs/whats-new' },
-            { label: 'Previous changes', slug: 'docs/previous-changes' },
             { label: 'How Bazilion is different', slug: 'docs/why-bazilion' },
           ],
         },
