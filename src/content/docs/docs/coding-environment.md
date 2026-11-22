@@ -104,9 +104,12 @@ the uploads and the attached skills are mounted and no host environment is passe
 With `BAZILION_BASH_APPROVAL=dangerous`, commands a classifier flags pause for a decision:
 credential paths, recursive deletes or permission changes outside the Team, piping a download into
 a shell, uploads to remote hosts, `sudo` and environment dumps. The web chat shows **Allow once**
-and **Deny**; `bazilion agent chat` in a terminal asks on stdin. An unanswered request is denied
-after two minutes. Turns with nobody to ask (Telegram, schedules, inbox wakes, queued follow-ups,
-piped CLI) deny flagged commands.
+and **Deny**; `bazilion agent chat` in a terminal asks on stdin. A command still waiting after
+half a minute is also posted in the Agent's [Telegram](/docs/telegram/) topic, when it has one,
+with **Allow once** and **Deny**; only the paired owner can use them, and the message shows the
+outcome once the command is decided anywhere. An unanswered request is denied after five minutes.
+Turns with nobody to ask (Telegram, schedules, inbox wakes, queued follow-ups, piped CLI) deny
+flagged commands.
 
 The classifier is a tripwire, not a sandbox: a determined command can get around it.
 

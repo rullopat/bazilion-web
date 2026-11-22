@@ -1,6 +1,6 @@
 ---
 title: The web interface
-description: A tour of the Bazilion web UI — sign-in and setup, the workspace with its overview, list, conversation, side panel and full-width views, Jump to and the keyboard, the Manage pages and Attention.
+description: A tour of the Bazilion web UI — sign-in and setup, the workspace with its overview, list, conversation, side panel and full-width views, live updates and desktop notifications, Jump to and the keyboard, the Manage pages and Attention.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -35,8 +35,9 @@ pages of their own.
 
 The top bar has **Jump to** (Ctrl+K, or ⌘K on a Mac), then three places: **Attention**, with the
 number of open items, kept current on every page; **Manage**; and **Setup**. The person icon at the
-end holds the theme (the same as the computer, light or dark) and **Log out**. The browser tab
-names the page and counts what waits for you, as in `(1) Quill · Launch — bazilion`.
+end holds the theme (the same as the computer, light or dark), desktop notifications and **Log
+out**. The browser tab names the page and counts what waits for you, as in `(1) Quill · Launch —
+bazilion`.
 
 ### The overview
 
@@ -127,12 +128,31 @@ formatted; **Edit** opens the text.
 
 ![Mira's schedules: a schedule that reads Weekdays at 09:00 with its message and a switch, and the recent runs below.](/screenshots/schedules.webp)
 
+## Live, and notifications
+
+Everything that shows what Agents are doing follows it as it happens: the list, the conversation,
+the overview, the top bar's count, the tab title and the Attention page. The daemon pushes each
+change over one event stream, so a question shows the moment it is asked. One tab per browser
+holds the stream and shares it with the others. While it cannot connect, for example while the
+daemon restarts, the pages ask every few seconds and try the stream again.
+
+**Notify me on this computer**, in the menu at the end of the top bar, turns on desktop
+notifications for this browser, after the browser asks you. When an Agent starts waiting for you
+and no Bazilion tab has the focus, a notification names the Agent and its question or command;
+clicking it opens the conversation. Browsers offer notifications on `https://` addresses and on
+this computer (`127.0.0.1`, `localhost`) only. If a browser blocks them for the site, the menu
+says so. They come with the live updates: while those are down, none are shown.
+
+When you are not at the computer, [Telegram](/docs/telegram/) reaches you: every question is
+posted in the Agent's topic, and a command still waiting for approval after half a minute too.
+
 ## Jump to, and the keyboard
 
 **Jump to** lists the Agents waiting for you first, then those working, then actions (a new
 conversation with the open Agent, adding an Agent, switching the theme, the keyboard shortcuts),
 the other Agents by when they were last active, recent conversations, Teams, the open Team's views
-and the Manage and Setup pages. Type to narrow it down; Enter opens the one highlighted.
+and the Manage and Setup pages. Type to narrow it down; Enter opens the one highlighted, also when
+you press it before the lists have arrived.
 
 ![Jump to with Quill waiting for an answer at the top, Scout working, and actions to start a conversation, add an Agent, switch the theme and list the shortcuts.](/screenshots/palette.webp)
 
@@ -183,8 +203,12 @@ download them all as one zip.
 ## On a phone, and in the dark
 
 On a narrow screen the list, the conversation and the panel take turns: pick an Agent to see its
-conversation, and open the panel from the conversation's bar. The theme, in the menu at the end of
-the top bar, follows the computer or stays light or dark.
+conversation, and open the panel from the conversation's bar. Above the list, **Waiting for you**
+names the Agents waiting on a question or a command, one tap from it.
+
+<img src="/screenshots/phone-waiting.webp" width="320" alt="On a phone: a Waiting for you strip with Quill and its question above the list of Teams." />
+
+The theme, in the menu at the end of the top bar, follows the computer or stays light or dark.
 
 ![The workspace in the dark theme.](/screenshots/workspace-dark.webp)
 
@@ -247,7 +271,7 @@ What needs you. First what an Agent is waiting on right now: its question, or a 
 your approval, soonest to expire first, each with the time it stops waiting; **Answer** and
 **Decide** open the conversation. Then lesson proposals, failed learning reviews and triggers,
 stopped message loops and queues paused after a restart. Each item links to the Agent's
-conversation or sheet in the workspace. The page keeps itself current. See
+conversation or sheet in the workspace. The page follows changes as they happen. See
 [daily operations](/docs/operations/#attention).
 
 ![Attention with one open item: Quill is waiting for your answer, with the time it stops waiting and an Answer button.](/screenshots/attention.webp)

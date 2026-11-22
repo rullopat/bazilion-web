@@ -1,20 +1,99 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.54.0 bundles Pi 1.5.2.
+description: The latest four Bazilion releases, newest first; Bazilion 0.55.0 bundles Pi 1.6.0.
 ---
 
-The latest four releases, newest first. Older releases are summarised on
-[Previous changes](/docs/previous-changes/) and in
+The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
 
+## Bazilion 0.55.0
+
+Published **2026-11-22**. What an Agent waits on now reaches you at once, and wherever you are.
+The web UI is pushed every change instead of asking every few seconds, so a question shows the
+moment it is asked. The browser can show a desktop notification when Bazilion is in the
+background, a command waiting for your approval can be decided from Telegram, and on a phone the
+Agents waiting for you are above the list. The embedded Pi engine moves to 1.6.0, with GPT-6.2.
+See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.55.0) and
+[the tour of the web interface](/docs/web-interface/#live-and-notifications).
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.54 home opens as it is. Stop the
+daemon, then:
+
+```sh
+npm install -g bazilion@0.55.0
+bazilion dashboard
+```
+
+Two settings may need you:
+
+- **Qwen Token Plan:** each plan has its own key now (`QWEN_TOKEN_PLAN_TEAM_API_KEY`,
+  `QWEN_TOKEN_PLAN_TEAM_CN_API_KEY`, `QWEN_TOKEN_PLAN_INDIVIDUAL_API_KEY`,
+  `QWEN_TOKEN_PLAN_INDIVIDUAL_CN_API_KEY`). Enter yours again under **Setup → Models**.
+- **llama.cpp:** Bazilion now looks for llama-server on its current default address,
+  `http://127.0.0.1:9931/v1`. If yours listens on 8080, set its address under **Add a provider →
+  llama.cpp** (`LLAMACPP_URL`).
+
+Models your Agents already use are not changed.
+
+### Added
+
+- **Live updates.** The daemon pushes what every Agent is doing and what is open in Attention as
+  it changes (`GET /api/events`). The list, the conversation, the overview, the top bar's count,
+  the tab title and the Attention page follow it. One tab per browser holds the connection and
+  shares it with the others. While it cannot connect, the pages ask every few seconds, as before.
+- **Desktop notifications.** **Notify me on this computer**, in the menu at the end of the top
+  bar, turns them on for this browser. When an Agent starts waiting for you and no Bazilion tab
+  has the focus, a notification names the Agent and its question or command; clicking it opens
+  the conversation.
+- **Commands to approve, in Telegram.** A command still waiting after half a minute is posted in
+  the Agent's topic with **Allow once** and **Deny**. Only the paired owner can use them. The
+  message says how it was decided, there or anywhere else.
+- **Waiting for you, on a phone.** Above the Agent list, a strip names the Agents waiting for you,
+  one tap from their question.
+
+<img src="/screenshots/phone-waiting.webp" width="320" alt="On a phone: a Waiting for you strip with Quill and its question above the list of Teams." />
+
+### Changed
+
+- **A command waits five minutes** for your decision, as long as a question, instead of two.
+- **Pi 1.6.0.**
+  - GPT-6.2 Sol and GPT-6.2 Astra are in the catalogs of ChatGPT, OpenAI and Azure.
+  - GPT-6.2 Sol is the model ticked first when you connect ChatGPT or OpenAI.
+  - Gemini 4 Carbon, Hydrogen and Neon are in the Google catalogs.
+  - The Qwen Token Plan team plans are listed as Qwen Token Plan Team, and each plan has its own
+    key.
+
+### Fixed
+
+- **A terminal chat** (`bazilion agent chat`) stopped when the command it was asking about had
+  been decided elsewhere or had timed out. It now says so and goes on.
+- **Jump to** did nothing when Enter was pressed before its lists had arrived (0.54.0). It now
+  opens the first match as soon as they do.
+- **Shortcuts** (`?`, `/`) did nothing while a closed dropdown kept the focus after a pick
+  (0.54.0). Only an open dropdown holds the keys now.
+
+### Limits
+
+- Questions and commands waiting for approval still live in the daemon's memory: a daemon restart
+  ends them.
+- Browsers offer desktop notifications on `https://` addresses and on this computer only.
+- Turns started from Telegram still deny flagged commands; only commands from a chat you are
+  watching, on the web or in a terminal, can be approved there.
+- Desktop notifications come with the live updates: while those are down, none are shown.
+- The new browser tests run the built package in Chrome on Linux, as part of every pull request.
+  They check every page in two languages and time zones, the live updates, answering a question,
+  the dropdowns and shortcuts, the phone layout and the notifications switch.
+
 ## Bazilion 0.54.0
 
-Published **2026-11-22**. The web UI now agrees on what needs you. An Agent's question or command
-to approve comes first in **Attention**, the top bar's count and the browser tab stay current, and
-an Agent blocked on you reads **Waiting for you** everywhere. The workspace opens on an overview,
-its sheets use the same cards as Setup and Manage, **Jump to** runs actions, and keyboard
-shortcuts move you around. The embedded Pi engine stays at 1.5.2. See the
+Published **2026-11-22**. 0.54.0 made the web UI agree on what needs you. An Agent's question or
+command to approve came first in **Attention**, the top bar's count and the browser tab stayed
+current, and an Agent blocked on you read **Waiting for you** everywhere. The workspace opened on
+an overview, its sheets used the same cards as Setup and Manage, **Jump to** ran actions, and
+keyboard shortcuts moved you around. The embedded Pi engine stayed at 1.5.2. See the
 [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.54.0) and
 [the tour of the web interface](/docs/web-interface/).
 
@@ -232,69 +311,5 @@ new addresses. The current commands are in
 - Outside the menus a model is still shown by its id: template lists, the conversation header
   and the CLI.
 - Docker is asked whether it has the image each time the Tools page opens, for at most 3 s.
-- The new pages were checked by hand in Chrome on macOS with a stand-in model server. The
-  automated tests cover their logic on Linux but do not drive a browser.
-
-## Bazilion 0.51.0
-
-Published **2026-11-21**. Setup became sorted by what a model does for your Agents, and
-connecting a provider became one step that tests it before anything is saved. The embedded Pi
-engine stayed at 1.5.2. See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.51.0) and
-[providers and models](/docs/configuration/#providers-and-models).
-
-### Upgrade: install and start again
-
-The database schema was unchanged, so a 0.26, 0.27 or 0.50 home opened as it was. Providers that
-were switched on keep working and read "Not tested yet" until you press **Test them** on the
-Models page or run `bazilion provider test <id>`. A key that was saved but never switched on shows
-as "Saved, not in use", with a **Connect** button. The current commands are in
-[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
-
-### Added
-
-- **Setup opens on Models (`/config`).** One page with three cards: **Chat**, the models Agents
-  think with; **Images**, the model they draw with, or off; and **Providers**, the accounts and
-  local servers behind them. Only the providers in use are listed; the others are behind **Add a
-  provider**.
-- **What a model is.** Each chat model shows its name, how much it can read, whether it takes
-  images, its list price per million tokens and which Agents and templates use it. These facts
-  come from the catalog bundled with Pi.
-- **Connect in one step.** Paste the key (or sign in with ChatGPT, or give a local server's
-  address), keep the suggested models or choose others, and press **Connect and test**. The
-  cheapest chosen model is asked for a short reply. Only when it answers are the key and the
-  models saved and the provider switched on, so a key that does not work is never stored.
-- **A state that was checked.** A provider is "Working", "Key rejected", "Not answering", "Model
-  unavailable", "Limit reached", "Not tested yet", "Needs a key" or "Turned off". A failed test
-  says what happened and what to do, with the provider's own message beside it. A line above the
-  cards names the provider that does not answer.
-- **First run on one screen.** `/welcome` is choose, connect, start chatting. **On this computer**
-  finds LM Studio, Ollama and llama.cpp at their usual addresses, and **Start chatting** opens
-  your first Agent ([getting started](/docs/getting-started/#sign-in-and-connect-a-provider)).
-- **Model picker.** **Add models** searches every connected provider, filters by image input or
-  reasoning, and folds dated copies of a model away. Removing a model that Agents use says so
-  first.
-- **CLI.** `bazilion provider connect <id>`, `bazilion provider disconnect <id>` and
-  `bazilion provider test <id>`; `bazilion provider list` shows each provider's state.
-
-### Changed
-
-- Installation health, the runtime summary and **Download backup** moved from the top of the
-  providers page to **Setup → System** (`/config/system`).
-- The image model is chosen under **Images** on the Models page. The Services page no longer has
-  a card for it.
-- `bazilion provider list` shows only the providers in use; `--all` lists every one.
-- A provider cannot be switched on without credentials: `bazilion provider enable` and
-  `PUT /api/config/providers/:id/enabled` refuse it.
-- `GET /api/config/providers` has a new shape and asks no provider for its model list, so the
-  page opens at once whatever a local server is doing. `GET /api/config/providers/:id/models` is
-  gone; `GET /api/config/providers/:id/catalog` replaces it.
-- The ChatGPT sign-in is shown as "ChatGPT" and Google as "Google Gemini". Provider ids and
-  setting names are unchanged.
-
-### Limits
-
-- Prices are list prices from the bundled catalog, not what your account was billed.
-- Nothing tests a provider on its own. A state is as old as its last test, and the page says how
-  old that is.
 - The new pages were checked by hand in Chrome on macOS with a stand-in model server. The
   automated tests cover their logic on Linux but do not drive a browser.
