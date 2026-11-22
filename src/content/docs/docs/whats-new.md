@@ -1,6 +1,6 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.52.0 bundles Pi 1.5.2.
+description: The latest four Bazilion releases, newest first; Bazilion 0.53.0 bundles Pi 1.5.2.
 ---
 
 The latest four releases, newest first. Older releases are summarised on
@@ -8,11 +8,87 @@ The latest four releases, newest first. Older releases are summarised on
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
 
+## Bazilion 0.53.0
+
+Published **2026-11-22**. Agents, Teams, their templates and skills are managed from one
+**Manage** section that looks and works like Setup: each page shows what there is first, creates
+in a dialog, and says what is worth knowing on each row. Setup's Telegram, System, MCP and Access
+pages use the same cards as Models and Tools. The embedded Pi engine stays at 1.5.2. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.53.0) and
+[the Manage pages](/docs/web-interface/#manage).
+
+![Manage, Agents: Agents grouped by Team under a search box and a Current, Archived and All filter, each with its template and model, and a menu on each row.](/screenshots/manage-agents.webp)
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26, 0.27, 0.50, 0.51 or 0.52 home opens as it is. Stop
+the daemon, then:
+
+```sh
+npm install -g bazilion@0.53.0
+bazilion dashboard
+```
+
+Nothing is set or moved by the upgrade. The Templates page is now two tabs of Manage, **Agent
+templates** (`/templates/agents`) and **Team templates** (`/templates/teams`), at the addresses
+they had. A 0.25 or older home still needs the reset described in
+[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
+
+### Added
+
+- **One Manage section.** Agents, Teams, Agent templates, Team templates and Skills share one tab
+  bar. Each page shows its list first; **Spawn an agent**, **Create a Team**, **New Agent
+  template**, **New Team template** and **Import skills** open a dialog. The rarer and destructive
+  actions of a row are behind its **⋯** button, and one the daemon would refuse is shown disabled,
+  with the reason.
+- **Agents by Team.** Agents are grouped by Team, found by name, creature or vibe, and filtered to
+  current, archived or all. Each row says its template and the model it answers with, and says
+  so when that model is not in Chat. **Move to another Team** is in the row's menu.
+- **An Agent template's page** has a **Settings** card (name, default model, skills) and a
+  **Files** card that shows one file at a time and saves every changed file with one **Save**. A
+  banner says when the template's model is not in Chat. **Spawn an agent** is on the page.
+- **Team templates spawn from the list and from their page.** A row shows the roster; the spawn
+  dialog asks for a new Team or one that exists. The roster editor speaks of Agents and
+  connections.
+- **Skills that need a look stand out.** A risky finding or a SKILL.md that cannot be read is
+  shown under the skill and in a banner; each row says which templates chose the skill.
+
+![An Agent template's page: the Settings card with its name, default model and chosen skills, and the Files card with SOUL.md open.](/screenshots/agent-template.webp)
+
+### Changed
+
+- **Creating a Team** asks for a name and makes the ID from it, then asks where its files are: a
+  new folder in the Bazilion home, or a project folder that exists, which the Team links to.
+- **Attention** says how many items are open in one line, filters by state, kind and severity in
+  one row, and gives times as "2 hours ago".
+- **Setup's Telegram, System, MCP and Access** use the same cards as Models and Tools. Telegram's
+  forms say what they need before they are saved (both credentials, a numeric group id, the token
+  again for a new group), and its **Bot** card says whether the bot runs.
+- **Telegram pairing is noticed by itself.** While a code waits, the **Owner pairing** card checks
+  every few seconds, and allowed users can be added as soon as the owner is paired.
+- **Keyboard.** Row menus, a template's file tabs (arrow keys, Home, End) and controls that
+  replace each other keep focus where it belongs; a menu item that cannot be used is still
+  reached, so its reason is read.
+
+### Fixed
+
+- **Skills and Attention no longer fail to load cleanly** in a browser whose language or time zone
+  differs from the computer Bazilion runs on: their dates were written twice, differently.
+- **Delete is no longer offered for an Agent template that a Team template uses**: the daemon
+  always refused it.
+
+### Limits
+
+- The workspace's side panel and sheets keep their own cards.
+- The Teams list does not say whether a Team's folder links to a project.
+- The new pages were checked by hand and by script in Chrome on macOS with a stand-in model
+  server; the automated tests cover their logic on Linux but do not drive a browser.
+
 ## Bazilion 0.52.0
 
-Published **2026-11-21**. The Services page becomes **Tools**: one card per tool, settings that
-are checked before they are stored, and one Save per card. Model menus show names. The embedded
-Pi engine stays at 1.5.2. See the
+Published **2026-11-21**. The Services page became **Tools**: one card per tool, settings that
+are checked before they are stored, and one Save per card. Model menus began to show names. The
+embedded Pi engine stayed at 1.5.2. See the
 [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.52.0) and
 [setting the tools](/docs/tools/#setting-the-tools).
 
@@ -20,18 +96,11 @@ Pi engine stays at 1.5.2. See the
 
 ### Upgrade: install and start again
 
-The database schema is unchanged, so a 0.26, 0.27, 0.50 or 0.51 home opens as it is. Stop the
-daemon, then:
-
-```sh
-npm install -g bazilion@0.52.0
-bazilion dashboard
-```
-
-Stored settings are read as before. A value that an older version stored and the daemon cannot
+The database schema was unchanged, so a 0.26, 0.27, 0.50 or 0.51 home opened as it was. Stored
+settings were read as before. A value that an older version stored and the daemon cannot
 use, such as a mistyped mode, is pointed out on its card, and saving the card replaces it.
-Bookmarks of `/config/services`, `/config/tokens` and `/config/integrations/telegram` need the new
-addresses. A 0.25 or older home still needs the reset described in
+Bookmarks of `/config/services`, `/config/tokens` and `/config/integrations/telegram` needed the
+new addresses. The current commands are in
 [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
 
 ### Added
@@ -214,40 +283,3 @@ are in [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
 - A review that is not sent yet lives in the page and is lost on a reload.
 - The workspace was checked by hand in Chrome on macOS with a scripted model. The automated tests
   cover its logic and rendering on Linux but do not drive a browser.
-
-## Bazilion 0.27.0
-
-Published **2026-11-19**. The managed browser works from the first start on Linux and macOS, and
-Agents can work in the browser you already have open. The embedded Pi engine stayed at 1.5.2. See
-the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.27.0).
-
-### Upgrade: install and start again
-
-The database schema was unchanged, so a 0.26 home opened as it was. The current commands are in
-[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
-
-### Fixed
-
-- **macOS found no browser.** The lookup only knew Linux install paths. Chrome, Brave, Edge and
-  Chromium are now found in `/Applications` and `~/Applications`. A `BROWSER_EXECUTABLE_PATH` set
-  as a workaround keeps working and is no longer needed.
-- **A machine without Chrome had no browser.** Playwright's Chromium came from an npm install
-  script, which current npm and pnpm skip. The daemon now downloads Chromium itself when no
-  browser is installed, at startup or at the first browser action. The Agent page shows the
-  download or why it failed, and `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1` turns it off.
-- **Crash cleanup on macOS.** A browser left on an Agent's profile by a daemon that crashed is
-  killed on macOS as well.
-
-### Added
-
-- **Your running browser.** With `BROWSER_ATTACH=true`, Agents work in the Chrome or Chromium you
-  have open, signed in as you, in tabs of their own. Your own tabs are never listed, read or
-  closed. The daemon's network proxy cannot cover this mode and the Agent acts as you on every
-  site you are signed in to: read [Your running browser](/docs/tools/#your-running-browser)
-  before turning it on.
-
-### Limits
-
-- Attaching is tested against a Chromium started with a debugging port. Chrome's own
-  remote-debugging switch and approval prompt need a person and are not covered by tests.
-- The browser suites pass on macOS against real Chrome but run in CI on Linux only.

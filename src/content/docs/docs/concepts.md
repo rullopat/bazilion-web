@@ -12,14 +12,14 @@ Bazilion is built on
 [Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent). Pi runs the
 turn loop and the provider calls, compacts history and writes the JSONL transcript under each
 Agent's `sessions/` directory. Bazilion supplies Agents and Teams, credentials, the tool list, the
-worker processes and the long-lived browser and MCP connections. Version 0.52.0 bundles Pi 1.5.2,
+worker processes and the long-lived browser and MCP connections. Version 0.53.0 bundles Pi 1.5.2,
 with Pi's own discovery of extensions, skills, prompt templates and context files switched off.
 
 ## Profiles (Agent templates)
 
 A **Profile** is an Agent template: `SOUL.md`, `IDENTITY.md`, `AGENTS.md`, `TOOLS.md`, an
 optional first-run `BOOTSTRAP.md`, a default model and a skills mode (`all` attaches every
-installed skill, `selected` a chosen list). The web UI lists them under **Templates → Agent
+installed skill, `selected` a chosen list). The web UI lists them under **Manage → Agent
 templates**; the CLI is `bazilion profile`. Editing a Profile affects future spawns only.
 
 ## Agents

@@ -154,17 +154,28 @@ example `/?agent=<id>&section=learning`.
 
 ## Manage
 
-- **Agents** (`/agents`): every Agent, archived ones too, with spawn, archive, restore and delete.
-- **Teams** (`/teams`): **Register a team** creates a workspace at `~/.bazilion/teams/<slug>/`, or
-  links one to an existing project directory; an empty Team can be removed.
-- **Templates** (`/templates`): **Agent templates** (`/templates/agents`) are Profiles: the default
-  model, skills and the `SOUL.md`, `IDENTITY.md`, `BOOTSTRAP.md`, `AGENTS.md` and `TOOLS.md` files
-  new Agents start with. Edits affect future spawns only. **Team templates** (`/templates/teams`)
-  are rosters: one slot per Agent (Profile, name, optional model and reasoning), allow edges
-  between slots and a policy mode.
-- **Skills** (`/skills`): import skills from a local OpenClaw install, a directory or a `.zip`,
-  see their scan findings, and remove them. Attach skills through a Profile or under **Skills** in
-  an Agent's side panel.
+**Manage** holds the housekeeping pages under one tab bar. Each shows what there is first and
+creates in a dialog from the button at the top right; the rarer and destructive actions of a row
+are behind its **⋯** button, and one Bazilion would refuse is shown disabled, with the reason.
+
+![Manage, Agents: Agents grouped by Team under a search box and a Current, Archived and All filter, each with its template and model, and a menu on each row.](/screenshots/manage-agents.webp)
+
+- **Agents** (`/agents`): every Agent, grouped by Team. Find one by name, creature or vibe; show
+  current, archived or all. Each row says its template and the model it answers with. Archive,
+  restore, move to another Team, delete, and **Spawn an agent**.
+- **Teams** (`/teams`): **Create a Team** asks for a name and where its files are: a new folder in
+  `~/.bazilion/teams/<id>/`, or a project folder it links to. A Team can be removed once it has
+  no Agents; removing it removes only the link to a project folder.
+- **Agent templates** (`/templates/agents`): what a new Agent starts with. A template's page has a
+  **Settings** card (name, default model, skills at spawn) and a **Files** card for `SOUL.md`,
+  `IDENTITY.md`, `BOOTSTRAP.md`, `AGENTS.md` and `TOOLS.md`, each card saved with one **Save**.
+  Edits affect future spawns only.
+- **Team templates** (`/templates/teams`): rosters, one Agent per slot from an Agent template, and
+  the connections between them. Arrange them as a map or a matrix; **Spawn** creates them in a new
+  Team or one that exists.
+- **Skills** (`/skills`): **Import skills** from OpenClaw, a folder or a `.zip`. A risky scan
+  finding or a `SKILL.md` that cannot be read is shown under the skill. Attach skills through a
+  template or under **Skills** in an Agent's side panel.
 
 ## Setup (`/config`)
 
