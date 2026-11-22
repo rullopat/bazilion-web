@@ -228,8 +228,9 @@ code {
   gap: 0.25rem;
   font-size: 0.94rem;
 }
-/* Docs and GitHub leave the page: a hairline sets them apart from its sections. */
-.nav__links--site {
+/* Docs and GitHub leave the page: a hairline sets them apart from its sections. Under .nav, to
+   outrank the reset of ul[role="list"], which would take the padding away. */
+.nav .nav__links--site {
   margin-left: 0.5rem;
   padding-left: 0.5rem;
   border-left: 1px solid var(--line);
@@ -278,7 +279,7 @@ code {
   .nav::before { display: none; }
   .nav__menu { display: contents; }
   .nav__links { font-size: 0.88rem; }
-  .nav__links--site {
+  .nav .nav__links--site {
     grid-row: 1;
     grid-column: 2;
     margin: 0 -0.5rem 0 0;
@@ -286,7 +287,7 @@ code {
     border: 0;
     gap: 0;
   }
-  .nav__links--sections {
+  .nav .nav__links--sections {
     position: relative;
     grid-row: 2;
     grid-column: 1 / -1;
