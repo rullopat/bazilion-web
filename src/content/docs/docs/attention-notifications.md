@@ -3,10 +3,12 @@ title: Attention notifications
 description: Send new Attention items to the Telegram bot's service topic, by kind and with quiet hours, from the web or the CLI.
 ---
 
-**Attention** lists what needs you: lesson proposals, failed or cancelled learning reviews,
-failed scheduled triggers, stopped Agent message loops and Agent queues paused after a daemon
-restart (see [Daily operations](/docs/operations/#attention)). Bazilion can post new items to the
+**Attention** lists what needs you: an Agent's questions and commands waiting for approval, lesson
+proposals, failed or cancelled learning reviews, failed scheduled triggers, stopped Agent message
+loops and Agent queues paused after a daemon restart (see
+[Daily operations](/docs/operations/#attention)). Bazilion can post new items to the
 [Telegram](/docs/telegram/) bot's service topic, so they reach your phone. This is off by default.
+Questions and commands are never posted: a question asked from Telegram is answered there.
 
 Each new open item of a selected kind is sent once, with its title, Agent and Team. When the web UI
 is published at `BAZILION_PUBLIC_ORIGIN` the notice links to the item; otherwise open

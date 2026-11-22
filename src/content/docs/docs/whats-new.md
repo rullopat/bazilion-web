@@ -1,6 +1,6 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.53.0 bundles Pi 1.5.2.
+description: The latest four Bazilion releases, newest first; Bazilion 0.54.0 bundles Pi 1.5.2.
 ---
 
 The latest four releases, newest first. Older releases are summarised on
@@ -8,12 +8,97 @@ The latest four releases, newest first. Older releases are summarised on
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
 
+## Bazilion 0.54.0
+
+Published **2026-11-22**. The web UI now agrees on what needs you. An Agent's question or command
+to approve comes first in **Attention**, the top bar's count and the browser tab stay current, and
+an Agent blocked on you reads **Waiting for you** everywhere. The workspace opens on an overview,
+its sheets use the same cards as Setup and Manage, **Jump to** runs actions, and keyboard
+shortcuts move you around. The embedded Pi engine stays at 1.5.2. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.54.0) and
+[the tour of the web interface](/docs/web-interface/).
+
+![The workspace with nothing open: an overview of who is waiting for you, who is working, the Teams and the latest files.](/screenshots/overview.webp)
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26, 0.27, 0.50, 0.51, 0.52 or 0.53 home opens as it is.
+Stop the daemon, then:
+
+```sh
+npm install -g bazilion@0.54.0
+bazilion dashboard
+```
+
+Nothing is set or moved by the upgrade. A Team you already have keeps its USER.md as it is,
+starter text included; only new Teams start with an empty one. Clear the old text under **About
+you** in the Team tab if you want Agents to fill it in from scratch.
+
+### Added
+
+- **What waits on you comes first in Attention.** An Agent's open question and a command waiting
+  for your approval are Attention items, listed before everything else, soonest to expire first,
+  each with the time it stops waiting. **Answer** and **Decide** open the Agent's conversation.
+  `bazilion attention list` shows them as `agent_question` and `command_approval`. They are not
+  sent as Telegram notifications; a question asked from Telegram is answered there.
+- **An overview to open on.** With nothing open, the workspace shows who is waiting for you, who
+  is working, every Team with its members, the latest files from every Team and the Agents that
+  were active last.
+- **Tab titles.** The browser tab names the page (`Mira · Launch — bazilion`, `Models · Setup —
+  bazilion`) and counts what waits for you (`(1) Quill · Launch — bazilion`).
+- **Jump to runs actions.** Agents waiting for you come first, then those working. It can start a
+  new conversation with the open Agent, add an Agent, switch the theme and list the shortcuts, and
+  it shows recent conversations.
+- **Keyboard shortcuts.** `?` lists them, `/` writes to the open Agent, Alt+↑ and Alt+↓ (⌥ on a
+  Mac) open the previous or next Agent, and ⌘. or Ctrl+. shows or hides the side panel. Keys
+  without ⌘ or Ctrl wait while you type in a field or a list is open.
+
+![Jump to with Quill waiting for an answer at the top, Scout working, and actions to start a conversation, add an Agent, switch the theme and list the shortcuts.](/screenshots/palette.webp)
+
+### Changed
+
+- **One phrase for an Agent blocked on you.** The list, the conversation's steps, the line under the
+  conversation, Jump to and the Team say `Waiting for you` in amber; green and `working` mean it is
+  working. `bazilion activity` says the same.
+- **The top bar** has three places, **Attention**, **Manage** and **Setup**, and a menu at the
+  end with the theme and **Log out**. The count on Attention stays current on every page.
+- **The workspace's sheets use the shared cards.** Schedules, learning, the mailbox, skills,
+  Telegram, the browser, About you, memory and a Team's settings look and work like Setup and
+  Manage. Schedules read as words (`Weekdays at 09:00`) and are added in a dialog with presets,
+  with cron kept for the rest. Memory notes are listed by title and read formatted. Skills are
+  switched on and off. The mailbox names Agents instead of showing ids.
+- **USER.md.** A new Team's USER.md starts empty and the Team tab invites you to write it; its
+  Agents fill it in as they learn about you. The **About you** editor reads it afresh when it
+  opens. A save made from text an Agent has changed since is refused, so the Agent's lines are
+  not lost.
+- **One kind of dropdown everywhere,** drawn like the model menu. The Agent tab saves a model or
+  reasoning change at once, with **Undo**. The Files tab and the gallery filter by kind and by
+  whom in the same way.
+- **Smaller things.** Headings use the text face, except page titles and the Agent's name, on one
+  type scale. A new or deleted file opens in one column in Changes, and a new Markdown file has a
+  **Preview**. The conversation's header stays on one line. The side panel's tabs scroll on a
+  phone. **Edit** sits under your last message. A Team opened on its own lists its members once.
+
+![Mira's schedules: a schedule that reads Weekdays at 09:00 with its message and a switch, and the recent runs below.](/screenshots/schedules.webp)
+
+### Fixed
+
+- **Manage → Skills** showed a skill with a scan finding one letter per line (0.53.0).
+
+### Limits
+
+- Questions and commands waiting for approval live in the daemon's memory: a daemon restart ends
+  them, and with them their Attention items.
+- The changes were checked by hand and by script in Chrome on macOS, at desktop and phone width
+  and in the dark theme, with a stand-in model server; the automated tests cover their logic on
+  Linux but do not drive a browser.
+
 ## Bazilion 0.53.0
 
-Published **2026-11-22**. Agents, Teams, their templates and skills are managed from one
+Published **2026-11-22**. Agents, Teams, their templates and skills came to be managed from one
 **Manage** section that looks and works like Setup: each page shows what there is first, creates
 in a dialog, and says what is worth knowing on each row. Setup's Telegram, System, MCP and Access
-pages use the same cards as Models and Tools. The embedded Pi engine stays at 1.5.2. See the
+pages took the same cards as Models and Tools. The embedded Pi engine stayed at 1.5.2. See the
 [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.53.0) and
 [the Manage pages](/docs/web-interface/#manage).
 
@@ -21,18 +106,10 @@ pages use the same cards as Models and Tools. The embedded Pi engine stays at 1.
 
 ### Upgrade: install and start again
 
-The database schema is unchanged, so a 0.26, 0.27, 0.50, 0.51 or 0.52 home opens as it is. Stop
-the daemon, then:
-
-```sh
-npm install -g bazilion@0.53.0
-bazilion dashboard
-```
-
-Nothing is set or moved by the upgrade. The Templates page is now two tabs of Manage, **Agent
+The database schema was unchanged, so a 0.26, 0.27, 0.50, 0.51 or 0.52 home opened as it was, and
+nothing was set or moved by the upgrade. The Templates page became two tabs of Manage, **Agent
 templates** (`/templates/agents`) and **Team templates** (`/templates/teams`), at the addresses
-they had. A 0.25 or older home still needs the reset described in
-[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
+they had. The current commands are in [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
 
 ### Added
 
@@ -79,10 +156,11 @@ they had. A 0.25 or older home still needs the reset described in
 
 ### Limits
 
-- The workspace's side panel and sheets keep their own cards.
-- The Teams list does not say whether a Team's folder links to a project.
+- The workspace's side panel and sheets kept their own cards (0.54.0 moved them onto the shared
+  ones).
+- The Teams list did not say whether a Team's folder links to a project.
 - The new pages were checked by hand and by script in Chrome on macOS with a stand-in model
-  server; the automated tests cover their logic on Linux but do not drive a browser.
+  server; the automated tests covered their logic on Linux but did not drive a browser.
 
 ## Bazilion 0.52.0
 
@@ -220,66 +298,3 @@ as "Saved, not in use", with a **Connect** button. The current commands are in
   old that is.
 - The new pages were checked by hand in Chrome on macOS with a stand-in model server. The
   automated tests cover their logic on Linux but do not drive a browser.
-
-## Bazilion 0.50.0
-
-Published **2026-11-20**. The web UI became one workspace: the conversation, the Team, who may
-message whom, the diff of what was written and the delivered files are on one screen, and the list
-of Agents says what each one is doing. The version jumped from 0.27 to 0.50 to mark the rework.
-The embedded Pi engine stayed at 1.5.2. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.50.0) and the
-[tour of the web interface](/docs/web-interface/).
-
-![The workspace: the list of Teams and Agents with a state each, a conversation with its steps, and the Changes tab with a diff.](/screenshots/workspace.webp)
-
-### Upgrade: install and start again
-
-The database schema was unchanged, so a 0.26 or 0.27 home opened as it was. The current commands
-are in [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
-
-### Added
-
-- **One workspace on `/`.** Teams and their Agents on the left, the open Agent's conversation in
-  the middle, and a side panel with five tabs: Agent, Team, Connections, Changes and Files. The
-  address holds what is on screen, so links and the back button work.
-- **What each Agent is doing.** Every Agent has a line of its own: `Needs you: 1 question`,
-  `Working: writing theme.js`, `Follow-ups paused`, `2 new files` or `Idle`. Before, the list
-  showed the lifecycle status, which read `IDLE` for an Agent in the middle of a turn.
-- **A transcript that reads.** Tool calls are steps in words with the lines added and removed,
-  instead of escaped JSON. A message to a teammate is a hand-off card that shows what the teammate
-  is doing now. Delivered pictures show as pictures, a turn that wrote files links to their diff,
-  and a question has one button per choice.
-- **Connections.** The Team as a map: one line per pair of Agents, an arrowhead for each allowed
-  direction and the number of recent messages. Select an Agent or a line to switch each direction
-  and to read what they said to each other.
-- **Changes.** Changed files with the Agent that wrote each, the diff in one column or with the
-  old and the new file side by side, comments on a line or a file, and all comments sent to one
-  Agent as one review ([reviewing what changed](/docs/coding-review/)).
-- **Files.** A gallery of everything a Team's Agents delivered, by Agent and by kind, with
-  details, two files side by side and one zip of the lot ([results](/docs/results/)).
-- **Conversations.** An earlier conversation can be continued, not only read, and a conversation
-  is named after the first message you send in it ([conversations](/docs/conversations/)).
-- **Jump to.** Ctrl+K (⌘K on a Mac) opens any Agent, Team, view or page by name.
-- **CLI.** `bazilion activity`, `bazilion team messages <team>`, `bazilion conversation select`,
-  `bazilion result archive`, `bazilion result list --conversation` and
-  `bazilion team review feedback --line`; `team review show` names who wrote each file.
-
-### Changed
-
-- The Agent pages (`/agents/<id>` with its Inbox, Triggers, Learning and Settings tabs) and the
-  Team pages (`/teams/<id>` with its Members, Policy, Memory, Review and Results tabs) are gone.
-  Their content is in the side panel and in sheets that open over the workspace. The old addresses
-  are not redirected; [Attention](/docs/operations/#attention) items link into the workspace.
-- `POST /api/teams/:id/review/feedback` takes
-  `{ agentId, comments: [{ path, line?, note? }], note?, base? }`. The 0.27 body with a single
-  `path` is refused.
-
-### Limits
-
-- The live states come from polling every three seconds, not from a push channel.
-- "New" markers and the layout of the Connections map are kept in the browser, per browser.
-- A changed file's author is the Agent whose `write` or `edit` last touched it in its five newest
-  conversations. Changes made by shell commands have no author.
-- A review that is not sent yet lives in the page and is lost on a reload.
-- The workspace was checked by hand in Chrome on macOS with a scripted model. The automated tests
-  cover its logic and rendering on Linux but do not drive a browser.

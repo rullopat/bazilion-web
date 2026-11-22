@@ -1,6 +1,6 @@
 ---
 title: The web interface
-description: A tour of the Bazilion web UI — sign-in and setup, the workspace with its list, conversation, side panel and full-width views, and the Manage pages.
+description: A tour of the Bazilion web UI — sign-in and setup, the workspace with its overview, list, conversation, side panel and full-width views, Jump to and the keyboard, the Manage pages and Attention.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -33,8 +33,19 @@ pages of their own.
 
 ![The workspace: the list of Teams and Agents with a state each, Dev's conversation with its steps, and the Changes tab with a diff.](/screenshots/workspace.webp)
 
-The top bar has **Jump to** (Ctrl+K, or ⌘K on a Mac), which opens any Agent, Team, view or page by
-name, the **Attention** badge, the **Manage** menu, the theme switch and logout.
+The top bar has **Jump to** (Ctrl+K, or ⌘K on a Mac), then three places: **Attention**, with the
+number of open items, kept current on every page; **Manage**; and **Setup**. The person icon at the
+end holds the theme (the same as the computer, light or dark) and **Log out**. The browser tab
+names the page and counts what waits for you, as in `(1) Quill · Launch — bazilion`.
+
+### The overview
+
+With nothing open, the middle of the workspace is an overview: who is waiting for you, who is
+working, every Team with its members, the latest files from every Team, and the Agents that were
+active last. A Team opened on its own shows its members with what each is doing, its views, its
+latest files and what its Agents said to each other lately.
+
+![The workspace with nothing open: an overview of who is waiting for you, who is working, the Teams and the latest files.](/screenshots/overview.webp)
 
 ### The list
 
@@ -42,8 +53,8 @@ Every Team is listed with its Agents, and every Agent has a line that says what 
 
 | Line | Meaning |
 | --- | --- |
-| `Needs you: 1 question` | The Agent asked a [question](/docs/questions/) and waits for your answer |
-| `Needs you: 1 command to approve` | A flagged shell command waits for **Allow once** or **Deny** |
+| `Waiting for you: a question` | The Agent asked a [question](/docs/questions/) and waits for your answer |
+| `Waiting for you: a command to approve` | A flagged shell command waits for **Allow once** or **Deny** |
 | `Working: writing theme.js` | A turn is running; the line follows its latest step |
 | `Follow-ups paused` | Its [follow-up queue](/docs/follow-up-queue/) is paused with messages waiting |
 | `2 new files`, `New activity` | Something happened since this browser last had its conversation open |
@@ -65,7 +76,10 @@ The middle pane streams the open Agent's conversation.
 - Delivered files show where they were delivered, pictures as pictures
   ([results](/docs/results/)).
 - When a turn wrote files, **Review changes** under it opens their diff.
-- A question from the Agent has one button per choice.
+- A question from the Agent has one button per choice. While an Agent waits on you, its step and
+  the line under the conversation say `waiting for you`, in amber, as the list does; green and
+  `working` mean it is working.
+- **Edit**, under your last message, appears when you point at it and replaces that turn.
 - Attach files with the button, by pasting or by dragging them in. Images reach the model as
   images; other files are saved for the Agent to read.
 - While a turn runs, **Send** becomes **Queue follow-up** and **Stop** cancels the turn.
@@ -87,22 +101,50 @@ one.
 The panel has five tabs and remembers the last one; the button at the right of the conversation's
 bar hides it.
 
-- **Agent**: model and reasoning, the Team the Agent belongs to, rename, archive and delete, and
-  the ways into its schedules, learning, mailbox, skills, Telegram topic and managed browser.
-  The model is chosen by name, under its provider, with how much it reads and whether it sees
-  images.
-- **Team**: the members with their states, `USER.md`, the shared memory with a search, and
-  settings (Docker sandbox defaults, Telegram topic names, **Save as Team template**).
+- **Agent**: model and reasoning, saved as soon as you pick them, with **Undo**; the Team the
+  Agent belongs to; rename, archive and delete; and the ways into its schedules, learning,
+  mailbox, skills, Telegram topic and managed browser. The model is chosen by name, under its
+  provider, with how much it reads and whether it sees images.
+- **Team**: the members with their states (left out beside a Team's own overview), **About you**
+  (`USER.md`), the shared memory with a search, and settings (the workspace folder and its
+  commands in Docker, Telegram topic names, **Save as a Team template**). A new Team's `USER.md`
+  starts empty: write it, or let its Agents fill it in as they learn about you.
 - **Connections**: whether the Team is open or restricted, who may message whom, and the latest
   messages between its Agents ([Team Policy](/docs/concepts/#team-policy)).
 - **Changes**: the files the Team's workspace changed since a commit, with the Agent that wrote
   each, and one file's diff ([reviewing what changed](/docs/coding-review/)).
-- **Files**: what the Team's Agents delivered, for the whole Team, the open Agent or the
-  conversation on screen.
+- **Files**: what the Team's Agents delivered, by kind (all, pictures, documents) and by whom
+  (the whole Team, one member, the conversation on screen), with the same filters as the gallery.
+
+On a phone the panel's tabs scroll sideways.
 
 The deeper pages open as sheets over the workspace: an Agent's **Schedules**, **Learning**
 ([daily operations](/docs/operations/#reviewed-learning)), **Mailbox**, **Skills**, **Telegram**
-and **Browser**; a Team's `USER.md`, memory and settings.
+and **Browser**; a Team's **About you**, memory and settings. They use the same cards and fields
+as Setup and Manage. A schedule reads as words, such as `Weekdays at 09:00`, and is added in a
+dialog with presets, or as a cron expression. Memory notes are listed by title and read
+formatted; **Edit** opens the text.
+
+![Mira's schedules: a schedule that reads Weekdays at 09:00 with its message and a switch, and the recent runs below.](/screenshots/schedules.webp)
+
+## Jump to, and the keyboard
+
+**Jump to** lists the Agents waiting for you first, then those working, then actions (a new
+conversation with the open Agent, adding an Agent, switching the theme, the keyboard shortcuts),
+the other Agents by when they were last active, recent conversations, Teams, the open Team's views
+and the Manage and Setup pages. Type to narrow it down; Enter opens the one highlighted.
+
+![Jump to with Quill waiting for an answer at the top, Scout working, and actions to start a conversation, add an Agent, switch the theme and list the shortcuts.](/screenshots/palette.webp)
+
+| Keys | |
+| --- | --- |
+| ⌘K or Ctrl+K | Jump to |
+| `?` | The list of shortcuts |
+| `/` | Write to the open Agent |
+| ⌥↓ ⌥↑, or Alt+↓ Alt+↑ | The next or previous Agent in the list |
+| ⌘. or Ctrl+. | Show or hide the side panel |
+
+The keys without ⌘ or Ctrl wait while you type in a field or a list is open.
 
 ## Full-width views
 
@@ -122,7 +164,8 @@ Team's mode, **Table** shows the same connections as a matrix, and nothing chang
 ### Changes
 
 The changed files on the left, and the selected file's diff with the old and the new file side by
-side (or in one column). Click a line number to comment on that line, or **Comment on the file**.
+side (or in one column). A new or deleted file opens in one column, and a new Markdown file has a
+**Preview**. Click a line number to comment on that line, or **Comment on the file**.
 Comments gather into one review; **Send review** sends them to one Agent as a single message,
 which it runs as its next turn.
 
@@ -130,7 +173,8 @@ which it runs as its next turn.
 
 ### Files
 
-A gallery of everything the Team's Agents delivered. Filter by Agent and by kind, open a file for
+A gallery of everything the Team's Agents delivered. Filter by kind and by whom, as in the Files
+tab, open a file for
 its details and the conversation it came from, put two files side by side, delete one, or
 download them all as one zip.
 
@@ -139,8 +183,8 @@ download them all as one zip.
 ## On a phone, and in the dark
 
 On a narrow screen the list, the conversation and the panel take turns: pick an Agent to see its
-conversation, and open the panel from the conversation's bar. The theme switch follows the system
-or stays light or dark.
+conversation, and open the panel from the conversation's bar. The theme, in the menu at the end of
+the top bar, follows the computer or stays light or dark.
 
 ![The workspace in the dark theme.](/screenshots/workspace-dark.webp)
 
@@ -199,6 +243,11 @@ A key is shown as saved, never in full. Replacing or removing one is its own act
 
 ## Attention (`/attention`)
 
-What needs you: lesson proposals, failed learning reviews and triggers, stopped message loops and
-queues paused after a restart. Each item links to the Agent's conversation or sheet in the
-workspace. See [daily operations](/docs/operations/#attention).
+What needs you. First what an Agent is waiting on right now: its question, or a command waiting for
+your approval, soonest to expire first, each with the time it stops waiting; **Answer** and
+**Decide** open the conversation. Then lesson proposals, failed learning reviews and triggers,
+stopped message loops and queues paused after a restart. Each item links to the Agent's
+conversation or sheet in the workspace. The page keeps itself current. See
+[daily operations](/docs/operations/#attention).
+
+![Attention with one open item: Quill is waiting for your answer, with the time it stops waiting and an Answer button.](/screenshots/attention.webp)
