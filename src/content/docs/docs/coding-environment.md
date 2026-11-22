@@ -78,7 +78,7 @@ bazilion config set BAZILION_BASH_SANDBOX_IMAGE bazilion-coding:node26-pnpm12
 ## Team defaults
 
 A Team can name its own image and a working directory inside the Team; both apply only in Docker
-mode. On the web, open the Team page and expand **Docker sandbox defaults**. From the CLI:
+mode. On the web, open **Settings** in the Team tab: **Commands in Docker** is under **Workspace**. From the CLI:
 
 ```sh
 bazilion team environment show <team>

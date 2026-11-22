@@ -45,9 +45,12 @@ trigger stops future runs, not a turn that is already running.
 
 ## Attention
 
-**Attention** lists what needs you: lesson proposals, failed or cancelled learning reviews, failed
-triggers, stopped Agent message loops and Agent queues paused after a daemon restart. Open the
-**Attention** page (the badge in the top bar shows the count) or:
+**Attention** lists what needs you. First what an Agent is waiting on right now: a
+[question](/docs/questions/) it asked and a command waiting for your approval, soonest to expire
+first, each with the time it stops waiting. Then lesson proposals, failed or cancelled learning
+reviews, failed triggers, stopped Agent message loops and Agent queues paused after a daemon
+restart. Open the **Attention** page (the count in the top bar stays current, and the browser tab
+counts what waits for you) or:
 
 ```sh
 bazilion attention summary
@@ -56,8 +59,9 @@ bazilion attention acknowledge <key> --yes
 bazilion attention acknowledge-all --yes
 ```
 
-Acknowledging a failure or loop break records that you saw it; it repairs nothing. Proposals and
-paused queues leave the list when you act on them. Attention items can also go to Telegram; see
+Acknowledging a failure or loop break records that you saw it; it repairs nothing. Questions,
+commands, proposals and paused queues leave the list when you act on them; a question or a command
+also leaves it when it stops waiting, or when the daemon restarts. Attention items can also go to Telegram; see
 [Attention notifications](/docs/attention-notifications/).
 
 ## Reviewed learning
