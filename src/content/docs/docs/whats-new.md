@@ -68,16 +68,21 @@ Models your Agents already use are not changed.
 
 ### Fixed
 
+- **A terminal chat** (`bazilion agent chat`) stopped when the command it was asking about had
+  been decided elsewhere or had timed out. It now says so and goes on.
 - **Jump to** did nothing when Enter was pressed before its lists had arrived (0.54.0). It now
   opens the first match as soon as they do.
+- **Shortcuts** (`?`, `/`) did nothing while a closed dropdown kept the focus after a pick
+  (0.54.0). Only an open dropdown holds the keys now.
 
 ### Limits
 
 - Questions and commands waiting for approval still live in the daemon's memory: a daemon restart
   ends them.
 - Browsers offer desktop notifications on `https://` addresses and on this computer only.
-- Turns started from Telegram still deny flagged commands; only commands from a web chat can be
-  approved there.
+- Turns started from Telegram still deny flagged commands; only commands from a chat you are
+  watching, on the web or in a terminal, can be approved there.
+- Desktop notifications come with the live updates: while those are down, none are shown.
 - The new browser tests run the built package in Chrome on Linux, as part of every pull request.
   They check every page in two languages and time zones, the live updates, answering a question,
   the dropdowns and shortcuts, the phone layout and the notifications switch.
