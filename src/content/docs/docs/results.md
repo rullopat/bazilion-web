@@ -30,8 +30,11 @@ deleting the workspace file does not change it.
 
 - **Telegram:** a bound Agent's delivered files are sent to its topic as documents.
 
-Previews show plain text and Markdown up to 256 KiB as text, and PNG, JPEG, GIF and WebP images up
-to 10 MiB. Everything else, HTML and SVG included, is download-only.
+Previews show text up to 256 KiB as text: a text type (Markdown, CSV, JSON, YAML, XML…), or a
+file delivered without one whose name says text (`.py`, `.ts`, `.sh`, `.log`, `.toml` and the
+like), as long as it is UTF-8. A text file's tile in the Files view shows its first lines. PNG,
+JPEG, GIF and WebP images are shown up to 10 MiB. Everything else, HTML and SVG included, is
+download-only.
 
 In a zip, files keep their names and the order they were saved in; a second file of the same name
 becomes `name (2).ext`. The zip is not compressed, and a selection larger than 512 MiB is refused.
