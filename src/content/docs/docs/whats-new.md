@@ -1,11 +1,74 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.56.0 bundles Pi 1.6.0.
+description: The latest four Bazilion releases, newest first; Bazilion 0.57.0 bundles Pi 1.6.0.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.57.0
+
+Published **2026-11-23**. A release of polish and fixes. Agents know who their teammates are and
+add teammates when you ask; the web UI follows changes made anywhere, keeps your place in each
+conversation, and no longer resets what you are reading when a turn ends. A walk-through of the
+whole app found sixteen more rough edges, and most are fixed here. The embedded Pi engine stays
+at 1.6.0. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.57.0) and the
+[Agents concepts](/docs/concepts/#agents).
+
+![Mira's conversation with a hand-off card for three teammates, and the Connections tab beside it.](/screenshots/handoffs.webp)
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.56 home opens as it is. Stop the
+daemon, then:
+
+```sh
+npm install -g bazilion@0.57.0
+bazilion dashboard
+```
+
+### Added
+
+- **Agents know their teammates.** Every turn tells an Agent its teammates' names and ids, which
+  of them Team Policy lets it message, and the Agents of other Teams it may reach. You no longer
+  paste ids into the chat, and `send_message` takes a teammate's name.
+- **Agents add teammates when you ask.** The new `agent_create` tool adds an Agent to the asking
+  Agent's own Team, with its model and template unless it names others. The new Agent starts
+  knowing its role and who made it, without the first-run questions; in a restricted Team it is
+  connected with its creator both ways. Only in a turn you started (a chat, a follow-up,
+  Telegram), at most six per turn.
+
+### Changed
+
+- **The page follows changes made elsewhere.** A Team or an Agent created, renamed, moved or
+  archived from a terminal, by an Agent running `bazilion` or in another tab shows up without a
+  reload. A question asked or answered elsewhere comes and goes in the open conversation.
+- **Your place is kept.** Going to another Agent and back opens the conversation where you left
+  it, with your unsent text still in the composer. A finished turn reloads the diff, Files and
+  the panels while they stay on screen, instead of flashing "Loading" and jumping to the top.
+- **The first-run questions wait for you.** A new Agent whose first message comes from a teammate
+  or a schedule does the work instead of asking what to call it, and the questions skip what
+  USER.md already says.
+- **A stopped reply says so**, and on a narrow screen the side panel closes with Escape. The
+  button is called **Add an Agent** everywhere.
+
+### Fixed
+
+- Long Team, Agent or model names no longer push the conversation bar's menu and panel button out
+  of reach.
+- A Team whose folder is not a Git repository no longer logs a failed request each time one of
+  its Agents is opened, and `bazilion team review show` says so instead of crashing.
+- A memory note named without `.md` gets it, and a name leaving the memory folder is refused with
+  a clear message.
+- What you type straight after ⌘K or Ctrl+K is kept, and closing **Jump to** gives the focus back.
+
+### Limits
+
+- Kept places and drafts last while the page is open; a reload opens every conversation at its
+  end.
+- `agent_create` adds Agents to the asking Agent's own Team only; it does not create Teams.
 
 ## Bazilion 0.56.0
 
@@ -237,72 +300,3 @@ you** in the Team tab if you want Agents to fill it in from scratch.
 - The changes were checked by hand and by script in Chrome on macOS, at desktop and phone width
   and in the dark theme, with a stand-in model server; the automated tests cover their logic on
   Linux but do not drive a browser.
-
-## Bazilion 0.53.0
-
-Published **2026-11-22**. Agents, Teams, their templates and skills came to be managed from one
-**Manage** section that looks and works like Setup: each page shows what there is first, creates
-in a dialog, and says what is worth knowing on each row. Setup's Telegram, System, MCP and Access
-pages took the same cards as Models and Tools. The embedded Pi engine stayed at 1.5.2. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.53.0) and
-[the Manage pages](/docs/web-interface/#manage).
-
-![Manage, Agents: Agents grouped by Team under a search box and a Current, Archived and All filter, each with its template and model, and a menu on each row.](/screenshots/manage-agents.webp)
-
-### Upgrade: install and start again
-
-The database schema was unchanged, so a 0.26, 0.27, 0.50, 0.51 or 0.52 home opened as it was, and
-nothing was set or moved by the upgrade. The Templates page became two tabs of Manage, **Agent
-templates** (`/templates/agents`) and **Team templates** (`/templates/teams`), at the addresses
-they had. The current commands are in [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
-
-### Added
-
-- **One Manage section.** Agents, Teams, Agent templates, Team templates and Skills share one tab
-  bar. Each page shows its list first; **Spawn an agent**, **Create a Team**, **New Agent
-  template**, **New Team template** and **Import skills** open a dialog. The rarer and destructive
-  actions of a row are behind its **⋯** button, and one the daemon would refuse is shown disabled,
-  with the reason.
-- **Agents by Team.** Agents are grouped by Team, found by name, creature or vibe, and filtered to
-  current, archived or all. Each row says its template and the model it answers with, and says
-  so when that model is not in Chat. **Move to another Team** is in the row's menu.
-- **An Agent template's page** has a **Settings** card (name, default model, skills) and a
-  **Files** card that shows one file at a time and saves every changed file with one **Save**. A
-  banner says when the template's model is not in Chat. **Spawn an agent** is on the page.
-- **Team templates spawn from the list and from their page.** A row shows the roster; the spawn
-  dialog asks for a new Team or one that exists. The roster editor speaks of Agents and
-  connections.
-- **Skills that need a look stand out.** A risky finding or a SKILL.md that cannot be read is
-  shown under the skill and in a banner; each row says which templates chose the skill.
-
-![An Agent template's page: the Settings card with its name, default model and chosen skills, and the Files card with SOUL.md open.](/screenshots/agent-template.webp)
-
-### Changed
-
-- **Creating a Team** asks for a name and makes the ID from it, then asks where its files are: a
-  new folder in the Bazilion home, or a project folder that exists, which the Team links to.
-- **Attention** says how many items are open in one line, filters by state, kind and severity in
-  one row, and gives times as "2 hours ago".
-- **Setup's Telegram, System, MCP and Access** use the same cards as Models and Tools. Telegram's
-  forms say what they need before they are saved (both credentials, a numeric group id, the token
-  again for a new group), and its **Bot** card says whether the bot runs.
-- **Telegram pairing is noticed by itself.** While a code waits, the **Owner pairing** card checks
-  every few seconds, and allowed users can be added as soon as the owner is paired.
-- **Keyboard.** Row menus, a template's file tabs (arrow keys, Home, End) and controls that
-  replace each other keep focus where it belongs; a menu item that cannot be used is still
-  reached, so its reason is read.
-
-### Fixed
-
-- **Skills and Attention no longer fail to load cleanly** in a browser whose language or time zone
-  differs from the computer Bazilion runs on: their dates were written twice, differently.
-- **Delete is no longer offered for an Agent template that a Team template uses**: the daemon
-  always refused it.
-
-### Limits
-
-- The workspace's side panel and sheets kept their own cards (0.54.0 moved them onto the shared
-  ones).
-- The Teams list did not say whether a Team's folder links to a project.
-- The new pages were checked by hand and by script in Chrome on macOS with a stand-in model
-  server; the automated tests covered their logic on Linux but did not drive a browser.

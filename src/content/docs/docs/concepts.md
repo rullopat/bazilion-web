@@ -12,7 +12,7 @@ Bazilion is built on
 [Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent). Pi runs the
 turn loop and the provider calls, compacts history and writes the JSONL transcript under each
 Agent's `sessions/` directory. Bazilion supplies Agents and Teams, credentials, the tool list, the
-worker processes and the long-lived browser and MCP connections. Version 0.56.0 bundles Pi 1.6.0,
+worker processes and the long-lived browser and MCP connections. Version 0.57.0 bundles Pi 1.6.0,
 with Pi's own discovery of extensions, skills, prompt templates and context files switched off.
 
 ## Profiles (Agent templates)
@@ -26,8 +26,15 @@ templates**; the CLI is `bazilion profile`. Editing a Profile affects future spa
 
 An **Agent** is spawned from a Profile into one Team. Its documents and conversations live in
 `~/.bazilion/agents/<id>/`: it edits its own documents with the `home_*` tools, and
-`BOOTSTRAP.md` stays until the Agent calls `bootstrap_done`. You can change an Agent's model,
-reasoning level and skills after spawning, move it to another Team, archive it or delete it.
+`BOOTSTRAP.md` stays until the Agent calls `bootstrap_done`. The first-run questions are asked
+only in a conversation you start: a teammate's message or a schedule gets the work done first.
+You can change an Agent's model, reasoning level and skills after spawning, move it to another
+Team, archive it or delete it.
+
+An Agent can also add Agents to its own Team when you ask it to, with the `agent_create` tool: it
+names them and says what each is for, and they start knowing their role and who made them,
+without the first-run questions. In a restricted Team each is connected with its creator both
+ways. Agents never add teammates on their own, from a schedule or from a teammate's message.
 
 ## Teams
 
@@ -96,7 +103,9 @@ instead.
 
 ## Mailbox
 
-Agents message each other with `send_message`, `read_inbox` and `wait_for_reply`. An idle Agent
+Agents message each other with `send_message`, `read_inbox` and `wait_for_reply`. Every turn
+tells an Agent its teammates' names and ids, and which of them [Team Policy](#team-policy) lets
+it message, so it can write to a teammate by name; you never pass ids around. An idle Agent
 with unread mail wakes up and gets one turn with those messages. Every message carries a hop
 count, and a chain is stopped after 8 hops (`BAZILION_AGENT_LOOP_MAX_HOPS`); stopped chains show
 in Attention and in `bazilion inbox loop-breaks <agent>`. From outside the loop:

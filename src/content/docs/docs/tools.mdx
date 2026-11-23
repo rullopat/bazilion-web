@@ -6,7 +6,8 @@ description: The tools every Agent turn gets — files and shell, memory, the ma
 import { Aside } from '@astrojs/starlight/components';
 
 Every turn gets the same tools, whatever started it: web or CLI chat, a follow-up, Telegram, a
-scheduled trigger or an inbox wake. Only two depend on someone being there to answer: `ask_user`
+scheduled trigger or an inbox wake. Three depend on you having started the turn: `agent_create`,
+which a schedule or a teammate's message never gets, `ask_user`
 ([questions](/docs/questions/)) and dangerous-command approval, which is denied when nobody can
 answer. Learning reviews run separately with a single `propose_lesson` tool.
 
@@ -18,7 +19,8 @@ answer. Learning reviews run separately with a single `propose_lesson` tool.
 | `memory_write`, `memory_read`, `memory_search`, `memory_list` | The Team's shared Markdown memory |
 | `home_read`, `home_write`, `home_list`, `bootstrap_done` | The Agent's own documents |
 | `user_md_get`, `user_md_write` | The Team's USER.md |
-| `send_message`, `read_inbox`, `wait_for_reply` | The mailbox, within [Team Policy](/docs/concepts/#team-policy) |
+| `send_message`, `read_inbox`, `wait_for_reply` | The mailbox, within [Team Policy](/docs/concepts/#team-policy); `to` is a teammate's id or name |
+| `agent_create` | Adds an Agent to its own Team when you ask, in a turn you started ([Agents](/docs/concepts/#agents)) |
 | `web_fetch`, `web_search` | [Web research](#web-research) |
 | `browser_*` | The [managed browser](#managed-browser) |
 | `mcp__<server>__<tool>` | Tools from [MCP servers](#mcp-servers) |

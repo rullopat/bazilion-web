@@ -45,7 +45,8 @@ bazilion team review feedback <team> --path src/app.ts --line 42 --agent <agent>
   another page, drops it.
 - The Team's own `memory/` store and credential-shaped paths (`.env`, `*.pem`, `credentials.*`,
   `.ssh/`, …) never show content; untracked ones are only counted.
-- A Team whose workspace is not a Git repository says so instead of showing an empty list.
+- A Team whose workspace is not a Git repository says so instead of showing an empty list, and
+  `bazilion team review show` says so and exits with an error.
 
 The API is `GET /api/teams/:id/review[?base=&patches=1&path=&authors=1]` and
 `POST /api/teams/:id/review/feedback` with
