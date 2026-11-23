@@ -112,7 +112,8 @@ Do not hardcode a particular release version in the checker.
 
 For the rolling page, the checker must:
 
-1. Require the homepage announcement to link to `/docs/whats-new/` and the canonical page to have
+1. Require the homepage release link (`hero__release` on the install box) to point to
+   `/docs/whats-new/` and the canonical page to have
    `title: What's new`.
 2. Derive the current Bazilion version from the first `## Bazilion X.Y.Z` heading, accepting stable
    and prerelease versions. Derive the current Pi version from the page description.
@@ -128,7 +129,7 @@ For the rolling page, the checker must:
 | File | Required current information |
 | --- | --- |
 | `astro.config.mjs` | One `What's new` entry for `docs/whats-new` |
-| `src/pages/index.astro` | `/docs/whats-new/`, `vX.Y.Z` badge, accurate announcement |
+| `src/pages/index.astro` | The install box's `vX.Y.Z` link (`hero__release`) to `/docs/whats-new/`, in its `aria-label` too |
 | `src/content/docs/docs/whats-new.md` | Current release first; its Pi version in the description |
 | `src/content/docs/docs/index.mdx` | `Bazilion X.Y.Z` and canonical release-notes link |
 | `src/content/docs/docs/concepts.md` | `Version X.Y.Z bundles Pi P.Q.R` |
@@ -184,7 +185,7 @@ heading anchors and verify them in the built output.
 4. Update current-release references, upgrade guidance, inbound links, guide navigation and
    LLM-doc checks. Keep the homepage free of Pi versions.
 5. Run `pnpm check:docs` and fix every failure without bypassing policy checks.
-6. Review the rendered homepage announcement, rolling release page and upgrade guidance at desktop
+6. Review the rendered homepage release link, rolling release page and upgrade guidance at desktop
    and phone widths with `pnpm preview` or `pnpm dev`.
 7. Review the diff and deliver a pull request. Do not publish without authorization.
 

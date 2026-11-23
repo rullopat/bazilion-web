@@ -135,15 +135,6 @@ const features = [
     <main id="main">
       <!-- ───────────── hero ───────────── -->
       <header class="hero page">
-        <a class="release-note" href="/docs/whats-new/" data-reveal="1">
-          <span class="release-note__badge">v0.58.0</span>
-          <span class="release-note__text">
-            Common connections to mail, calendars, chat and notes that ask before anything goes
-            out, an Agent's job given when you add it, and a Team's day at a glance.
-          </span>
-          <span class="release-note__more">Read what changed</span>
-        </a>
-
         <div class="hero__text">
           <h1 class="hero__title" data-reveal="2">
             Your own team of AI agents, running on your machine.
@@ -157,13 +148,29 @@ const features = [
           </p>
 
           <div class="hero__install" data-reveal="4">
-            <div class="cmd">
-              <code class="cmd__text"><span class="cmd__prompt" aria-hidden="true">$ </span>curl -fsSL https://bazilion.com/install.sh | bash</code>
-              <button class="cmd__copy" type="button" data-copy="curl -fsSL https://bazilion.com/install.sh | bash" aria-label="Copy the install command" hidden>Copy</button>
+            <!-- Two ways in, one box: the release they install links to what changed. -->
+            <div class="term">
+              <input class="term__input" type="radio" name="hero-install" id="hero-curl" aria-label="Install with curl" checked />
+              <input class="term__input" type="radio" name="hero-install" id="hero-npm" aria-label="Install with npm" />
+              <div class="term__head">
+                <div class="term__tabs">
+                  <label class="term__tab" for="hero-curl">curl</label>
+                  <label class="term__tab" for="hero-npm">npm</label>
+                </div>
+                <a class="hero__release" href="/docs/whats-new/" aria-label="Bazilion 0.58.0: what's new">v0.58.0</a>
+              </div>
+              <div class="cmd term__panel term__panel--curl">
+                <code class="cmd__text"><span class="cmd__prompt" aria-hidden="true">$ </span>curl -fsSL https://bazilion.com/install.sh | bash</code>
+                <button class="cmd__copy" type="button" data-copy="curl -fsSL https://bazilion.com/install.sh | bash" aria-label="Copy the curl install command" hidden>Copy</button>
+              </div>
+              <div class="cmd term__panel term__panel--npm">
+                <code class="cmd__text"><span class="cmd__prompt" aria-hidden="true">$ </span>npm install -g bazilion</code>
+                <button class="cmd__copy" type="button" data-copy="npm install -g bazilion" aria-label="Copy the npm install command" hidden>Copy</button>
+              </div>
             </div>
             <p class="hero__then">
-              Then run <code>bazilion dashboard</code>. With a supported Node already installed,
-              <code>npm install -g bazilion</code> works too.
+              Then run <code>bazilion dashboard</code>. The script sets up a supported Node when
+              needed; npm needs Node <code>^26.12.1</code>.
             </p>
           </div>
 
