@@ -1,11 +1,38 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.57.0 bundles Pi 1.6.0.
+description: The latest four Bazilion releases, newest first; Bazilion 0.57.1 bundles Pi 1.6.0.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.57.1
+
+Published **2026-11-23**. A fix for browser tabs left open across an upgrade. The embedded Pi
+engine stays at 1.6.0. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.57.1).
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.57 home opens as it is. Stop the
+daemon, then:
+
+```sh
+npm install -g bazilion@0.57.1
+bazilion dashboard
+```
+
+Then reload the Bazilion tabs you had open.
+
+### Fixed
+
+- **A tab opened before an upgrade no longer fails** on a part it had not loaded yet, such as the
+  Connections map. Such a tab showed "Could not load this page — Failed to fetch dynamically
+  imported module", which **Retry** could not fix; it now reloads itself once to get the new
+  version, and otherwise says that Bazilion was updated and offers **Reload**. Tabs opened before
+  0.57.1 still need one reload by hand.
+- **⌘K or Ctrl+K just after closing a dialog** opens **Jump to** again.
 
 ## Bazilion 0.57.0
 
@@ -215,88 +242,3 @@ Models your Agents already use are not changed.
 - The new browser tests run the built package in Chrome on Linux, as part of every pull request.
   They check every page in two languages and time zones, the live updates, answering a question,
   the dropdowns and shortcuts, the phone layout and the notifications switch.
-
-## Bazilion 0.54.0
-
-Published **2026-11-22**. 0.54.0 made the web UI agree on what needs you. An Agent's question or
-command to approve came first in **Attention**, the top bar's count and the browser tab stayed
-current, and an Agent blocked on you read **Waiting for you** everywhere. The workspace opened on
-an overview, its sheets used the same cards as Setup and Manage, **Jump to** ran actions, and
-keyboard shortcuts moved you around. The embedded Pi engine stayed at 1.5.2. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.54.0) and
-[the tour of the web interface](/docs/web-interface/).
-
-![The workspace with nothing open: an overview of who is waiting for you, who is working, the Teams and the latest files.](/screenshots/overview.webp)
-
-### Upgrade: install and start again
-
-The database schema is unchanged, so a 0.26, 0.27, 0.50, 0.51, 0.52 or 0.53 home opens as it is.
-Stop the daemon, then:
-
-```sh
-npm install -g bazilion@0.54.0
-bazilion dashboard
-```
-
-Nothing is set or moved by the upgrade. A Team you already have keeps its USER.md as it is,
-starter text included; only new Teams start with an empty one. Clear the old text under **About
-you** in the Team tab if you want Agents to fill it in from scratch.
-
-### Added
-
-- **What waits on you comes first in Attention.** An Agent's open question and a command waiting
-  for your approval are Attention items, listed before everything else, soonest to expire first,
-  each with the time it stops waiting. **Answer** and **Decide** open the Agent's conversation.
-  `bazilion attention list` shows them as `agent_question` and `command_approval`. They are not
-  sent as Telegram notifications; a question asked from Telegram is answered there.
-- **An overview to open on.** With nothing open, the workspace shows who is waiting for you, who
-  is working, every Team with its members, the latest files from every Team and the Agents that
-  were active last.
-- **Tab titles.** The browser tab names the page (`Mira · Launch — bazilion`, `Models · Setup —
-  bazilion`) and counts what waits for you (`(1) Quill · Launch — bazilion`).
-- **Jump to runs actions.** Agents waiting for you come first, then those working. It can start a
-  new conversation with the open Agent, add an Agent, switch the theme and list the shortcuts, and
-  it shows recent conversations.
-- **Keyboard shortcuts.** `?` lists them, `/` writes to the open Agent, Alt+↑ and Alt+↓ (⌥ on a
-  Mac) open the previous or next Agent, and ⌘. or Ctrl+. shows or hides the side panel. Keys
-  without ⌘ or Ctrl wait while you type in a field or a list is open.
-
-![Jump to with Quill waiting for an answer at the top, Scout working, and actions to start a conversation, add an Agent, switch the theme and list the shortcuts.](/screenshots/palette.webp)
-
-### Changed
-
-- **One phrase for an Agent blocked on you.** The list, the conversation's steps, the line under the
-  conversation, Jump to and the Team say `Waiting for you` in amber; green and `working` mean it is
-  working. `bazilion activity` says the same.
-- **The top bar** has three places, **Attention**, **Manage** and **Setup**, and a menu at the
-  end with the theme and **Log out**. The count on Attention stays current on every page.
-- **The workspace's sheets use the shared cards.** Schedules, learning, the mailbox, skills,
-  Telegram, the browser, About you, memory and a Team's settings look and work like Setup and
-  Manage. Schedules read as words (`Weekdays at 09:00`) and are added in a dialog with presets,
-  with cron kept for the rest. Memory notes are listed by title and read formatted. Skills are
-  switched on and off. The mailbox names Agents instead of showing ids.
-- **USER.md.** A new Team's USER.md starts empty and the Team tab invites you to write it; its
-  Agents fill it in as they learn about you. The **About you** editor reads it afresh when it
-  opens. A save made from text an Agent has changed since is refused, so the Agent's lines are
-  not lost.
-- **One kind of dropdown everywhere,** drawn like the model menu. The Agent tab saves a model or
-  reasoning change at once, with **Undo**. The Files tab and the gallery filter by kind and by
-  whom in the same way.
-- **Smaller things.** Headings use the text face, except page titles and the Agent's name, on one
-  type scale. A new or deleted file opens in one column in Changes, and a new Markdown file has a
-  **Preview**. The conversation's header stays on one line. The side panel's tabs scroll on a
-  phone. **Edit** sits under your last message. A Team opened on its own lists its members once.
-
-![Mira's schedules: a schedule that reads Weekdays at 09:00 with its message and a switch, and the recent runs below.](/screenshots/schedules.webp)
-
-### Fixed
-
-- **Manage → Skills** showed a skill with a scan finding one letter per line (0.53.0).
-
-### Limits
-
-- Questions and commands waiting for approval live in the daemon's memory: a daemon restart ends
-  them, and with them their Attention items.
-- The changes were checked by hand and by script in Chrome on macOS, at desktop and phone width
-  and in the dark theme, with a stand-in model server; the automated tests cover their logic on
-  Linux but do not drive a browser.
