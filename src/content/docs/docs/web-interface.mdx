@@ -43,8 +43,10 @@ bazilion`.
 
 With nothing open, the middle of the workspace is an overview: who is waiting for you, who is
 working, every Team with its members, the latest files from every Team, and the Agents that were
-active last. A Team opened on its own shows its members with what each is doing, its views, its
-latest files and what its Agents said to each other lately.
+active last. A Team opened on its own shows its members with what each is doing, its views,
+**Today** (its day at a glance: hand-offs and replies between its Agents, files delivered,
+conversations worked in, questions and approvals waiting, newest first), its latest files and
+what its Agents said to each other lately.
 
 ![The workspace with nothing open: an overview of who is waiting for you, who is working, the Teams and the latest files.](/screenshots/overview.webp)
 
@@ -112,12 +114,15 @@ bar hides it.
   provider, with how much it reads and whether it sees images.
 - **Team**: the members with their states (left out beside a Team's own overview), **About you**
   (`USER.md`), the shared memory with a search, and settings (the workspace folder and its
-  commands in Docker, Telegram topic names, **Save as a Team template**). A new Team's `USER.md`
+  commands in Docker, Telegram topic names, **Save as a Team template**), and the Team folder
+  behind **Show the folder**. A new Team's `USER.md`
   starts empty: write it, or let its Agents fill it in as they learn about you.
-- **Connections**: whether the Team is open or restricted, who may message whom, and the latest
+- **Connections**: whether everyone can message everyone or only along connections, who may
+  message whom, and the latest
   messages between its Agents ([Team Policy](/docs/concepts/#team-policy)).
 - **Changes**: the files the Team's workspace changed since a commit, with the Agent that wrote
-  each, and one file's diff ([reviewing what changed](/docs/coding-review/)).
+  each, and one file's diff ([reviewing what changed](/docs/coding-review/)). Only for a Team whose
+  folder is a Git repository.
 - **Files**: what the Team's Agents delivered, by kind (all, pictures, documents) and by whom
   (the whole Team, one member, the conversation on screen), with the same filters as the gallery.
 
@@ -190,8 +195,10 @@ Switch between them at the top of the view; the arrow leads back to the conversa
 The Team as a map. Every Agent is a node with what it is doing; every pair that is connected or
 that talked is one line, with an arrowhead for each allowed direction and the number of recent
 messages. Drag from one Agent to another to connect them. Select an Agent or a line to switch
-each direction and to read what they said to each other. **Open** and **Restricted** set the
-Team's mode, **Table** shows the same connections as a matrix, and nothing changes until **Save**.
+each direction and to read what they said to each other. **Who can message whom** sets the
+Team's mode, **Everyone** or **Connections only**; drawing a connection between teammates of an
+open Team asks to switch it first. **Table** shows the same connections as a matrix, and nothing
+changes until **Save**.
 
 ![The Connections map of a Team, with the line between two Agents selected and their messages beside it.](/screenshots/connections.webp)
 

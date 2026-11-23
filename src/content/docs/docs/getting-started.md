@@ -67,10 +67,11 @@ to choose models and what a provider's state means.
 ## First Agent
 
 **Start chatting** on the first-run screen spawns an Agent from the `default` template and opens
-its conversation. From the workspace, use **Spawn first agent** or **New**, or:
+its conversation. From the workspace, use **Add the first Agent** or **New**, and say what it is
+for so it starts working at once; or:
 
 ```sh
-bazilion agent spawn --profile default --name first
+bazilion agent spawn --profile default --name first --role "Answers questions about my notes"
 bazilion agent chat <agent-id> --message "say hi"
 ```
 
@@ -82,8 +83,8 @@ bazilion agent chat <agent-id> --message "say hi"
 There are no database migrations. A release opens a home only when its schema matches the one it
 ships; otherwise the daemon refuses to start and leaves the home untouched.
 
-**From 0.26, 0.27 or 0.50 to 0.57:** 0.57.1 uses the same schema, so the
-home opens as it is. Stop the daemon, run `npm install -g bazilion@0.57.1` and start Bazilion
+**From 0.26, 0.27 or 0.50 to 0.57:** 0.58.0 uses the same schema, so the
+home opens as it is. Stop the daemon, run `npm install -g bazilion@0.58.0` and start Bazilion
 again. Coming from 0.26 or
 0.27, the web UI is laid out anew: see the [tour of the web interface](/docs/web-interface/).
 Coming from 0.50 or earlier, providers you had switched on keep working and read "Not tested yet"
@@ -104,7 +105,7 @@ current release:
    removes them too.
 
    ```sh
-   npm install -g bazilion@0.57.1
+   npm install -g bazilion@0.58.0
    bazilion uninstall --yes
    ```
 

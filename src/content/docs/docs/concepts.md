@@ -12,7 +12,7 @@ Bazilion is built on
 [Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent). Pi runs the
 turn loop and the provider calls, compacts history and writes the JSONL transcript under each
 Agent's `sessions/` directory. Bazilion supplies Agents and Teams, credentials, the tool list, the
-worker processes and the long-lived browser and MCP connections. Version 0.57.1 bundles Pi 1.6.0,
+worker processes and the long-lived browser and MCP connections. Version 0.58.0 bundles Pi 1.6.0,
 with Pi's own discovery of extensions, skills, prompt templates and context files switched off.
 
 ## Profiles (Agent templates)
@@ -30,6 +30,12 @@ An **Agent** is spawned from a Profile into one Team. Its documents and conversa
 only in a conversation you start: a teammate's message or a schedule gets the work done first.
 You can change an Agent's model, reasoning level and skills after spawning, move it to another
 Team, archive it or delete it.
+
+When you add an Agent you can say what it is for (**What is it for?**, or
+`bazilion agent spawn --role "…"`). The role goes on top of its `AGENTS.md` with who added it, and
+the Agent starts working instead of asking its name and purpose. Names are unique within a Team,
+whatever their case. An Agent that gave itself another name in its `IDENTITY.md` shows it next
+to its own, teammates reach it by either, and the Agent tab offers to make it its name.
 
 An Agent can also add Agents to its own Team when you ask it to, with the `agent_create` tool: it
 names them and says what each is for, and they start knowing their role and who made them,
@@ -66,7 +72,8 @@ Team Policy decides which Agent may send a message to which other Agent. It neve
 you can always chat with every Agent, and every Agent can always reach you.
 
 A Team's policy is a **mode** plus directed **allow edges**. An edge endpoint is a member Agent
-or `outside`, which stands for every Agent in other Teams.
+or `outside`, which stands for every Agent in other Teams. The web names the modes by what they
+do: **Everyone** (`open`: everyone can message everyone) and **Connections only** (`restricted`).
 
 | Message | Allowed when |
 | --- | --- |
@@ -76,6 +83,8 @@ or `outside`, which stands for every Agent in other Teams.
 
 A denied message is an error returned to the sender, with the reason; nothing is stored or
 queued. Edits take effect immediately. An Agent that moves to another Team loses its edges.
+Connections between teammates of an open Team are kept but change nothing, so drawing one there
+asks whether to switch the Team to **Connections only** first.
 
 ```sh
 bazilion team policy show <team>
