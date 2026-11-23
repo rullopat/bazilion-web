@@ -161,6 +161,35 @@ only for local development.
 ## MCP servers
 
 Tools from Model Context Protocol servers are offered to every turn as `mcp__<server>__<tool>`.
+
+### Common connections
+
+**Common connections** on **Setup → MCP** lists four third-party servers for the services a
+business Team works in. Each runs on your computer, and connecting one asks only for what it needs:
+
+| Connection | What Agents can do | Needs |
+| --- | --- | --- |
+| Microsoft 365 | Outlook mail and calendar, OneDrive, Excel; Teams and SharePoint with a work account | Nothing to paste: ask an Agent to sign in, and it gives a link and a code |
+| Google Workspace | Gmail, Calendar, Drive, Docs, Sheets | `uv`, and an OAuth client of your own from Google Cloud |
+| Slack | Read channels, threads and search; post when you allow it | A user token (`xoxp-…`) |
+| Notion | Pages and databases shared with it | An integration secret (`ntn_…`) |
+
+```sh
+bazilion mcp presets
+bazilion mcp add notion --preset notion --env NOTION_TOKEN=ntn_…
+```
+
+### Tools that ask first
+
+A tool whose name says it sends, posts, replies, shares, creates, updates, moves, deletes or
+uploads something asks you before each call, as a risky shell command does: in the conversation,
+in Telegram after 30 seconds, and in Attention. In a turn nobody can answer (a schedule, a
+teammate's message) it is refused, so nothing goes out unseen. After **Test** you can tick or
+untick single tools; every other tool, one the server adds later too, keeps following the rule.
+The rule reads names only, so look at the list after **Test**.
+
+### Adding any server
+
 Servers are configured once for the whole installation, on `/config/mcp` or with the CLI:
 
 ```sh
@@ -173,7 +202,10 @@ bazilion mcp rm <server-id>
 ```
 
 - **stdio** servers run as daemon child processes. They get the daemon's environment with your
-  provider keys, but never Bazilion's own credentials. Treat them as trusted local programs.
+  provider keys, but never Bazilion's own credentials, plus variables of their own (a token, a
+  client id: `--env`, or **Variables** on the server's row). Those are stored encrypted and given
+  to that server only, never to an Agent's environment. Treat these servers as trusted local
+  programs.
 - **http** servers use Streamable HTTP. The bearer token is stored encrypted and redirects are
   refused. A token passed with `--token` can land in your shell history; the web page avoids that.
 
