@@ -80,10 +80,14 @@ The middle pane streams the open Agent's conversation.
 - A question from the Agent has one button per choice. While an Agent waits on you, its step and
   the line under the conversation say `waiting for you`, in amber, as the list does; green and
   `working` mean it is working.
-- **Edit**, under your last message, appears when you point at it and replaces that turn.
+- **Edit**, under your last message, appears when you point at it and replaces that turn; what
+  you had typed comes back afterwards.
+- Going to another Agent and back opens the conversation where you left it, with the text you
+  had not sent still in the composer.
 - Attach files with the button, by pasting or by dragging them in. Images reach the model as
   images; other files are saved for the Agent to read.
-- While a turn runs, **Send** becomes **Queue follow-up** and **Stop** cancels the turn.
+- While a turn runs, **Send** becomes **Queue follow-up** and **Stop** cancels the turn; the
+  reply then ends with `Stopped.`
 - With `BAZILION_BASH_APPROVAL=dangerous`, a flagged shell command shows **Allow once** and
   **Deny**.
 - Composer commands: `/new` (conversations), `/compact` (summarise older history) and `/context`
@@ -134,7 +138,10 @@ Everything that shows what Agents are doing follows it as it happens: the list, 
 the overview, the top bar's count, the tab title and the Attention page. The daemon pushes each
 change over one event stream, so a question shows the moment it is asked. One tab per browser
 holds the stream and shares it with the others. While it cannot connect, for example while the
-daemon restarts, the pages ask every few seconds and try the stream again.
+daemon restarts, the pages ask every few seconds and try the stream again. A Team or an Agent
+added, renamed, moved or archived somewhere else (in a terminal, by an Agent running
+`bazilion`, in another tab) shows up without a reload, and a question asked or answered
+elsewhere comes and goes in the open conversation.
 
 **Notify me on this computer**, in the menu at the end of the top bar, turns on desktop
 notifications for this browser, after the browser asks you. When an Agent starts waiting for you
@@ -238,7 +245,7 @@ are behind its **⋯** button, and one Bazilion would refuse is shown disabled, 
 
 - **Agents** (`/agents`): every Agent, grouped by Team. Find one by name, creature or vibe; show
   current, archived or all. Each row says its template and the model it answers with. Archive,
-  restore, move to another Team, delete, and **Spawn an agent**.
+  restore, move to another Team, delete, and **Add an Agent**.
 - **Teams** (`/teams`): **Create a Team** asks for a name and where its files are: a new folder in
   `~/.bazilion/teams/<id>/`, or a project folder it links to. A Team can be removed once it has
   no Agents; removing it removes only the link to a project folder.

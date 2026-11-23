@@ -10,7 +10,7 @@ CLI and the web UI are clients of its HTTP API.
 
 Models are written `provider:model`, for example `anthropic:claude-fable-5-2`,
 `openai-codex:gpt-6.2-sol` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
-catalog; Bazilion 0.56.0 bundles Pi 1.6.0. An id that is not in the catalog is refused as
+catalog; Bazilion 0.57.0 bundles Pi 1.6.0. An id that is not in the catalog is refused as
 "Unknown model" unless the provider has an endpoint you configured, so a typo never sends a key to
 another vendor.
 
@@ -103,7 +103,7 @@ bazilion provider models anthropic       # in use, and offered
 bazilion provider models-set anthropic claude-fable-5-2,claude-haiku-5-5
 ```
 
-Wherever a model is chosen (an Agent's **Agent** tab, **Spawn an agent**, an Agent template) the
+Wherever a model is chosen (an Agent's **Agent** tab, **Add an Agent**, an Agent template) the
 menu shows these names by provider, with how much each model reads and whether it sees images.
 The CLI and the API keep the `provider:model` id.
 
