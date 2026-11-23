@@ -327,46 +327,6 @@ code {
   padding-bottom: clamp(2rem, 4vw, 3rem);
 }
 .hero > * { min-width: 0; }
-.hero > .release-note { grid-column: 1 / -1; justify-self: start; margin-bottom: -0.5rem; }
-
-.release-note {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.35rem 0.75rem;
-  padding: 0.35rem 0.95rem 0.35rem 0.35rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--paper-raised);
-  color: var(--chocolate);
-  font-size: 0.88rem;
-  line-height: 1.4;
-  box-shadow: var(--shadow-sm);
-  transition: border-color .2s ease, box-shadow .2s ease;
-}
-.release-note:hover {
-  color: var(--chocolate);
-  border-color: var(--sapphire-light);
-  box-shadow: var(--shadow-md);
-}
-.release-note__badge {
-  border-radius: 999px;
-  background: var(--sapphire-deep);
-  color: var(--snow);
-  padding: 0.18rem 0.65rem;
-  font-weight: 600;
-  font-size: 0.8rem;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.02em;
-}
-.release-note__more {
-  color: var(--sapphire-deep);
-  font-weight: 500;
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--sapphire) 40%, transparent);
-  text-underline-offset: 3px;
-}
-
 .hero__title {
   font-size: clamp(2.5rem, 4.7vw, 4.15rem);
   line-height: 1.03;
@@ -421,6 +381,66 @@ code {
 }
 .cmd__copy:hover { background: color-mix(in srgb, var(--snow) 14%, var(--charcoal)); }
 .cmd__copy:focus-visible { outline-color: var(--sapphire-light); }
+
+/* The hero's install box: curl or npm, and the release they install. */
+.term {
+  background: var(--charcoal);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+.term__input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.term__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.6rem 0.35rem 0.6rem;
+  border-bottom: 1px solid var(--night-line);
+}
+.term__tabs { display: flex; gap: 0.2rem; }
+.term__tab {
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  color: var(--mocha-light);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background .2s ease, color .2s ease;
+}
+.term__tab:hover { color: var(--cream); }
+#hero-curl:checked ~ .term__head label[for="hero-curl"],
+#hero-npm:checked ~ .term__head label[for="hero-npm"] {
+  background: color-mix(in srgb, var(--snow) 12%, var(--charcoal));
+  color: var(--cream);
+}
+#hero-curl:focus-visible ~ .term__head label[for="hero-curl"],
+#hero-npm:focus-visible ~ .term__head label[for="hero-npm"] {
+  outline: 2px solid var(--sapphire-light);
+  outline-offset: 1px;
+}
+.hero__release {
+  color: var(--mocha-light);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--mocha-light) 45%, transparent);
+  text-underline-offset: 3px;
+  padding: 0.2rem 0.35rem;
+  border-radius: 6px;
+}
+.hero__release:hover { color: var(--cream); text-decoration-color: currentColor; }
+.hero__release:focus-visible { outline-color: var(--sapphire-light); }
+.term .cmd { background: none; box-shadow: none; border-radius: 0 0 var(--radius-md) var(--radius-md); }
+.term__panel { display: none; }
+#hero-curl:checked ~ .term__panel--curl,
+#hero-npm:checked ~ .term__panel--npm { display: flex; }
 
 .hero__then {
   margin-top: 0.8rem;
@@ -512,7 +532,6 @@ code {
     grid-template-columns: minmax(0, 1fr);
     gap: 2.25rem;
   }
-  .hero > .release-note { margin-bottom: 0; border-radius: 16px; padding: 0.5rem 0.9rem 0.6rem 0.5rem; }
   .hero__portrait {
     justify-self: start;
     max-width: 260px;

@@ -13,8 +13,9 @@ const requireText = (path, text) => {
 };
 
 if (!existsSync(dist)) throw new Error('Build the website before checking documentation.');
+// The homepage names the current release on its install box and links it to the release notes.
 const announcementSlug = read('src/pages/index.astro')
-  .match(/class="release-note" href="\/docs\/([^/]+)\//)?.[1];
+  .match(/class="hero__release" href="\/docs\/([^/]+)\//)?.[1];
 const { version, pi, versions, failures: releaseFailures } = releaseNotesPolicy({
   announcementSlug,
   announcement: read('src/content/docs/docs/whats-new.md'),

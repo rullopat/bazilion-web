@@ -31,7 +31,7 @@ Use two-space indentation for Astro, JSON, CSS, and config files. Keep semantic 
 
 Prefer CSS custom properties from `:root` before adding raw colors, fonts, spacing, or shadows. Keep copy edits in `src/pages/index.astro` and visual changes in `src/styles/global.css`.
 
-**Permanent homepage rule:** never state the Pi version on `/`, including the hero, release banner,
+**Permanent homepage rule:** never state the Pi version on `/`, including the hero, the install box's release link,
 feature cards, metadata, or generated homepage text. Unversioned attribution to Pi is welcome.
 Engine versions may appear in the detailed documentation/release pages, not the homepage.
 `pnpm check:docs` tests this policy and checks both source and rendered homepage; preserve this guard
