@@ -38,7 +38,8 @@ bazilion trigger history <trigger-id>
 bazilion trigger disable <trigger-id>
 ```
 
-On the web, open **Schedules** in the Agent's side panel. Each occurrence runs at most once and
+On the web, open **Schedules** in the Agent's side panel; it and `bazilion trigger list` say when
+each schedule runs next. Each occurrence runs at most once and
 is never retried: a busy Agent leaves it pending, then it ends succeeded, failed or cancelled. The
 history shows each run with its real error, and a failure also shows in Attention. Disabling a
 trigger stops future runs, not a turn that is already running.
@@ -48,8 +49,9 @@ trigger stops future runs, not a turn that is already running.
 **Attention** lists what needs you. First what an Agent is waiting on right now: a
 [question](/docs/questions/) it asked and a command waiting for your approval, soonest to expire
 first, each with the time it stops waiting. Then lesson proposals, failed or cancelled learning
-reviews, failed triggers, stopped Agent message loops and Agent queues paused after a daemon
-restart. Open the **Attention** page (the count in the top bar stays current, and the browser tab
+reviews, failed triggers, stopped Agent message loops, Agent queues paused after a daemon
+restart, and background turns that failed (a follow-up or a turn for new mail, one item per Agent
+and cause). Open the **Attention** page (the count in the top bar stays current, and the browser tab
 counts what waits for you) or:
 
 ```sh
@@ -59,7 +61,8 @@ bazilion attention acknowledge <key> --yes
 bazilion attention acknowledge-all --yes
 ```
 
-Acknowledging a failure or loop break records that you saw it; it repairs nothing. Questions,
+Acknowledging a failure or loop break records that you saw it; it repairs nothing. A failed
+background turn opens again when another fails for the same cause. Questions,
 commands, proposals and paused queues leave the list when you act on them; a question or a command
 also leaves it when it stops waiting, or when the daemon restarts. Attention items can also go to Telegram; see
 [Attention notifications](/docs/attention-notifications/).

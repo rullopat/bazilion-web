@@ -34,6 +34,23 @@ conversation to continue. Nothing recreates or replaces a missing history.
 Editing the last message in the web chat is refused when the Agent has switched to another
 conversation since the page loaded; reload and try again.
 
+## Search
+
+Search finds the messages, yours and the Agents' replies, that hold every word you give, in every
+Agent's conversations, newest first. It looks at what a conversation shows: tool output and
+anything a summary replaced are not searched. A stored key is never found, and is taken out of
+what a result shows.
+
+- **Web:** type three characters or more in **Jump to** (⌘K or Ctrl+K). **In conversations** lists
+  the messages found, with the words marked; opening one shows its conversation at that message.
+- **CLI:** `bazilion conversation search "launch email" [--agent <id or name>] [--limit 20]
+  [--json]` prints each message's Agent, conversation and time, the text around the words, and
+  the command that shows the whole conversation.
+
+Each conversation's use (tokens, and cost for a provider paid per use) is under its title in the
+conversation menu and in `bazilion conversation list`; **Manage → Usage** adds them up
+([the web interface](/docs/web-interface/#manage)).
+
 ## Compact and context
 
 - `/compact` in the web chat, or `bazilion agent chat-compact <agent>`, summarises older messages

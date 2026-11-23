@@ -82,8 +82,9 @@ bazilion agent chat <agent-id> --message "say hi"
 There are no database migrations. A release opens a home only when its schema matches the one it
 ships; otherwise the daemon refuses to start and leaves the home untouched.
 
-**From 0.26, 0.27, 0.50, 0.51, 0.52, 0.53 or 0.54:** 0.55.0 uses the same schema, so the home
-opens as it is. Stop the daemon, run `npm install -g bazilion@0.55.0` and start Bazilion again. Coming from 0.26 or
+**From 0.26, 0.27, 0.50, 0.51, 0.52, 0.53, 0.54 or 0.55:** 0.56.0 uses the same schema, so the
+home opens as it is. Stop the daemon, run `npm install -g bazilion@0.56.0` and start Bazilion
+again. Coming from 0.26 or
 0.27, the web UI is laid out anew: see the [tour of the web interface](/docs/web-interface/).
 Coming from 0.50 or earlier, providers you had switched on keep working and read "Not tested yet"
 under **Setup → Models** until their first test.
@@ -103,7 +104,7 @@ current release:
    removes them too.
 
    ```sh
-   npm install -g bazilion@0.55.0
+   npm install -g bazilion@0.56.0
    bazilion uninstall --yes
    ```
 

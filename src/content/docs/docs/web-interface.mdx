@@ -122,8 +122,8 @@ On a phone the panel's tabs scroll sideways.
 The deeper pages open as sheets over the workspace: an Agent's **Schedules**, **Learning**
 ([daily operations](/docs/operations/#reviewed-learning)), **Mailbox**, **Skills**, **Telegram**
 and **Browser**; a Team's **About you**, memory and settings. They use the same cards and fields
-as Setup and Manage. A schedule reads as words, such as `Weekdays at 09:00`, and is added in a
-dialog with presets, or as a cron expression. Memory notes are listed by title and read
+as Setup and Manage. A schedule reads as words, such as `Weekdays at 09:00`, says when it runs
+next, and is added in a dialog with presets, or as a cron expression. Memory notes are listed by title and read
 formatted; **Edit** opens the text.
 
 ![Mira's schedules: a schedule that reads Weekdays at 09:00 with its message and a switch, and the recent runs below.](/screenshots/schedules.webp)
@@ -155,6 +155,13 @@ and the Manage and Setup pages. Type to narrow it down; Enter opens the one high
 you press it before the lists have arrived.
 
 ![Jump to with Quill waiting for an answer at the top, Scout working, and actions to start a conversation, add an Agent, switch the theme and list the shortcuts.](/screenshots/palette.webp)
+
+Three characters or more also search your conversations. **In conversations** lists the messages
+holding every word typed, yours and the Agents' replies, with the words marked; opening one shows
+its conversation at that message, marked for a moment. Tool output is not searched, and a stored
+key never turns up. From a terminal: `bazilion conversation search "dark mode"`.
+
+![Jump to with "dark mode" typed: messages from Pixel, Quill, Dev and Mira that hold both words, each with its Agent and conversation.](/screenshots/search.webp)
 
 | Keys | |
 | --- | --- |
@@ -196,7 +203,8 @@ which it runs as its next turn.
 A gallery of everything the Team's Agents delivered. Filter by kind and by whom, as in the Files
 tab, open a file for
 its details and the conversation it came from, put two files side by side, delete one, or
-download them all as one zip.
+download them all as one zip. A text file's tile shows its first lines; any text file can be read
+in place (Markdown, CSV, JSON, code, logs), while HTML and SVG are only downloaded.
 
 ![The Files gallery with a picture open: who delivered it, when, its size and checksum.](/screenshots/files.webp)
 
@@ -244,6 +252,15 @@ are behind its **⋯** button, and one Bazilion would refuse is shown disabled, 
 - **Skills** (`/skills`): **Import skills** from OpenClaw, a folder or a `.zip`. A risky scan
   finding or a `SKILL.md` that cannot be read is shown under the skill. Attach skills through a
   template or under **Skills** in an Agent's side panel.
+- **Usage** (`/usage`): what your Agents' model calls used, today or over 7, 30 or 90 days or
+  everything. The money spent on providers paid per use leads; the tokens of subscriptions (a
+  ChatGPT plan, Copilot, a token plan) and of models on your computer are counted apart, at no
+  cost. A bar per day, readable with the arrow keys and as a table, then the totals by Team, Agent
+  and model; open a Team or an Agent for theirs only. Each conversation's use is under its title in
+  the conversation menu. The cost is what the provider billed when it says, otherwise the
+  catalog price, marked as an estimate. From a terminal: `bazilion usage`.
+
+![Manage, Usage: $96.57 spent in the last 30 days, 23M tokens of which 5.8M on a subscription, a bar per day, and the totals by Team.](/screenshots/usage.webp)
 
 ## Setup (`/config`)
 
@@ -270,7 +287,9 @@ A key is shown as saved, never in full. Replacing or removing one is its own act
 What needs you. First what an Agent is waiting on right now: its question, or a command waiting for
 your approval, soonest to expire first, each with the time it stops waiting; **Answer** and
 **Decide** open the conversation. Then lesson proposals, failed learning reviews and triggers,
-stopped message loops and queues paused after a restart. Each item links to the Agent's
+stopped message loops, queues paused after a restart, and background turns that failed: a
+follow-up or a turn for new mail, one item per Agent and cause, so an expired key is one line
+however many turns it stopped. Each item links to the Agent's
 conversation or sheet in the workspace. The page follows changes as they happen. See
 [daily operations](/docs/operations/#attention).
 

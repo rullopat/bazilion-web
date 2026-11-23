@@ -1,15 +1,81 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.55.0 bundles Pi 1.6.0.
+description: The latest four Bazilion releases, newest first; Bazilion 0.56.0 bundles Pi 1.6.0.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
 
+## Bazilion 0.56.0
+
+Published **2026-11-23**. Nothing goes wrong unnoticed: **Usage** shows what your Agents' model
+calls cost, per day, Team, Agent, model and conversation; a background turn that fails is in
+Attention; and **Jump to** searches your conversations. Checks on CI now compare pictures of the
+web UI and scan every page for accessibility, and what they found is fixed. The embedded Pi
+engine stays at 1.6.0. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.56.0) and
+[Usage in the web interface](/docs/web-interface/#manage).
+
+![Manage, Usage: $96.57 spent in the last 30 days, 23M tokens of which 5.8M on a subscription, a bar per day, and the totals by Team.](/screenshots/usage.webp)
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.55 home opens as it is. Stop the
+daemon, then:
+
+```sh
+npm install -g bazilion@0.56.0
+bazilion dashboard
+```
+
+Attention notifications in Telegram keep the kinds you chose: to be told about failed turns,
+tick **Failed background turns** under **Setup → Telegram**.
+
+### Added
+
+- **Usage and cost.** **Manage → Usage** and `bazilion usage` show tokens and dollars per day,
+  Team, Agent and model, for today, 7, 30 or 90 days or everything, with a bar per day you can
+  read with the arrow keys. Each conversation's use is under its title in the conversation menu
+  and in `bazilion conversation list`. The cost is what the provider billed when it says
+  (OpenRouter does), otherwise Pi's catalog price, marked as an estimate. A ChatGPT plan, Copilot
+  and the Qwen and Xiaomi MiMo token plans count in tokens only, as do models on your computer.
+- **Failed background turns in Attention.** A follow-up sent from the web, a terminal or
+  Telegram, or a turn for new mail, that fails is listed once per Agent and cause, so an expired
+  key is one line however many turns it stopped. A later failure of the same cause opens it again.
+- **Search your conversations.** Three characters or more in **Jump to** list the messages holding
+  every word, with the words marked; one opens its conversation at that message.
+  `bazilion conversation search` does the same in a terminal. A stored key is never found.
+- **When a schedule runs next**, in the Schedules sheet and `bazilion trigger list`.
+- **Text previews for every kind of text file** in Files, and a text file's first lines on its
+  tile. HTML and SVG stay download-only.
+
+![Jump to with "dark mode" typed: messages from Pixel, Quill, Dev and Mira that hold both words, each with its Agent and conversation.](/screenshots/search.webp)
+
+### Changed
+
+- **Easier to read and to use without a mouse.** Grey text is a step darker, and code and table
+  headers use the darker ink, so everything reaches 4.5:1 contrast. Controls say what they show
+  to a screen reader, buttons no longer sit inside fold-outs, and links among a row's facts are
+  underlined.
+- **Agent templates** cannot have a blank name.
+
+### Fixed
+
+- In the conversation header, a long conversation title no longer squeezes the Agent's name to
+  one letter.
+- Team messages sent in the same millisecond keep the order they were sent in.
+
+### Limits
+
+- Usage counts what conversations used: learning reviews, provider tests and generated images
+  are not counted, and a deleted Agent's use goes with it.
+- A failed turn for new mail is kept in the daemon's memory: a restart forgets it.
+- Search looks at what a conversation shows; tool output is not searched.
+
 ## Bazilion 0.55.0
 
-Published **2026-11-22**. What an Agent waits on now reaches you at once, and wherever you are.
+Published **2026-11-22**. What an Agent waits on came to reach you at once, and wherever you are.
 The web UI is pushed every change instead of asking every few seconds, so a question shows the
 moment it is asked. The browser can show a desktop notification when Bazilion is in the
 background, a command waiting for your approval can be decided from Telegram, and on a phone the
@@ -19,7 +85,7 @@ See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.55
 
 ### Upgrade: install and start again
 
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.54 home opens as it is. Stop the
+The database schema was unchanged, so a 0.26, 0.27 or 0.50 to 0.54 home opened as it was. Stop the
 daemon, then:
 
 ```sh
@@ -240,76 +306,3 @@ they had. The current commands are in [Upgrade to 0.26.0](/docs/getting-started/
 - The Teams list did not say whether a Team's folder links to a project.
 - The new pages were checked by hand and by script in Chrome on macOS with a stand-in model
   server; the automated tests covered their logic on Linux but did not drive a browser.
-
-## Bazilion 0.52.0
-
-Published **2026-11-21**. The Services page became **Tools**: one card per tool, settings that
-are checked before they are stored, and one Save per card. Model menus began to show names. The
-embedded Pi engine stayed at 1.5.2. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.52.0) and
-[setting the tools](/docs/tools/#setting-the-tools).
-
-![Setup, Tools: the Web search card with its five choices and a saved Brave key, the Web pages card and the Browser card with its switch and two choices.](/screenshots/tools.webp)
-
-### Upgrade: install and start again
-
-The database schema was unchanged, so a 0.26, 0.27, 0.50 or 0.51 home opened as it was. Stored
-settings were read as before. A value that an older version stored and the daemon cannot
-use, such as a mistyped mode, is pointed out on its card, and saving the card replaces it.
-Bookmarks of `/config/services`, `/config/tokens` and `/config/integrations/telegram` needed the
-new addresses. The current commands are in
-[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260).
-
-### Added
-
-- **Setup → Tools (`/config/tools`).** Web search, Web pages, Browser, Commands and Messages
-  between Agents are one card each, in place of 18 text boxes with a save button each. A setting
-  is entered as what it is: a choice with what each option means, a switch, a number in the unit
-  people use (minutes, not milliseconds), a key shown as saved.
-- **What is in effect.** A card says what the tool is doing now (`Using Brave`,
-  `On: a browser per Agent`, `Runs in Docker, asks first`) and what a choice would meet on this
-  machine before it is saved: a key that is missing, or whether Docker has the image. A setting
-  that only matters with another choice appears with it.
-- **One Save per card.** Every value is checked first, and when one is refused nothing of the
-  card is stored. A key is replaced or removed with the same Save.
-- **Model names in the menus.** The Agent tab, **Spawn an agent** and Agent templates choose a
-  model from a menu with names by provider, how much each reads and whether it sees images. A
-  provider that is not working is marked. The CLI and the API keep `provider:model`.
-- **CLI.** `bazilion config set NAME=value NAME=value` saves several settings together or none.
-  `config list` shows defaults, what is in effect for each tool and what each setting takes.
-
-![The Spawn an agent dialog with its model menu open: the template's model first, then models by provider with how much each reads and whether it sees images.](/screenshots/model-menu.webp)
-
-### Changed
-
-- Settings are checked before they are stored, by the page and by `bazilion config set`. A choice
-  must be one of its values, a switch `true` or `false` (`yes`, `no`, `on`, `off`, `1` and `0`
-  are stored as `true` or `false`), a number whole and in range, an address `http://` or
-  `https://`. A mistyped `BAZILION_BASH_APPROVAL` used to be stored and then failed every turn.
-- The Setup tabs are Models, Tools, MCP, Telegram, Access and System. `/config/tools`,
-  `/config/telegram` and `/config/access` replace `/config/services`,
-  `/config/integrations/telegram` and `/config/tokens`, which are not redirected.
-- `GET /api/config/services` and `GET /api/config/available-models` are gone: use
-  `GET /api/config/tools` and the `chat` list of `GET /api/config/models`. Setting names are
-  unchanged.
-
-### Fixed
-
-- **Changes sees a file rewritten in the second it was staged.** A file rewritten at the same
-  size within the second it was staged could go unseen in Changes and in a review until it was
-  touched again.
-- **The browser's first start has 60 s instead of 15.** A first start from a cold disk on a small
-  or busy machine could take longer than the old limit.
-- **A tool call cut short by a lost MCP session says "MCP session expired"** whichever request
-  noticed first; it could say "MCP connection closed".
-- **A conversation renamed in the millisecond it was created keeps its name** when the first
-  message arrives.
-
-### Limits
-
-- Telegram and MCP keep their own pages and forms.
-- Outside the menus a model is still shown by its id: template lists, the conversation header
-  and the CLI.
-- Docker is asked whether it has the image each time the Tools page opens, for at most 3 s.
-- The new pages were checked by hand in Chrome on macOS with a stand-in model server. The
-  automated tests cover their logic on Linux but do not drive a browser.
