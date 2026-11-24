@@ -1,11 +1,38 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.58.0 bundles Pi 1.6.0.
+description: The latest four Bazilion releases, newest first; Bazilion 0.58.1 bundles Pi 1.6.0.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.58.1
+
+Published **2026-11-24**. A fix for keeping your place in a conversation. The embedded Pi engine
+stays at 1.6.0. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.58.1).
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.58 home opens as it is. Stop the
+daemon, then:
+
+```sh
+npm install -g bazilion@0.58.1
+bazilion dashboard
+```
+
+Then reload the Bazilion tabs you had open.
+
+### Fixed
+
+- **Going to another Agent and back keeps where you were in the conversation.** The web UI's
+  router also restored scroll positions, by where a scrolling area stands on the page, and every
+  conversation stands in the same place. So after each switch it put the previous conversation's
+  position on the next one: an Agent opened where the previous one had been scrolled to, and
+  coming back opened where the other Agent had been left. Each conversation now keeps only its
+  own place.
 
 ## Bazilion 0.58.0
 
@@ -170,69 +197,3 @@ bazilion dashboard
 - Kept places and drafts last while the page is open; a reload opens every conversation at its
   end.
 - `agent_create` adds Agents to the asking Agent's own Team only; it does not create Teams.
-
-## Bazilion 0.56.0
-
-Published **2026-11-23**. Nothing goes wrong unnoticed: **Usage** shows what your Agents' model
-calls cost, per day, Team, Agent, model and conversation; a background turn that fails is in
-Attention; and **Jump to** searches your conversations. Checks on CI now compare pictures of the
-web UI and scan every page for accessibility, and what they found is fixed. The embedded Pi
-engine stays at 1.6.0. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.56.0) and
-[Usage in the web interface](/docs/web-interface/#manage).
-
-![Manage, Usage: $96.57 spent in the last 30 days, 23M tokens of which 5.8M on a subscription, a bar per day, and the totals by Team.](/screenshots/usage.webp)
-
-### Upgrade: install and start again
-
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.55 home opens as it is. Stop the
-daemon, then:
-
-```sh
-npm install -g bazilion@0.56.0
-bazilion dashboard
-```
-
-Attention notifications in Telegram keep the kinds you chose: to be told about failed turns,
-tick **Failed background turns** under **Setup → Telegram**.
-
-### Added
-
-- **Usage and cost.** **Manage → Usage** and `bazilion usage` show tokens and dollars per day,
-  Team, Agent and model, for today, 7, 30 or 90 days or everything, with a bar per day you can
-  read with the arrow keys. Each conversation's use is under its title in the conversation menu
-  and in `bazilion conversation list`. The cost is what the provider billed when it says
-  (OpenRouter does), otherwise Pi's catalog price, marked as an estimate. A ChatGPT plan, Copilot
-  and the Qwen and Xiaomi MiMo token plans count in tokens only, as do models on your computer.
-- **Failed background turns in Attention.** A follow-up sent from the web, a terminal or
-  Telegram, or a turn for new mail, that fails is listed once per Agent and cause, so an expired
-  key is one line however many turns it stopped. A later failure of the same cause opens it again.
-- **Search your conversations.** Three characters or more in **Jump to** list the messages holding
-  every word, with the words marked; one opens its conversation at that message.
-  `bazilion conversation search` does the same in a terminal. A stored key is never found.
-- **When a schedule runs next**, in the Schedules sheet and `bazilion trigger list`.
-- **Text previews for every kind of text file** in Files, and a text file's first lines on its
-  tile. HTML and SVG stay download-only.
-
-![Jump to with "dark mode" typed: messages from Pixel, Quill, Dev and Mira that hold both words, each with its Agent and conversation.](/screenshots/search.webp)
-
-### Changed
-
-- **Easier to read and to use without a mouse.** Grey text is a step darker, and code and table
-  headers use the darker ink, so everything reaches 4.5:1 contrast. Controls say what they show
-  to a screen reader, buttons no longer sit inside fold-outs, and links among a row's facts are
-  underlined.
-- **Agent templates** cannot have a blank name.
-
-### Fixed
-
-- In the conversation header, a long conversation title no longer squeezes the Agent's name to
-  one letter.
-- Team messages sent in the same millisecond keep the order they were sent in.
-
-### Limits
-
-- Usage counts what conversations used: learning reviews, provider tests and generated images
-  are not counted, and a deleted Agent's use goes with it.
-- A failed turn for new mail is kept in the daemon's memory: a restart forgets it.
-- Search looks at what a conversation shows; tool output is not searched.
