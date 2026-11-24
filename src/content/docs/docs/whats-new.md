@@ -1,11 +1,39 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.58.1 bundles Pi 1.6.0.
+description: The latest four Bazilion releases, newest first; Bazilion 0.58.2 bundles Pi 1.6.0.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.58.2
+
+Published **2026-11-24**. The rest of 0.58.1's fix for keeping your place in a conversation.
+The embedded Pi engine stays at 1.6.0. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.58.2).
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.58 home opens as it is. Stop the
+daemon, then:
+
+```sh
+npm install -g bazilion@0.58.2
+bazilion dashboard
+```
+
+Then reload the Bazilion tabs you had open, once.
+
+### Fixed
+
+- **Going to another Agent and back keeps where you were, in every tab.** The router keeps
+  scroll positions in the browser tab, and a reload keeps them. 0.58.1 stopped it saving a
+  conversation's position where the next Agent's would find it, but positions saved before, in
+  a tab already open, still landed on every conversation: each Agent opened where the Agent
+  visited last had been. The router no longer restores scrolling in the workspace at all, so
+  each conversation keeps only its own place and a reload opens every conversation at its end.
+  Other pages, such as Setup and Manage, still return to where you were when you go Back.
 
 ## Bazilion 0.58.1
 
@@ -32,7 +60,8 @@ Then reload the Bazilion tabs you had open.
   conversation stands in the same place. So after each switch it put the previous conversation's
   position on the next one: an Agent opened where the previous one had been scrolled to, and
   coming back opened where the other Agent had been left. Each conversation now keeps only its
-  own place.
+  own place in a new tab; a tab already open before the upgrade still needed
+  [0.58.2](#bazilion-0582).
 
 ## Bazilion 0.58.0
 
@@ -134,66 +163,3 @@ Then reload the Bazilion tabs you had open.
   version, and otherwise says that Bazilion was updated and offers **Reload**. Tabs opened before
   0.57.1 still need one reload by hand.
 - **⌘K or Ctrl+K just after closing a dialog** opens **Jump to** again.
-
-## Bazilion 0.57.0
-
-Published **2026-11-23**. A release of polish and fixes. Agents know who their teammates are and
-add teammates when you ask; the web UI follows changes made anywhere, keeps your place in each
-conversation, and no longer resets what you are reading when a turn ends. A walk-through of the
-whole app found sixteen more rough edges, and most are fixed here. The embedded Pi engine stays
-at 1.6.0. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.57.0) and the
-[Agents concepts](/docs/concepts/#agents).
-
-![Mira's conversation with a hand-off card for three teammates, and the Connections tab beside it.](/screenshots/handoffs.webp)
-
-### Upgrade: install and start again
-
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.56 home opens as it is. Stop the
-daemon, then:
-
-```sh
-npm install -g bazilion@0.57.0
-bazilion dashboard
-```
-
-### Added
-
-- **Agents know their teammates.** Every turn tells an Agent its teammates' names and ids, which
-  of them Team Policy lets it message, and the Agents of other Teams it may reach. You no longer
-  paste ids into the chat, and `send_message` takes a teammate's name.
-- **Agents add teammates when you ask.** The new `agent_create` tool adds an Agent to the asking
-  Agent's own Team, with its model and template unless it names others. The new Agent starts
-  knowing its role and who made it, without the first-run questions; in a restricted Team it is
-  connected with its creator both ways. Only in a turn you started (a chat, a follow-up,
-  Telegram), at most six per turn.
-
-### Changed
-
-- **The page follows changes made elsewhere.** A Team or an Agent created, renamed, moved or
-  archived from a terminal, by an Agent running `bazilion` or in another tab shows up without a
-  reload. A question asked or answered elsewhere comes and goes in the open conversation.
-- **Your place is kept.** Going to another Agent and back opens the conversation where you left
-  it, with your unsent text still in the composer. A finished turn reloads the diff, Files and
-  the panels while they stay on screen, instead of flashing "Loading" and jumping to the top.
-- **The first-run questions wait for you.** A new Agent whose first message comes from a teammate
-  or a schedule does the work instead of asking what to call it, and the questions skip what
-  USER.md already says.
-- **A stopped reply says so**, and on a narrow screen the side panel closes with Escape. The
-  button is called **Add an Agent** everywhere.
-
-### Fixed
-
-- Long Team, Agent or model names no longer push the conversation bar's menu and panel button out
-  of reach.
-- A Team whose folder is not a Git repository no longer logs a failed request each time one of
-  its Agents is opened, and `bazilion team review show` says so instead of crashing.
-- A memory note named without `.md` gets it, and a name leaving the memory folder is refused with
-  a clear message.
-- What you type straight after ⌘K or Ctrl+K is kept, and closing **Jump to** gives the focus back.
-
-### Limits
-
-- Kept places and drafts last while the page is open; a reload opens every conversation at its
-  end.
-- `agent_create` adds Agents to the asking Agent's own Team only; it does not create Teams.
