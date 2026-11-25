@@ -53,10 +53,16 @@ conversation menu and in `bazilion conversation list`; **Manage → Usage** adds
 
 ## Compact and context
 
-- `/compact` in the web chat, or `bazilion agent chat-compact <agent>`, summarises older messages
-  and keeps the recent part verbatim. It is a model call.
+- A conversation that nears the model's window is summarised during a turn: older messages
+  become one summary the Agent reads in their place, and the last 20,000 tokens or so stay as they
+  are. It stays one conversation; the summarised messages stay on the page above a line with
+  **Show the summary**, and search still finds them. A reply the full window would have cut short
+  is redone after the summary.
+- `/compact` in the web chat, or `bazilion agent chat-compact <agent>`, does the same at once. It
+  is a model call, like each automatic summary.
+- The bar above the conversation says how full the window is (`41K / 272K`, amber past 80%).
 - `/context`, or `bazilion agent chat-context <agent>`, shows what the next turn would carry:
-  prompt sections, tools, skills, USER.md and history size.
+  prompt sections, tools, skills, USER.md and history size, and how full the window is.
 - `bazilion agent chat-trim <agent> --keep N` keeps the first N messages for the next turn.
 
 ## API
