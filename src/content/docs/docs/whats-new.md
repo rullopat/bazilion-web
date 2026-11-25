@@ -1,11 +1,56 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.60.1 bundles Pi 1.6.0.
+description: The latest four Bazilion releases, newest first; Bazilion 0.61.0 bundles Pi 1.6.0.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.61.0
+
+Published **2026-11-25**. Bazilion installs with one line and nothing installed first, and on a
+Mac it then opens like any app. The installer brings its own Node.js, adds the **Bazilion** app
+to Applications, keeps Bazilion running in the background from login on, and opens it in your
+browser, already signed in. The embedded Pi engine stays at 1.6.0. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.61.0) and
+[getting started](/docs/getting-started/#install-on-a-mac).
+
+![The Bazilion app's icon: the Bazilion cat on a cream rounded square.](/screenshots/bazilion-app-icon.webp)
+
+### Install or upgrade
+
+```sh
+curl -fsSL https://bazilion.com/install.sh | bash
+```
+
+The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.60 home opens as it is. Stop a
+`bazilion dashboard` you run in a terminal first: the app's Bazilion uses the same ports. The line
+installs its own copy beside one you installed with npm or the earlier installer; keep using
+that one instead (`npm install -g bazilion@0.61.0`, then `bazilion app install` for the app), or
+remove it with `npm uninstall -g bazilion`.
+
+### Added
+
+- **One line, nothing else first.** The installer downloads Node.js 26.12.1 from nodejs.org,
+  checks it against the published checksums, and installs it and Bazilion in
+  `~/.local/share/bazilion`, with a `bazilion` command in `~/.local/bin`. It no longer uses Volta,
+  changes no shell settings and asks for no password. Running it again updates.
+- **The Bazilion app on a Mac.** Opening it starts Bazilion when it is not running and opens it in
+  your browser, signed in. Bazilion runs in the background from login on, and starts again if it
+  fails. `bazilion app install`, `app status` and `app remove` manage it.
+- **Signed in without a token.** The installer, the app, `bazilion dashboard` and the new
+  `bazilion open` open the browser with a link that works once, for two minutes. A token is
+  needed only on another device; the login page says so.
+
+### Limits
+
+- Terminal is still needed once, for the line. A downloadable app needs Apple's notarization and
+  is not available yet.
+- Windows is not supported. On Linux the installer installs Bazilion but adds no app.
+- Updates are not automatic: run the same line again.
+- The background Bazilion does not see your shell's variables, such as provider keys: keep keys in
+  **Setup**.
 
 ## Bazilion 0.60.1
 
@@ -130,31 +175,3 @@ summarized during its next turn.
   unknown until the next reply.
 - A local server's model is taken to have a 32,768-token window, so its conversations are
   summarized from about 16,000 tokens.
-
-## Bazilion 0.58.2
-
-Published **2026-11-24**. The rest of 0.58.1's fix for keeping your place in a conversation.
-The embedded Pi engine stays at 1.6.0. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.58.2).
-
-### Upgrade: install and start again
-
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.58 home opens as it is. Stop the
-daemon, then:
-
-```sh
-npm install -g bazilion@0.58.2
-bazilion dashboard
-```
-
-Then reload the Bazilion tabs you had open, once.
-
-### Fixed
-
-- **Going to another Agent and back keeps where you were, in every tab.** The router keeps
-  scroll positions in the browser tab, and a reload keeps them. 0.58.1 stopped it saving a
-  conversation's position where the next Agent's would find it, but positions saved before, in
-  a tab already open, still landed on every conversation: each Agent opened where the Agent
-  visited last had been. The router no longer restores scrolling in the workspace at all, so
-  each conversation keeps only its own place and a reload opens every conversation at its end.
-  Other pages, such as Setup and Manage, still return to where you were when you go Back.

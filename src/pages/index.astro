@@ -157,7 +157,7 @@ const features = [
                   <label class="term__tab" for="hero-curl">curl</label>
                   <label class="term__tab" for="hero-npm">npm</label>
                 </div>
-                <a class="hero__release" href="/docs/whats-new/" aria-label="Bazilion 0.60.1: what's new">v0.60.1</a>
+                <a class="hero__release" href="/docs/whats-new/" aria-label="Bazilion 0.61.0: what's new">v0.61.0</a>
               </div>
               <div class="cmd term__panel term__panel--curl">
                 <code class="cmd__text"><span class="cmd__prompt" aria-hidden="true">$ </span>curl -fsSL https://bazilion.com/install.sh | bash</code>
@@ -169,8 +169,9 @@ const features = [
               </div>
             </div>
             <p class="hero__then">
-              Then run <code>bazilion dashboard</code>. The script sets up a supported Node when
-              needed; npm needs Node <code>^26.12.1</code>.
+              Paste it into Terminal; it brings its own Node. On a Mac, Bazilion then opens in your
+              browser and stays in Applications. With npm (Node <code>^26.12.1</code>), then run
+              <code>bazilion dashboard</code>.
             </p>
           </div>
 
@@ -419,13 +420,14 @@ newest first. Older releases link to their GitHub release notes.</span>
           <div class="install__intro">
             <h2 class="section__title" id="install-title">Install</h2>
             <p>
-              One line, npm, or a source checkout. Bazilion needs Node.js
-              <code>^26.12.1</code>; the installer sets it up through Volta when no supported Node
-              is found. The dashboard opens locally.
+              One line, npm, or a source checkout. The line needs nothing installed first: it
+              brings its own Node.js and asks for no password. On a Mac it adds the Bazilion app
+              and opens it in your browser, signed in; Bazilion then keeps running from login on.
             </p>
             <p class="install__note">
-              Linux is the tested platform; macOS runs commands on the host and is untested.
-              Upgrading from 0.26 or later? Install the new version and start it again. A 0.25 or
+              macOS and Linux; Windows is not supported yet. Linux is the tested platform; macOS
+              runs commands on the host. Upgrading from 0.26 or later? Run the line again, or
+              install the new version with npm and start it again. A 0.25 or
               older home is refused: back it up, run
               <code>bazilion uninstall --yes</code> and start fresh, as the
               <a href="/docs/getting-started/#upgrade-to-0260">0.26.0 upgrade steps</a> describe.
@@ -434,22 +436,33 @@ newest first. Older releases link to their GitHub release notes.</span>
 
           <div class="install-tabs">
             <input class="install-tabs__input" type="radio" name="install-method" id="install-macos" checked />
+            <input class="install-tabs__input" type="radio" name="install-method" id="install-linux" />
             <input class="install-tabs__input" type="radio" name="install-method" id="install-npm" />
             <input class="install-tabs__input" type="radio" name="install-method" id="install-hackable" />
 
             <div class="install-tabs__nav">
-              <label class="install-tabs__tab" for="install-macos">Linux / macOS</label>
+              <label class="install-tabs__tab" for="install-macos">Mac</label>
+              <label class="install-tabs__tab" for="install-linux">Linux</label>
               <label class="install-tabs__tab" for="install-npm">npm</label>
               <label class="install-tabs__tab" for="install-hackable">From source</label>
             </div>
 
             <div class="install-tabs__panels">
               <div class="install-tabs__panel install-tabs__panel--macos">
-<pre class="code" tabindex="0"><code><span class="t-n"># Installs supported Node if needed, then bazilion.</span>
+<pre class="code" tabindex="0"><code><span class="t-n"># 1. Open Terminal: ⌘ Space, type Terminal, press Return.</span>
+<span class="t-n"># 2. Paste this line and press Return:</span>
 <span class="t-p">$</span> <span class="t-c">curl</span> <span class="t-f">-fsSL</span> https://bazilion.com/install.sh | bash
 
-<span class="t-n"># Then open the local web dashboard.</span>
-<span class="t-p">$</span> <span class="t-c">bazilion dashboard</span></code></pre>
+<span class="t-n"># 3. Bazilion opens in your browser, signed in.</span>
+<span class="t-n">#    Next time, open the Bazilion app from Applications.</span></code></pre>
+              </div>
+
+              <div class="install-tabs__panel install-tabs__panel--linux">
+<pre class="code" tabindex="0"><code><span class="t-n"># Installs its own Node.js, then bazilion.</span>
+<span class="t-p">$</span> <span class="t-c">curl</span> <span class="t-f">-fsSL</span> https://bazilion.com/install.sh | bash
+
+<span class="t-n"># Then open the local web dashboard, signed in.</span>
+<span class="t-p">$</span> <span class="t-c">~/.local/bin/bazilion dashboard</span></code></pre>
               </div>
 
               <div class="install-tabs__panel install-tabs__panel--npm">
