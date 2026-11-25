@@ -1,11 +1,43 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.60.0 bundles Pi 1.6.0.
+description: The latest four Bazilion releases, newest first; Bazilion 0.60.1 bundles Pi 1.6.0.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.60.1
+
+Published **2026-11-25**. An Agent tells you what a teammate brought back. The embedded Pi engine
+stays at 1.6.0. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.60.1) and the
+[mailbox](/docs/concepts/#mailbox).
+
+### Upgrade: install and start again
+
+The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.60 home opens as it is. Stop the
+daemon, then:
+
+```sh
+npm install -g bazilion@0.60.1
+bazilion dashboard
+```
+
+### Fixed
+
+- **A teammate's answer reaches you.** When an Agent handed out work and the teammate replied,
+  the Agent was told that no response was required, and it sometimes ended its turn without a
+  word. What the teammate found then stayed in a closed **Update from …** line in the
+  conversation, and the file it named never reached Files. Now the Agent still sends nothing
+  back to the teammate, but tells you in a few lines what came back and delivers the files the
+  reply names, so they show in Files. A reply that only acknowledges gets one line.
+
+### Limits
+
+- The model still decides what is worth telling you and which files you should see.
+- Replies that arrived before the upgrade are not replayed: ask the Agent for a result you
+  missed.
 
 ## Bazilion 0.60.0
 
@@ -126,31 +158,3 @@ Then reload the Bazilion tabs you had open, once.
   visited last had been. The router no longer restores scrolling in the workspace at all, so
   each conversation keeps only its own place and a reload opens every conversation at its end.
   Other pages, such as Setup and Manage, still return to where you were when you go Back.
-
-## Bazilion 0.58.1
-
-Published **2026-11-24**. A fix for keeping your place in a conversation. The embedded Pi engine
-stays at 1.6.0. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.58.1).
-
-### Upgrade: install and start again
-
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.58 home opens as it is. Stop the
-daemon, then:
-
-```sh
-npm install -g bazilion@0.58.1
-bazilion dashboard
-```
-
-Then reload the Bazilion tabs you had open.
-
-### Fixed
-
-- **Going to another Agent and back keeps where you were in the conversation.** The web UI's
-  router also restored scroll positions, by where a scrolling area stands on the page, and every
-  conversation stands in the same place. So after each switch it put the previous conversation's
-  position on the next one: an Agent opened where the previous one had been scrolled to, and
-  coming back opened where the other Agent had been left. Each conversation now keeps only its
-  own place in a new tab; a tab already open before the upgrade still needed
-  [0.58.2](#bazilion-0582).
