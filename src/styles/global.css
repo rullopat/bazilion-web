@@ -1025,6 +1025,7 @@ code {
 .install-tabs__tab:hover { color: var(--charcoal); }
 
 #install-macos:checked ~ .install-tabs__nav label[for="install-macos"],
+#install-linux:checked ~ .install-tabs__nav label[for="install-linux"],
 #install-npm:checked ~ .install-tabs__nav label[for="install-npm"],
 #install-hackable:checked ~ .install-tabs__nav label[for="install-hackable"] {
   background: var(--snow);
@@ -1032,6 +1033,7 @@ code {
   box-shadow: var(--shadow-sm);
 }
 #install-macos:focus-visible ~ .install-tabs__nav label[for="install-macos"],
+#install-linux:focus-visible ~ .install-tabs__nav label[for="install-linux"],
 #install-npm:focus-visible ~ .install-tabs__nav label[for="install-npm"],
 #install-hackable:focus-visible ~ .install-tabs__nav label[for="install-hackable"] {
   outline: 2px solid var(--sapphire-deep);
@@ -1040,6 +1042,7 @@ code {
 
 .install-tabs__panel { display: none; }
 #install-macos:checked ~ .install-tabs__panels .install-tabs__panel--macos,
+#install-linux:checked ~ .install-tabs__panels .install-tabs__panel--linux,
 #install-npm:checked ~ .install-tabs__panels .install-tabs__panel--npm,
 #install-hackable:checked ~ .install-tabs__panels .install-tabs__panel--hackable {
   display: block;

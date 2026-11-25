@@ -8,23 +8,51 @@ creates its home on first start; there is no separate `init` step.
 
 ## What you need
 
-- **Node.js `^26.12.1`** (26.12.1 or a later 26.x). The CLI refuses any other Node version before
-  it starts.
+- **Nothing to install first** with the one-line installer: it brings its own Node.js. With npm,
+  **Node.js `^26.12.1`** (26.12.1 or a later 26.x); the CLI refuses any other Node version.
 - **A model provider**: a ChatGPT account, an API key (OpenAI, Anthropic, Google and many others)
   or a local server (LM Studio, Ollama, llama.cpp).
-- Linux is the tested platform; macOS runs commands on the host and is untested.
+- **macOS or Linux.** Linux is the tested platform; macOS runs commands on the host. Windows is
+  not supported yet.
 
-## Install and open the dashboard
+## Install on a Mac
 
-The one-line installer installs Node 26.12.1 through Volta when no supported Node is found, then
-the `bazilion` package:
+1. Open **Terminal**: press ⌘ Space, type `Terminal` and press Return.
+2. Paste this line and press Return:
+
+   ```sh
+   curl -fsSL https://bazilion.com/install.sh | bash
+   ```
+
+3. Wait a minute or two. Bazilion opens in your browser, already signed in, on its first-run
+   screen.
+
+That is the only time you need Terminal. Bazilion keeps running in the background and starts by
+itself when you log in. Next time, open the **Bazilion** app from Applications, Launchpad or
+Spotlight. To update, run the same line again.
+
+![The Bazilion app's icon: the Bazilion cat on a cream rounded square.](/screenshots/bazilion-app-icon.webp)
+
+The installer asks for no password and changes no settings. It puts its own Node.js and
+Bazilion in `~/.local/share/bazilion`, a `bazilion` command in `~/.local/bin`, the app in
+Applications, and your data in `~/.bazilion`. macOS may say that `node` added an item that can
+run in the background: that is Bazilion, listed under **System Settings → General → Login
+Items**. To remove the app and stop it running, `~/.local/bin/bazilion app remove`;
+`bazilion uninstall` then deletes your data.
+
+## Install on Linux
+
+The same line installs its own Node.js and Bazilion, without an app; then start Bazilion, which
+opens your browser signed in:
 
 ```sh
 curl -fsSL https://bazilion.com/install.sh | bash
-bazilion dashboard
+~/.local/bin/bazilion dashboard
 ```
 
-With a supported Node already installed, use npm (or run each command as `npx bazilion …`):
+## Install with npm
+
+With a supported Node already installed (or run each command as `npx bazilion …`):
 
 ```sh
 npm install -g bazilion
@@ -32,14 +60,16 @@ bazilion dashboard
 ```
 
 `bazilion dashboard` starts the daemon on `127.0.0.1:4321` and the web UI on `127.0.0.1:4322`,
-and opens your browser (`--no-open` skips that). On first start the daemon creates `~/.bazilion`
-(or `$BAZILION_HOME`) with its database and a bootstrap token in `auth.json`. `bazilion serve`
-starts only the daemon.
+and opens your browser, signed in (`--no-open` skips that). On a Mac, `bazilion app install`
+gives this install the Bazilion app and runs it in the background. On first start the daemon
+creates `~/.bazilion` (or `$BAZILION_HOME`) with its database and a bootstrap token in
+`auth.json`. `bazilion serve` starts only the daemon.
 
 ## Sign in and connect a provider
 
-Sign in to the web UI with the bootstrap token; `bazilion token show-local` prints it. The CLI
-reads it by itself.
+The installer, the Bazilion app, `bazilion dashboard` and `bazilion open` open the browser
+signed in, with a link that works once. Another browser or device signs in with a token:
+`bazilion token show-local` prints the bootstrap token, and the CLI reads it by itself.
 
 Until one provider is connected, every page leads to the first-run screen (`/welcome`). It is
 one step: choose a provider, paste its API key (or sign in with ChatGPT, or use a model server
@@ -83,9 +113,10 @@ bazilion agent chat <agent-id> --message "say hi"
 There are no database migrations. A release opens a home only when its schema matches the one it
 ships; otherwise the daemon refuses to start and leaves the home untouched.
 
-**From 0.26, 0.27 or 0.50 to 0.60:** 0.60.1 uses the same schema, so the
-home opens as it is. Stop the daemon, run `npm install -g bazilion@0.60.1` and start Bazilion
-again. Coming from 0.26 or
+**From 0.26, 0.27 or 0.50 to 0.60:** 0.61.0 uses the same schema, so the
+home opens as it is. Stop the daemon, run `npm install -g bazilion@0.61.0` and start Bazilion
+again; or run the one-line installer, which installs its own copy beside the old one (remove
+that with `npm uninstall -g bazilion`). Coming from 0.26 or
 0.27, the web UI is laid out anew: see the [tour of the web interface](/docs/web-interface/).
 Coming from 0.50 or earlier, providers you had switched on keep working and read "Not tested yet"
 under **Setup → Models** until their first test.
@@ -105,7 +136,7 @@ current release:
    removes them too.
 
    ```sh
-   npm install -g bazilion@0.60.1
+   npm install -g bazilion@0.61.0
    bazilion uninstall --yes
    ```
 
