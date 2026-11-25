@@ -12,7 +12,7 @@ Bazilion is built on
 [Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent). Pi runs the
 turn loop and the provider calls, compacts history and writes the JSONL transcript under each
 Agent's `sessions/` directory. Bazilion supplies Agents and Teams, credentials, the tool list, the
-worker processes and the long-lived browser and MCP connections. Version 0.60.0 bundles Pi 1.6.0,
+worker processes and the long-lived browser and MCP connections. Version 0.60.1 bundles Pi 1.6.0,
 with Pi's own discovery of extensions, skills, prompt templates and context files switched off.
 
 ## Profiles (Agent templates)
@@ -115,10 +115,12 @@ instead.
 Agents message each other with `send_message`, `read_inbox` and `wait_for_reply`. Every turn
 tells an Agent its teammates' names and ids, and which of them [Team Policy](#team-policy) lets
 it message, so it can write to a teammate by name; you never pass ids around. An idle Agent
-with unread mail wakes up and gets one turn with those messages. Every message carries a hop
-count, and a chain is stopped after 8 hops (`BAZILION_AGENT_LOOP_MAX_HOPS`); stopped chains show
-in Attention and in `bazilion inbox loop-breaks <agent>`. From outside the loop:
-`bazilion send`, `bazilion inbox` and **Mailbox** in the Agent's side panel.
+with unread mail wakes up and gets one turn with those messages, in its current conversation.
+It must answer a new message. A reply is not answered back: the Agent tells you what it brought
+back and delivers the files it names, so they show in [Files](/docs/results/). Every message
+carries a hop count, and a chain is stopped after 8 hops (`BAZILION_AGENT_LOOP_MAX_HOPS`);
+stopped chains show in Attention and in `bazilion inbox loop-breaks <agent>`. From outside the
+loop: `bazilion send`, `bazilion inbox` and **Mailbox** in the Agent's side panel.
 
 ## Triggers
 
