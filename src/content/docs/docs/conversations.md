@@ -58,6 +58,9 @@ conversation menu and in `bazilion conversation list`; **Manage → Usage** adds
   are. It stays one conversation; the summarised messages stay on the page above a line with
   **Show the summary**, and search still finds them. A reply the full window would have cut short
   is redone after the summary.
+- The Agent can reread the summarised messages: when the summary leaves out a detail it needs,
+  such as an exact value, a link or your own words, it searches and reads them with `recall`. The
+  step shows as **Searched older messages for …** or **Reread older messages**.
 - `/compact` in the web chat, or `bazilion agent chat-compact <agent>`, does the same at once. It
   is a model call, like each automatic summary.
 - The bar above the conversation says how full the window is (`41K / 272K`, amber past 80%).
