@@ -1,11 +1,62 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.61.0 bundles Pi 1.6.0.
+description: The latest four Bazilion releases, newest first; Bazilion 0.62.0 bundles Pi 1.6.0.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.62.0
+
+Published **2026-11-26**. Bazilion stops assuming two numbers: how many tokens a model reads, and
+how long Agents may talk to each other. A local model's context window comes from its server or
+from you, and an exchange between Agents lasts as long as the work needs. **Setup → System** shows
+the version Bazilion runs. The embedded Pi engine stays at 1.6.0. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.62.0).
+
+### Install or upgrade
+
+```sh
+curl -fsSL https://bazilion.com/install.sh | bash
+```
+
+Or `npm install -g bazilion@0.62.0`. The database schema is unchanged, so a 0.26, 0.27 or 0.50 to
+0.61 home opens as it is. A local model on LM Studio or Ollama has its window once the server
+has loaded it: before a first turn on a model that is not loaded, set its window on
+**Setup → Models**, or load the model first.
+
+### Added
+
+- **Context windows from the server, or from you.** Each turn asks the local server the window
+  it loaded the model with: llama.cpp, LM Studio 0.4 or later and Ollama say it. When the server
+  does not, set it on the model's row on **Setup → Models**, or with
+  `bazilion provider window <provider:model> <tokens>`. A turn on a model whose window nothing says
+  is refused at once, saying where to set it ([context windows](/docs/configuration/#context-windows)).
+- **Exchanges between Agents without a length limit.** An exchange stops when its Agents go round
+  in circles (one sends another the same message again: it is not delivered, and the Agent tells
+  you where the work stands) or when you stop it. A woken Agent reads the exchange so far and ends
+  it when it no longer moves the first request forward. While one goes on, **Connections** shows
+  it under **Going on now**, with how many messages, what it used and **Stop**
+  ([mailbox](/docs/concepts/#mailbox)).
+- **The version in Setup → System**, first on the page; `bazilion doctor` prints it too.
+
+### Changed and fixed
+
+- A local model on a 32k llama.cpp server stopped answering a few seconds into a reply: every
+  local model was taken to read 32,768 tokens, and its conversation was summarized again on every
+  turn, so the prompt cache never held and the reply had almost no room. Summaries are now sized
+  to the window, and a reply may use what the window leaves.
+- The **Messages between Agents** setting (`BAZILION_AGENT_LOOP_MAX_HOPS`) is gone, and
+  `bazilion inbox loop-breaks` is now `bazilion inbox stopped`.
+
+### Limits
+
+- LM Studio and Ollama say nothing about a model before it is loaded.
+- A window too small for Bazilion's instructions and tools (about 9,500 tokens) is not refused up
+  front: replies are cut.
+- Two Agents that keep asking each other new, different things are not stopped by Bazilion: they
+  judge it, and you can stop it. A reworded repeat is not caught.
 
 ## Bazilion 0.61.0
 
@@ -120,58 +171,3 @@ Then reload the Bazilion tabs you had open.
 - It reads only the current conversation, and only its summarized part.
 - Words are matched as written (case ignored), not by meaning.
 - A message longer than about 20,000 characters is cut, even when read alone.
-
-## Bazilion 0.59.0
-
-Published **2026-11-25**. Long conversations keep working: near the end of the model's window,
-older messages are summarized instead of every reply being cut to a few words. The whole
-conversation stays on the page, and the conversation bar says how full the window is. With
-browser attach on, your own Chrome keeps its downloads and its settings. The embedded Pi engine
-stays at 1.6.0. See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.59.0)
-and [conversations](/docs/conversations/#compact-and-context).
-
-![Dev's conversation: earlier messages above a line that says they were summarized to make room, the summary open below it, and 1K / 33K beside the model in the bar.](/screenshots/compacted-conversation.webp)
-
-### Upgrade: install and start again
-
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.58 home opens as it is. Stop the
-daemon, then:
-
-```sh
-npm install -g bazilion@0.59.0
-bazilion dashboard
-```
-
-Then reload the Bazilion tabs you had open. A conversation that is already nearly full is
-summarized during its next turn.
-
-### Added
-
-- **Automatic compaction.** When a conversation comes within about 16,000 tokens of the model's
-  window, the turn summarizes older messages and keeps the last 20,000 tokens or so as they are,
-  and redoes a reply the full window cut short. While it runs, the conversation says so.
-- **The whole conversation stays.** Summarized messages stay on the page above a line that says
-  so; **Show the summary** shows what the Agent reads in their place. It stays one conversation,
-  with its files and follow-ups, and search still finds those messages. `/compact` works the same
-  way.
-- **How full the window is.** The conversation bar shows `41K / 272K`, amber past 80%;
-  `bazilion agent chat-context` prints the same figure.
-
-### Fixed
-
-- **A full conversation no longer cuts every reply to a few words.** Compaction used to run only
-  on `/compact`, so a conversation that filled the window left each reply 16 tokens.
-- **Hand-offs that did not go out say so**, as `not sent`, and a teammate addressed by name shows
-  with its name.
-- **Editing the last message after a summary keeps the summary.**
-- **Browser attach leaves your own Chrome alone.** Your downloads went nowhere while Agents
-  worked in your Chrome, and your tabs were forced to light mode. Now only a download started in
-  an Agent's tab is cancelled.
-
-### Limits
-
-- Each summary is one model request over the conversation, billed like a turn.
-- The size shown is what the model reported for its last reply; right after a summary it is
-  unknown until the next reply.
-- A local server's model is taken to have a 32,768-token window, so its conversations are
-  summarized from about 16,000 tokens.

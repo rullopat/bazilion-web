@@ -118,9 +118,10 @@ bar hides it.
   commands in Docker, Telegram topic names, **Save as a Team template**), and the Team folder
   behind **Show the folder**. A new Team's `USER.md`
   starts empty: write it, or let its Agents fill it in as they learn about you.
-- **Connections**: whether everyone can message everyone or only along connections, who may
-  message whom, and the latest
-  messages between its Agents ([Team Policy](/docs/concepts/#team-policy)).
+- **Connections**: the exchanges between its Agents going on now, each with how many messages,
+  what it used and **Stop**; whether everyone can message everyone or only along connections,
+  who may message whom, and the latest messages between its Agents
+  ([mailbox](/docs/concepts/#mailbox)).
 - **Changes**: the files the Team's workspace changed since a commit, with the Agent that wrote
   each, and one file's diff ([reviewing what changed](/docs/coding-review/)). Only for a Team whose
   folder is a Git repository.
@@ -282,16 +283,17 @@ are behind its **⋯** button, and one Bazilion would refuse is shown disabled, 
 - **Models** (`/config`): the chat models your Agents think with, the image model they draw
   with, and the providers behind them, each with what its last test found. **Add a provider**
   connects one in a single step that tests it before anything is saved; **Add models** searches
-  every connected provider ([providers and models](/docs/configuration/#providers-and-models)).
-- **Tools** (`/config/tools`): web search, the page reader, the browser, how commands run and
-  message chains, one card each. A card says what is in effect and is saved whole
+  every connected provider, and **Set** gives the context window of a model whose server does not
+  say it ([providers and models](/docs/configuration/#providers-and-models)).
+- **Tools** (`/config/tools`): web search, the page reader, the browser and how commands run,
+  one card each. A card says what is in effect and is saved whole
   ([setting the tools](/docs/tools/#setting-the-tools)).
 - **MCP** (`/config/mcp`): stdio and Streamable HTTP servers ([MCP](/docs/tools/#mcp-servers)).
 - **Telegram** (`/config/telegram`): Telegram credentials, preflight, pairing, the allowlist
   and Attention notifications ([Telegram](/docs/telegram/)).
 - **Access** (`/config/access`): device tokens and browser sessions.
-- **System** (`/config/system`): the installation's health, how Agents run commands, and
-  **Download backup**, which saves an archive of the home.
+- **System** (`/config/system`): the version Bazilion runs, first; the installation's health, how
+  Agents run commands, and **Download backup**, which saves an archive of the home.
 
 ![Setup, Models: six chat models with their size, price and who uses them, the image model, and three providers that each say when they were last tested.](/screenshots/models.webp)
 

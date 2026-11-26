@@ -61,7 +61,7 @@ bazilion attention acknowledge <key> --yes
 bazilion attention acknowledge-all --yes
 ```
 
-Acknowledging a failure or loop break records that you saw it; it repairs nothing. A failed
+Acknowledging a failure, or Agents that went round in circles, records that you saw it; it repairs nothing. A failed
 background turn opens again when another fails for the same cause. Questions,
 commands, proposals and paused queues leave the list when you act on them; a question or a command
 also leaves it when it stops waiting, or when the daemon restarts. Attention items can also go to Telegram; see

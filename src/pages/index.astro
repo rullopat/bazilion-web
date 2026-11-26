@@ -45,7 +45,7 @@ const features = [
   },
   {
     title: 'Agents that message each other',
-    body: 'An inbox inside the agent loop. An idle Agent with unread mail wakes up, and a hop limit stops message loops. A restricted Team decides who may message whom.',
+    body: 'An inbox inside the agent loop. An idle Agent with unread mail wakes up, works as long as the job needs, and stops when it goes round in circles. A restricted Team decides who may message whom.',
     tells: ['send_message', 'wait_for_reply'],
   },
   {
@@ -157,7 +157,7 @@ const features = [
                   <label class="term__tab" for="hero-curl">curl</label>
                   <label class="term__tab" for="hero-npm">npm</label>
                 </div>
-                <a class="hero__release" href="/docs/whats-new/" aria-label="Bazilion 0.61.0: what's new">v0.61.0</a>
+                <a class="hero__release" href="/docs/whats-new/" aria-label="Bazilion 0.62.0: what's new">v0.62.0</a>
               </div>
               <div class="cmd term__panel term__panel--curl">
                 <code class="cmd__text"><span class="cmd__prompt" aria-hidden="true">$ </span>curl -fsSL https://bazilion.com/install.sh | bash</code>
