@@ -12,7 +12,7 @@ Bazilion is built on
 [Pi's coding agent](https://www.npmjs.com/package/@earendil-works/pi-coding-agent). Pi runs the
 turn loop and the provider calls, compacts history and writes the JSONL transcript under each
 Agent's `sessions/` directory. Bazilion supplies Agents and Teams, credentials, the tool list, the
-worker processes and the long-lived browser and MCP connections. Version 0.61.0 bundles Pi 1.6.0,
+worker processes and the long-lived browser and MCP connections. Version 0.62.0 bundles Pi 1.6.0,
 with Pi's own discovery of extensions, skills, prompt templates and context files switched off.
 
 ## Profiles (Agent templates)
@@ -117,10 +117,17 @@ tells an Agent its teammates' names and ids, and which of them [Team Policy](#te
 it message, so it can write to a teammate by name; you never pass ids around. An idle Agent
 with unread mail wakes up and gets one turn with those messages, in its current conversation.
 It must answer a new message. A reply is not answered back: the Agent tells you what it brought
-back and delivers the files it names, so they show in [Files](/docs/results/). Every message
-carries a hop count, and a chain is stopped after 8 hops (`BAZILION_AGENT_LOOP_MAX_HOPS`);
-stopped chains show in Attention and in `bazilion inbox loop-breaks <agent>`. From outside the
-loop: `bazilion send`, `bazilion inbox` and **Mailbox** in the Agent's side panel.
+back and delivers the files it names, so they show in [Files](/docs/results/).
+
+Messages form exchanges: the first, sent in a turn someone started, opens one, and every message
+sent in a turn that messages woke continues it. An exchange has no length limit. A woken Agent
+reads the exchange so far and ends it when it no longer moves the first request forward. A
+message its sender already sent the same Agent in the exchange is not delivered: the Agents are
+going round in circles, so the sender tells you where the work stands, and Attention says so.
+While an exchange goes on, **Connections** shows it under **Going on now**, with **Stop**
+(`bazilion inbox exchanges <team>`, `bazilion inbox stop <exchange>`); stopped exchanges are in
+`bazilion inbox stopped <agent>`. From outside the loop: `bazilion send`, `bazilion inbox` and
+**Mailbox** in the Agent's side panel.
 
 ## Triggers
 

@@ -10,7 +10,7 @@ CLI and the web UI are clients of its HTTP API.
 
 Models are written `provider:model`, for example `anthropic:claude-fable-5-2`,
 `openai-codex:gpt-6.2-sol` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
-catalog; Bazilion 0.61.0 bundles Pi 1.6.0. An id that is not in the catalog is refused as
+catalog; Bazilion 0.62.0 bundles Pi 1.6.0. An id that is not in the catalog is refused as
 "Unknown model" unless the provider has an endpoint you configured, so a typo never sends a key to
 another vendor.
 
@@ -103,6 +103,17 @@ bazilion provider models anthropic       # in use, and offered
 bazilion provider models-set anthropic claude-fable-5-2,claude-haiku-5-5
 ```
 
+#### Context windows
+
+How many tokens a model reads in one request sizes when a conversation is summarised and how long
+each reply may be, so Bazilion never assumes it. Pi's catalog says it for the models it knows. A
+local server says the window it loaded the model with, asked at each turn: llama.cpp in its model
+listing, LM Studio (0.4 or later) and Ollama once the model is loaded. Otherwise set it by hand:
+the model's row on **Setup → Models** says **Context window not known**, and **Set** takes the
+number of tokens; or run `bazilion provider window ollama:qwen3 32768` (`--clear` forgets it). What
+a server says wins over it. A turn on a model whose window nothing says is refused at once, saying
+where to set it.
+
 Wherever a model is chosen (an Agent's **Agent** tab, **Add an Agent**, an Agent template) the
 menu shows these names by provider, with how much each model reads and whether it sees images.
 The CLI and the API keep the `provider:model` id.
@@ -143,7 +154,6 @@ The settings you are most likely to change:
 | `BAZILION_BASH_SANDBOX` | `off` | `docker` runs each `bash` command in a fresh network-less container ([coding](/docs/coding-environment/)) |
 | `BAZILION_BASH_SANDBOX_IMAGE` | `debian:bookworm-slim` | the local Docker image |
 | `BAZILION_BASH_APPROVAL` | `off` | `dangerous` pauses flagged shell commands for approval in chat |
-| `BAZILION_AGENT_LOOP_MAX_HOPS` | `8` | hop limit for Agent message chains |
 | `BAZILION_WEB_SEARCH_ROUTE` | `auto` | `brave`, `searxng`, `native` or `off` ([web research](/docs/tools/#web-research)) |
 | `BAZILION_IMAGE_MODEL` | `off` | the image model and account ([image generation](/docs/tools/#image-generation)) |
 | `BROWSER_ENABLED` | `true` | the managed browser ([browser](/docs/tools/#managed-browser)) |

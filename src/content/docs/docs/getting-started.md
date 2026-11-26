@@ -113,8 +113,8 @@ bazilion agent chat <agent-id> --message "say hi"
 There are no database migrations. A release opens a home only when its schema matches the one it
 ships; otherwise the daemon refuses to start and leaves the home untouched.
 
-**From 0.26, 0.27 or 0.50 to 0.60:** 0.61.0 uses the same schema, so the
-home opens as it is. Stop the daemon, run `npm install -g bazilion@0.61.0` and start Bazilion
+**From 0.26, 0.27 or 0.50 to 0.61:** 0.62.0 uses the same schema, so the
+home opens as it is. Stop the daemon, run `npm install -g bazilion@0.62.0` and start Bazilion
 again; or run the one-line installer, which installs its own copy beside the old one (remove
 that with `npm uninstall -g bazilion`). Coming from 0.26 or
 0.27, the web UI is laid out anew: see the [tour of the web interface](/docs/web-interface/).
@@ -136,7 +136,7 @@ current release:
    removes them too.
 
    ```sh
-   npm install -g bazilion@0.61.0
+   npm install -g bazilion@0.62.0
    bazilion uninstall --yes
    ```
 
