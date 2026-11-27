@@ -71,10 +71,13 @@ does not hold the turn; you answer when it suits you:
 - **Terminal:** `bazilion agent secret set <agent> <NAME>` reads it without echo (`--from-file` for
   a key file); `bazilion question answer <agent> <id> --decline` declines.
 
-The Agent's next turn is told **stored** or **declined**, never the value. Its commands get the
-secret as an environment variable of that name, on the host and in Docker; `web_fetch` puts it in
-a header written `{{secret:NAME}}` only for its hosts, and drops the Agent's headers on a redirect
-to another site. Tool output reaches the model with the exact value taken out. Each Agent's
+The Agent's next turn is told **stored** or **declined**, never the value. The hosts it asked for
+are on the card and in the Telegram message; the sheet and the CLI give only the hosts you type
+(`--hosts`). A reply to the Telegram message is never passed on, and is deleted when the bot may
+delete messages. Its commands get the secret as an environment variable of that name, on the
+host and in Docker; `web_fetch` puts it in a header written `{{secret:NAME}}` only for its hosts
+and over https, and drops the Agent's headers on a redirect to another site. Tool output, and a
+turn's own message such as a background job's end, reach the model with the value taken out. Each Agent's
 secrets are encrypted like Bazilion's own keys, listed (never shown) on its **Secrets** sheet with
 **Replace** and **Remove**, and deleted with the Agent:
 
