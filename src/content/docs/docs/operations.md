@@ -106,5 +106,5 @@ project belong in the Team's `USER.md`, not in a lesson.
 - [Agent questions](/docs/questions/): questions the Agent asks you during a turn.
 - [Saved results](/docs/results/): files the Agent delivered.
 
-Before an upgrade, read [Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260) and
+Before an upgrade, read [Upgrade](/docs/getting-started/#upgrade) and
 [Backup and recovery](/docs/backup-recovery/).

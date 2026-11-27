@@ -10,7 +10,7 @@ CLI and the web UI are clients of its HTTP API.
 
 Models are written `provider:model`, for example `anthropic:claude-fable-5-2`,
 `openai-codex:gpt-6.2-sol` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
-catalog; Bazilion 0.62.0 bundles Pi 1.6.0. An id that is not in the catalog is refused as
+catalog; Bazilion 0.63.0 bundles Pi 1.6.1. An id that is not in the catalog is refused as
 "Unknown model" unless the provider has an endpoint you configured, so a typo never sends a key to
 another vendor.
 
@@ -191,10 +191,12 @@ after 30 days without use or when its token is revoked.
 
 ## Schema
 
-The database has no migrations. A release opens a home only when its schema matches; otherwise
-the daemon refuses to start and leaves the home untouched. `bazilion.db` and `auth.json` are a
-pair: when only one of them exists, or they do not match, the daemon refuses too. See
-[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260) and
+Since 0.63.0 the daemon migrates the database when it starts: it copies it to `upgrades/` first,
+applies the release's migrations in one transaction and commits only when the result matches the
+schema the release ships. A home that a later release has already upgraded is refused untouched.
+`bazilion.db` and `auth.json` are a pair: when only one of them exists, or they do not match, the
+daemon refuses too. See [Upgrade](/docs/getting-started/#upgrade),
+[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260) for homes from 0.25 or earlier, and
 [Reset a home](/docs/getting-started/#reset-a-home).
 
 ## On-disk layout

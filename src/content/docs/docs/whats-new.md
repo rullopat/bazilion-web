@@ -1,11 +1,72 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.62.0 bundles Pi 1.6.0.
+description: The latest four Bazilion releases, newest first; Bazilion 0.63.0 bundles Pi 1.6.1.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.63.0
+
+Published **2026-11-27**. Upgrades keep your home: the daemon migrates the database when it starts,
+so a 0.62 home moves to 0.63 without a reset. Agents get better tools: commands that keep running,
+approvals that remember, search filters, a browser for checking web apps, questions in one card,
+recall across conversations and pictures from pictures. The embedded Pi engine moves to 1.6.1.
+See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.63.0).
+
+### Install or upgrade
+
+```sh
+curl -fsSL https://bazilion.com/install.sh | bash
+```
+
+Or `npm install -g bazilion@0.63.0`. The database schema changes (one new table, for remembered
+command rules). When it first starts, the daemon copies the database to `upgrades/` in the home,
+migrates it in one transaction and checks the result before it commits; a failed upgrade changes
+nothing. Homes from 0.26 on are upgraded. To go back to 0.62.0, put that copy back first
+([upgrading](/docs/getting-started/#upgrade)).
+
+### Added
+
+- **Commands that keep running.** An Agent can start a dev server, a watcher or a long build in
+  the background. The daemon keeps it past the turn, the Agent reads its output, types into it or
+  stops it, and is woken when it ends. **Background jobs** in the Agent's panel and
+  `bazilion job list|show|stop` show them, with Stop.
+- **Approvals that remember.** **Always for this Agent** keeps a rule for the start of a dangerous
+  command, such as `git push`: on the card, in a terminal chat or on Telegram. The rules are on
+  the Tools page and in `bazilion approval rules`. **A review model first** lets a model you
+  choose allow or refuse each dangerous command, or pass it to you.
+- **File tools in Docker mode**, and `apply_patch`, which changes several files in one step.
+- **Search filters**: how recent, which sites, a country and a language. **Tavily** and **Exa**
+  join the search backends. A page longer than what `web_fetch` returns is saved whole for the
+  Agent to read on.
+- **A browser for checking web apps**: page errors, failed requests, the page's text, waiting,
+  a phone, dark mode, a locale or a time zone, screenshots of one element and PDFs. Files a page
+  downloads in an Agent's own browser are saved with its uploads.
+- **Questions in one card.** An Agent can ask several questions at once, a question can take
+  several choices, and it can ask you to do something only you can do, such as signing in: your
+  **Done** or **Can't** starts its next turn ([questions](/docs/questions/)).
+- **Quiet messages** between Agents, which wait in the inbox without starting a turn.
+- **Recall across conversations**: the Agent searches and reads its own earlier conversations.
+- **Pictures from pictures**: `image_generate` starts from pictures in the workspace or uploads,
+  and can make one in the background, waking the Agent to show it.
+- **Files in MCP tool results** reach the Agent: text as text, others saved with its uploads.
+
+### Changed and fixed
+
+- **Dangerous commands** on the Commands card is a choice: off, ask you, or a review model first.
+- With Pi 1.6.1, more temporary provider failures are retried, ChatGPT GPT-6 turns use the
+  Agent's reasoning level instead of medium, very long conversations load again, and MCP servers
+  that send request ids back as strings no longer time out.
+
+### Limits
+
+- A remembered rule covers one simple command: no chains, pipes or redirections.
+- A job still running at a restart wakes its Agent when the daemon comes back; an unanswered
+  request to do something, and a picture still being made, are lost on a restart.
+- SearXNG takes no dates or country, and the model's own search no dates or exclusions.
+- A sign-in in the Agent's own headless browser needs a visible window or your running Chrome.
 
 ## Bazilion 0.62.0
 
@@ -134,40 +195,3 @@ bazilion dashboard
 - The model still decides what is worth telling you and which files you should see.
 - Replies that arrived before the upgrade are not replayed: ask the Agent for a result you
   missed.
-
-## Bazilion 0.60.0
-
-Published **2026-11-25**. The Agent can reread what a summary replaced. In a long conversation,
-older messages are summarized to make room; a new `recall` tool lets the Agent search them and
-read them in full when the summary leaves out a detail it needs. The embedded Pi engine stays at
-1.6.0. See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.60.0) and
-[conversations](/docs/conversations/#compact-and-context).
-
-![Dev's conversation: asked what was asked first, Dev searched the older messages for dark-mode; the step shows the summarized message it found, then Dev answers.](/screenshots/recall.webp)
-
-### Upgrade: install and start again
-
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.59 home opens as it is. Stop the
-daemon, then:
-
-```sh
-npm install -g bazilion@0.60.0
-bazilion dashboard
-```
-
-Then reload the Bazilion tabs you had open.
-
-### Added
-
-- **`recall`, in every turn.** It searches the summarized messages of the conversation for
-  every word given, tool output included, and reads them in full by number. The Agent uses it
-  when the summary leaves out an exact value, a link or your own words, instead of guessing or
-  asking you again. Stored credentials are never shown.
-- **The step says what it did:** **Searched older messages for …** or **Reread older
-  messages**. Open it to see what the Agent found.
-
-### Limits
-
-- It reads only the current conversation, and only its summarized part.
-- Words are matched as written (case ignored), not by meaning.
-- A message longer than about 20,000 characters is cut, even when read alone.
