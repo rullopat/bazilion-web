@@ -15,19 +15,20 @@ answer. Learning reviews run separately with a single `propose_lesson` tool.
 
 | Tools | What they do |
 | --- | --- |
-| `bash`, and with the sandbox off `read`, `edit`, `write`, `grep`, `find`, `ls` | Work in the Team directory ([coding](/docs/coding-environment/)) |
+| `bash`, `read`, `edit`, `write`, `grep`, `find`, `ls`, `apply_patch` | Work in the Team directory, on the host or in Docker ([coding](/docs/coding-environment/)) |
+| `job_list`, `job_output`, `job_input`, `job_stop` | Commands started with `bash` in the background: a dev server, a watcher, a long build ([background jobs](/docs/coding-environment/#background-jobs)) |
 | `memory_write`, `memory_read`, `memory_search`, `memory_list` | The Team's shared Markdown memory |
-| `recall` | Searches and rereads the conversation's messages a summary replaced ([compact and context](/docs/conversations/#compact-and-context)) |
+| `recall` | Searches and rereads the conversation's messages a summary replaced, and the Agent's other conversations ([compact and context](/docs/conversations/#compact-and-context)) |
 | `home_read`, `home_write`, `home_list`, `bootstrap_done` | The Agent's own documents |
 | `user_md_get`, `user_md_write` | The Team's USER.md |
-| `send_message`, `read_inbox`, `wait_for_reply` | The mailbox, within [Team Policy](/docs/concepts/#team-policy); `to` is a teammate's id or name |
+| `send_message`, `read_inbox`, `wait_for_reply` | The mailbox, within [Team Policy](/docs/concepts/#team-policy); `to` is a teammate's id or name. A quiet message (`wake: false`) waits without starting a turn; `wait_for_reply` can wait for several replies |
 | `agent_create` | Adds an Agent to its own Team when you ask, in a turn you started ([Agents](/docs/concepts/#agents)) |
 | `web_fetch`, `web_search` | [Web research](#web-research) |
 | `browser_*` | The [managed browser](#managed-browser) |
 | `mcp__<server>__<tool>` | Tools from [MCP servers](#mcp-servers) |
 | `image_generate` | [Image generation](#image-generation), when a model is set |
-| `deliver_file` | Saves a workspace file as a [result](/docs/results/) |
-| `ask_user` | Asks you a question, when someone is watching |
+| `deliver_file` | Saves a workspace file as a [result](/docs/results/), or shows a saved one again |
+| `ask_user` | Asks you questions, or to do something only you can do, when someone is watching ([questions](/docs/questions/)) |
 
 While a tool runs, its output streams into the chat; see
 [live tool output](/docs/coding-review/#live-tool-output).
@@ -57,19 +58,24 @@ value in effect and leaves it alone.
 ## Web research
 
 - `web_search` finds sources. The daemon runs the search, so backend URLs and keys never reach
-  the Agent.
+  the Agent. It takes filters: how recent (`freshness`, or `after` and `before`), `sites` and
+  `exclude_sites`, a `country` and a `language`. Each backend applies the ones it supports, and
+  the result names the rest. A search repeated in a turn is not sent again.
 - `web_fetch` reads a page as Markdown. It refuses private and loopback addresses, also after
   redirects, and caches pages for 15 minutes. With `FIRECRAWL_API_KEY` set, a page whose text comes
-  out nearly empty is fetched again through Firecrawl.
+  out nearly empty is fetched again through Firecrawl. A page longer than what it returns is saved
+  whole with the Agent's uploads, and the Agent is told where to read the rest.
 
 `BAZILION_WEB_SEARCH_ROUTE` picks the search backend: the **Web search** card under
 [**Setup → Tools**](#setting-the-tools), or `bazilion config set BAZILION_WEB_SEARCH_ROUTE <value>`:
 
 | Value | Backend |
 | --- | --- |
-| `auto` (default) | Brave when `BRAVE_API_KEY` is set, else SearXNG when `SEARXNG_URL` is set, else `native` |
+| `auto` (default) | The first that is set up: Brave (`BRAVE_API_KEY`), SearXNG (`SEARXNG_URL`), Tavily (`TAVILY_API_KEY`), Exa (`EXA_API_KEY`), then `native` |
 | `brave` | The Brave Search API with `BRAVE_API_KEY` |
 | `searxng` | Your SearXNG instance at `SEARXNG_URL`, with JSON output enabled |
+| `tavily` | The Tavily Search API with `TAVILY_API_KEY` |
+| `exa` | The Exa Search API with `EXA_API_KEY` |
 | `native` | The search built into the Agent's own model: OpenAI models with `OPENAI_API_KEY`, or ChatGPT models with the ChatGPT login. Other models get no `web_search` |
 | `off` | No `web_search` tool |
 
@@ -88,7 +94,11 @@ off. The Agent reads
 pages as accessibility snapshots with refs such as `[ref=e5]` and acts on them with
 `browser_navigate`, `browser_snapshot`, `browser_click`, `browser_type`, `browser_fill_form`,
 `browser_select`, `browser_hover`, `browser_press_key`, `browser_go_back`, `browser_tabs`,
-`browser_take_screenshot`, `browser_console` and `browser_network`.
+`browser_take_screenshot` (of the page or one element), `browser_console` and `browser_network`.
+To check a web app it also has `browser_errors` (console errors and uncaught page errors),
+`browser_text` (the readable text), `browser_wait` (until a text or an element shows),
+`browser_emulate` (a phone, dark mode, a locale, a time zone) and `browser_pdf`. A PDF, and a file
+a page downloads in the Agent's own browser, are saved with its uploads.
 
 The browser starts at the Agent's first browser action and stops after `BROWSER_IDLE_MS` of
 inactivity. Its settings are on the **Browser** card under
@@ -212,8 +222,10 @@ bazilion mcp rm <server-id>
 
 A server starts on first use and is shared by all turns. One that fails to start or to list its
 tools within 10 seconds is skipped for that turn; `bazilion mcp test` shows why. Calls time out
-after 60 seconds and are never retried. Only tools are supported: no MCP resources, prompts,
-sampling or automatic OAuth sign-in.
+after 60 seconds and are never retried. Files in a tool's result reach the Agent: pictures as
+pictures, text files as text, and others, such as a PDF, saved with its uploads under `mcp/`
+with their path given. Only tools are supported: no MCP resources, prompts, sampling or automatic
+OAuth sign-in.
 
 ## Image generation
 
@@ -229,6 +241,10 @@ off until you pick a model with `BAZILION_IMAGE_MODEL`: under **Images** on **Se
 | `openai:gpt-image-2` | `OPENAI_API_KEY`; billed per image by OpenAI |
 | `openrouter:google/gemini-3.1-flash-image` | `OPENROUTER_API_KEY`; billed by OpenRouter |
 | `openrouter:openai/gpt-image-2` | `OPENROUTER_API_KEY`; billed by OpenRouter |
+
+The Agent can give pictures to start from (`references`): files in the workspace or its uploads,
+for an edit, a variation or a style. With `background: true` the call answers at once and the
+Agent is woken to show the picture when it is ready.
 
 At most four calls per turn, each waiting up to 180 seconds. Nothing is retried, and a call that
 failed after the request was sent may still have been billed. Set spending limits in the

@@ -39,13 +39,14 @@ bazilion backup restore home.tar.gz --home /srv/bazilion --force
 
 Stop the daemon first: restore refuses while a daemon runs on the target home. It decrypts the
 archive if needed, refuses paths and links that leave the home (other than linked Teams) and
-special files, checks the database (integrity, the schema of this release, the `auth.json` pair)
-and only then swaps the restored home in. A non-empty target needs `--force`, which deletes its
-current data.
+special files, checks the database (integrity, a schema this release can open, the `auth.json`
+pair) and only then swaps the restored home in. A non-empty target needs `--force`, which deletes
+its current data.
 
-The schema check means a backup can be restored only by a release with the same schema: 0.27.0
-restores a 0.26 archive, but a 0.25 or older archive cannot be restored by 0.26; keep the
-release that wrote it if you need its data.
+Since 0.63.0 a backup from an earlier release, back to 0.26.0, is restored as it is, and the daemon
+upgrades it when it next starts ([upgrading](/docs/getting-started/#upgrade)). A backup from a
+later release is refused: restore it with that release. A 0.25 or older archive cannot be restored
+by 0.26 or later; keep the release that wrote it if you need its data.
 
 To try a restore without touching your home, restore into an empty directory and start it with
 the scheduler off, so no trigger or inbox turn runs:

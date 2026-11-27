@@ -108,18 +108,36 @@ bazilion agent chat <agent-id> --message "say hi"
 `agent chat` runs one turn and streams it; the web chat is the conversational client. Next, read
 [Core concepts](/docs/concepts/) and the [web interface tour](/docs/web-interface/).
 
+## Upgrade
+
+Run the one-line installer again, which updates Bazilion and, on a Mac, restarts it; or stop the
+daemon, run `npm install -g bazilion@0.63.0` and start Bazilion again. If you installed with npm
+first and then ran the installer, the installer's copy runs: remove the old one with
+`npm uninstall -g bazilion`.
+
+Since 0.63.0 an upgrade keeps your home. When it starts, the daemon brings the database up to the
+new release:
+
+1. It copies the database to `upgrades/bazilion-schema-<version>-<time>.db` in the home.
+2. It applies the release's migrations in one transaction and checks the result against the
+   schema the release ships; only then does it commit.
+
+When a migration fails, nothing it did is kept: the daemon refuses to start, says why and leaves
+the home as it was. Report the message; do not reset the home. Homes from 0.26.0 to 0.62.0 are
+recognised and upgraded from there. Copies in `upgrades/` stay until you delete them; backups
+leave them out.
+
+**Going back to an earlier release.** A release refuses a home that a later one has already
+upgraded. Releases up to 0.62.0 call it incompatible and suggest a reset: do not reset it. Stop
+the daemon, copy the file from `upgrades/` over `bazilion.db`, delete `bazilion.db-wal` and
+`bazilion.db-shm`, and install the earlier release. What changed in the database since the upgrade
+is lost; conversations, memory and Team workspaces are files and are not touched.
+
+Coming from 0.26 or 0.27, the web UI is laid out anew: see the
+[tour of the web interface](/docs/web-interface/). Coming from 0.50 or earlier, providers you had
+switched on keep working and read "Not tested yet" under **Setup → Models** until their first test.
+
 ## Upgrade to 0.26.0
-
-There are no database migrations. A release opens a home only when its schema matches the one it
-ships; otherwise the daemon refuses to start and leaves the home untouched.
-
-**From 0.26, 0.27 or 0.50 to 0.61:** 0.62.0 uses the same schema, so the
-home opens as it is. Stop the daemon, run `npm install -g bazilion@0.62.0` and start Bazilion
-again; or run the one-line installer, which installs its own copy beside the old one (remove
-that with `npm uninstall -g bazilion`). Coming from 0.26 or
-0.27, the web UI is laid out anew: see the [tour of the web interface](/docs/web-interface/).
-Coming from 0.50 or earlier, providers you had switched on keep working and read "Not tested yet"
-under **Setup → Models** until their first test.
 
 **From 0.25.0 or earlier:** 0.26.0 reset the schema, so the home is refused. To move to the
 current release:
@@ -136,7 +154,7 @@ current release:
    removes them too.
 
    ```sh
-   npm install -g bazilion@0.62.0
+   npm install -g bazilion@0.63.0
    bazilion uninstall --yes
    ```
 

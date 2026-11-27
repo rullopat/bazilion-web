@@ -143,12 +143,14 @@ Replies, errors, images and [delivered files](/docs/results/) are mirrored into 
 Agent's mirror mode (`bazilion agent edit <id> --mirror minimal|verbose`, or **Telegram** in the
 Agent's side panel) adds short tool-call lines in verbose mode, at most 30 a minute per Agent.
 
-When an Agent [asks a question](/docs/questions/), it appears in its topic with one button per
-choice and **Skip**. Tap a button, or reply to the question message with your own answer.
+When an Agent [asks questions](/docs/questions/), each appears in its topic with one button per
+choice and **Skip**; a question that allows several choices is answered by replying with their
+numbers. Tap a button, or reply to the question's message with your own answer. When it asks you
+to do something, the message has **Done** and **Can't**.
 
 A command that needs your [approval](/docs/coding-environment/#dangerous-command-approval) in a
-chat you are watching, on the web or in a terminal, and is still waiting after half a minute is posted in the topic too, with **Allow once**
-and **Deny**. Only the paired owner can use them. Once the command is decided, there, on the web
+chat you are watching, on the web or in a terminal, and is still waiting after half a minute is posted in the topic too, with **Allow once**,
+**Always** (keeps a rule for that command) and **Deny**. Only the paired owner can use them. Once the command is decided, there, on the web
 or by timing out, the message says how.
 
 ## Who can use the bot

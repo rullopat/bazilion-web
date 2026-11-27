@@ -40,7 +40,14 @@ which says whether Docker has the image before you save, or with
 | Setting | What runs |
 | --- | --- |
 | `off` (default) | `bash` and Pi's file tools (`read`, `edit`, `write`, `grep`, `find`, `ls`) run on the host as the daemon's user, in the Team directory. Nothing is isolated. |
-| `docker` | Only `bash`, each command in a fresh container. The file tools are hidden, because they take host paths. |
+| `docker` | `bash` runs each command in a fresh container. The file tools take the container's paths (`/workspace`, `/inputs`, `/skills`) and reach only what commands see. |
+
+`apply_patch` works in both: one patch that adds, changes, moves and deletes several files, every
+change worked out before any file is written.
+
+In Docker mode the file tools work on the host folders behind the mounts: `/workspace` (with
+`memory/` read-only), `/inputs` and `/skills` (both read-only). Any other path is refused, and a
+symbolic link in the workspace cannot lead outside the mounts or into a read-only one.
 
 In Docker mode every command is one `docker run --rm` with:
 
@@ -52,8 +59,9 @@ In Docker mode every command is one `docker run --rm` with:
 - nothing from the host environment;
 - the local image only: Bazilion never pulls.
 
-Cancelling a turn removes its running container. If Docker or the image is missing, the command
-fails and the Agent sees the error; nothing falls back to the host. `bazilion doctor` and
+Cancelling a turn removes its running container. Background jobs have containers of their own,
+which outlive the turn (below). If Docker or the image is missing, the command fails and the
+Agent sees the error; nothing falls back to the host. `bazilion doctor` and
 **Setup → System** (`/config/system`) show whether the configured image is available.
 
 ## The image
@@ -99,9 +107,33 @@ environment, and a command runs as the daemon's user: it can read the Bazilion h
 `auth.json` and the database whose secrets that token decrypts. In Docker only the Team directory,
 the uploads and the attached skills are mounted and no host environment is passed.
 
+## Background jobs
+
+`bash` with `background: true` starts the command as a job and answers at once with its id and
+what it printed so far: a dev server, a watcher, a long build. The daemon runs it, on the host as
+its own process group or in Docker as a container of the turn's image and mounts (network still
+off), and keeps it past the turn. The Agent reads new output with `job_output`, types into it or
+interrupts it as Ctrl-C does with `job_input`, stops it with `job_stop` and lists its jobs with
+`job_list`.
+
+A job runs until it ends or is stopped, by the Agent or by you; no clock ends it. When one ends and
+the Agent has not seen it end, the end wakes the Agent: a turn of its own in the conversation that
+started the job, with the exit code and the end of the output. A job is approved like any other
+command before it starts. **Background jobs** in the Agent's side panel lists them with their
+output and **Stop**; from a terminal:
+
+```sh
+bazilion job list <agent>
+bazilion job show <job-id>      # the end of its output
+bazilion job stop <job-id>
+```
+
+A daemon stop stops every job; the next start tells their Agents.
+
 ## Dangerous-command approval
 
-With `BAZILION_BASH_APPROVAL=dangerous`, commands a classifier flags pause for a decision:
+`BAZILION_BASH_APPROVAL` (**Dangerous commands** on the Commands card): `off` runs them,
+`dangerous` asks you, and `review` asks a review model first. Commands a classifier flags pause for a decision:
 credential paths, recursive deletes or permission changes outside the Team, piping a download into
 a shell, uploads to remote hosts, `sudo` and environment dumps. The web chat shows **Allow once**
 and **Deny**; `bazilion agent chat` in a terminal asks on stdin. A command still waiting after
@@ -110,6 +142,24 @@ with **Allow once** and **Deny**; only the paired owner can use them, and the me
 outcome once the command is decided anywhere. An unanswered request is denied after five minutes.
 Turns with nobody to ask (Telegram, schedules, inbox wakes, queued follow-ups, piped CLI) deny
 flagged commands.
+
+**Always for this Agent** (on the card; `a` in a terminal chat; **Always** on Telegram) allows the
+command and keeps a rule: from then on, that Agent's commands that start with the same words run
+without asking, in every kind of turn. The card offers the program and its subcommand (`git push`)
+and lets you change it. A rule applies only to a single simple command: one joined to another with
+`;`, `&&` or `|`, or with a redirect or a substitution, still asks. The rules are listed under
+**Commands allowed without asking** on the Tools page, with **Remove**, and in the CLI:
+
+```sh
+bazilion approval rules [--agent <id>]
+bazilion approval rm <rule-id>
+```
+
+With `review`, a flagged command first goes to the **Command review** model (Setup → Models, or
+`BAZILION_COMMAND_REVIEW_MODEL` as `provider:model`), which allows it, refuses it or passes it to
+you; the card shows what it said. What it passes on asks you as with `dangerous`, and is denied
+when nobody can answer. A model that cannot be reached, or whose answer cannot be read, passes the
+command on. Without a review model chosen, `review` asks you.
 
 The classifier is a tripwire, not a sandbox: a determined command can get around it.
 
@@ -122,5 +172,7 @@ work with `send_message` and wait for the answer with `wait_for_reply`, within t
 ## Limits
 
 - Bind mounts use `bind-recursive=disabled`, which needs Docker Engine 25 or later.
-- A process a command detaches from the worker's process group is not tracked.
+- A process a command detaches from the worker's process group is not tracked; start it as a
+  background job instead.
+- A server in a Docker job has no network, so the Agent's browser cannot reach it.
 - The Docker sandbox is used on Linux; elsewhere it is untested.
