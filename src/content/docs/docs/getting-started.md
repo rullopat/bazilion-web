@@ -111,7 +111,7 @@ bazilion agent chat <agent-id> --message "say hi"
 ## Upgrade
 
 Run the one-line installer again, which updates Bazilion and, on a Mac, restarts it; or stop the
-daemon, run `npm install -g bazilion@0.63.0` and start Bazilion again. If you installed with npm
+daemon, run `npm install -g bazilion@0.64.0` and start Bazilion again. If you installed with npm
 first and then ran the installer, the installer's copy runs: remove the old one with
 `npm uninstall -g bazilion`.
 

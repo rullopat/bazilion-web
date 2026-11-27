@@ -32,14 +32,22 @@ conversation before asking again.
 
 ```sh
 bazilion trigger add <agent> --every 300 --message 'Summarise project status' --disabled
+bazilion trigger add <agent> --at '2026-12-04 09:00' --message 'Renew the domain'
 bazilion trigger list <agent>
+bazilion trigger edit <trigger-id> --cron '0 9 * * 1-5' --message 'Weekday check'
 bazilion trigger enable <trigger-id>
 bazilion trigger history <trigger-id>
 bazilion trigger disable <trigger-id>
 ```
 
 On the web, open **Schedules** in the Agent's side panel; it and `bazilion trigger list` say when
-each schedule runs next. Each occurrence runs at most once and
+each schedule runs next. A schedule runs every few minutes, at times a cron expression gives, or
+**once**, and then shows as done. **Change…** edits its timing or message.
+
+An Agent sets schedules itself when you ask ("remind me on Friday at nine", "check the deploy
+again in two hours"): they run in the conversation they were set in, are marked with the Agent's
+name, and you change or remove them like your own. The Agent removes only the ones it set. Times
+are this computer's clock. Each occurrence runs at most once and
 is never retried: a busy Agent leaves it pending, then it ends succeeded, failed or cancelled. The
 history shows each run with its real error, and a failure also shows in Attention. Disabling a
 trigger stops future runs, not a turn that is already running.
