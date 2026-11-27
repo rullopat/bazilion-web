@@ -4,8 +4,8 @@
 
 This is a small static Astro marketing site. The main page lives in `src/pages/index.astro`; shared styling lives in `src/styles/global.css`. Static assets belong in `public/`. Build output goes to `dist/` and should not be edited by hand.
 
-Release notes live on one permanent `/docs/whats-new/` page, with at most the latest four release
-lines, newest first. Update it in place; do not add version-specific content pages or sidebar entries.
+Release notes live on one permanent `/docs/whats-new/` page, with at most the latest ten releases,
+newest first. Update it in place; do not add version-specific content pages or sidebar entries.
 Retired URLs redirect to retained sections or GitHub Releases. See `skills/release-notes/SKILL.md`.
 
 Agent skills live in `skills/<skill-name>/SKILL.md`; `skills/index.json` is the searchable catalog. Claude Code discovers them through `.claude/skills/`. Operational guides live in `src/content/docs/docs/`; `scripts/check-docs.mjs` validates the generated documentation.

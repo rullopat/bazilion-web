@@ -2,6 +2,8 @@
 // never guessed by sorting semver labels (including backfilled final versions).
 const versionPattern = String.raw`\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?`;
 const releaseHeading = new RegExp(`^Bazilion (${versionPattern})$`);
+/** The page keeps the latest ten releases (the owner's choice, 2026-11-28). */
+export const MAX_RELEASES = 10;
 
 export function releaseNotesPolicy({ announcementSlug, announcement, config, pages }) {
   const failures = [];
@@ -14,7 +16,7 @@ export function releaseNotesPolicy({ announcementSlug, announcement, config, pag
   const body = announcement.replace(/^(`{3,}|~{3,})[^\n]*\n[\s\S]*?^\1\s*$/gm, '');
   const headings = [...body.matchAll(/^## (.+)$/gm)].map((match) => match[1]);
   const versions = headings.map((heading) => heading.match(releaseHeading)?.[1]);
-  if (headings.length < 1 || headings.length > 4) failures.push('Keep one to four release sections.');
+  if (headings.length < 1 || headings.length > MAX_RELEASES) failures.push(`Keep one to ${MAX_RELEASES} release sections.`);
   if (versions.some((version) => !version)) failures.push('Every level-two heading must be Bazilion X.Y.Z.');
   if (new Set(versions).size !== versions.length) failures.push('Release versions must not be duplicated.');
 

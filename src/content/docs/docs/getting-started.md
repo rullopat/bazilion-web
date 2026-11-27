@@ -111,9 +111,13 @@ bazilion agent chat <agent-id> --message "say hi"
 ## Upgrade
 
 Run the one-line installer again, which updates Bazilion and, on a Mac, restarts it; or stop the
-daemon, run `npm install -g bazilion@0.65.0` and start Bazilion again. If you installed with npm
+daemon, run `npm install -g bazilion@0.65.1` and start Bazilion again. If you installed with npm
 first and then ran the installer, the installer's copy runs: remove the old one with
 `npm uninstall -g bazilion`.
+
+A Bazilion tab left open across an upgrade shows **Bazilion was updated** once Bazilion is back:
+choose **Reload** to use the new version. What you typed and had not sent is kept. Tabs opened
+before 0.65.1 cannot say so: reload them once with the browser.
 
 Since 0.63.0 an upgrade keeps your home. When it starts, the daemon brings the database up to the
 new release:
