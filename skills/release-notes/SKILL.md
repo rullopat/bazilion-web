@@ -1,6 +1,6 @@
 ---
 name: release-notes
-description: Use when updating the Bazilion website for a published release — maintaining one rolling "What's new" page with at most the latest four releases, moving current-release references, and syncing navigation and LLM-readable docs.
+description: Use when updating the Bazilion website for a published release — maintaining one rolling "What's new" page with at most the latest ten releases, moving current-release references, and syncing navigation and LLM-readable docs.
 metadata:
   short-description: Maintain rolling Bazilion release notes and site docs
   tags:
@@ -8,7 +8,7 @@ metadata:
     - release
     - documentation
     - starlight
-  version: 2.1.0
+  version: 2.2.0
 ---
 
 # Release notes and site docs
@@ -16,7 +16,7 @@ metadata:
 ## Use This Skill For
 
 - Updating the single `src/content/docs/docs/whats-new.md` release-notes page
-- Keeping only the latest four published releases on that page, newest first
+- Keeping only the latest ten published releases on that page, newest first
 - Consolidating existing version-specific what's-new pages into that permanent page
 - Moving the site's **current release** references and updating accurate upgrade guidance
 - Syncing guide navigation and LLM-readable documentation
@@ -25,14 +25,16 @@ metadata:
 This skill edits copy and documentation. For layout, styling, or marketing-page visual work see
 `astro-static-site`. Read `AGENTS.md` before editing.
 
-## One What's new page, at most four releases
+## One What's new page, at most ten releases
 
 The canonical page is **`/docs/whats-new/`**, backed by
 `src/content/docs/docs/whats-new.md`, with frontmatter `title: What's new`.
 There must be exactly one What's new page and one sidebar entry labelled **What's new**.
 Do not create a new page, slug, or sidebar entry for each release.
 
-The page contains **at most four release sections**, ordered newest first:
+The page contains **at most ten release sections**, ordered newest first (the owner asked for
+ten on 2026-11-28; `MAX_RELEASES` in `scripts/release-notes-policy.mjs`). Patch releases count as
+releases and get sections of their own:
 
 ```md
 ---
@@ -63,11 +65,11 @@ For each release:
 1. Confirm actual publication and release facts; do not present a candidate as released.
 2. Prepend one section, or update the existing section if that version is already present.
    Never duplicate a release.
-3. Retain the three immediately preceding published releases, or fewer if fewer exist. Determine
+3. Retain the nine immediately preceding published releases, or fewer if fewer exist. Determine
    release order from confirmed release-line history, not from whichever old page filenames happen
    to exist. Group superseded prerelease checkpoints under their published final release; a
    backfilled final version stays with its original release line rather than displacing a later one.
-4. When a fifth section would appear, remove the oldest section in full. Do not create another
+4. When an eleventh section would appear, remove the oldest section in full. Do not create another
    What's new page or grow a website archive to preserve it; Git and GitHub Releases retain history.
 5. Repair inbound links to removed sections. Link to the corresponding GitHub release for older
    release details, or to the current upgrade guide for upgrade instructions.
@@ -80,13 +82,13 @@ A reader must be able to distinguish current guidance from historical release ob
 
 When adopting this policy in a site that still has `whats-new-0-XY.md` pages:
 
-1. Create `whats-new.md` with the latest four published releases at most. Check source release
+1. Create `whats-new.md` with the latest ten published releases at most. Check source release
    facts for any intervening release that lacks a standalone page.
 2. Replace the version-specific sidebar entries with the single **What's new** entry, and point
    the homepage announcement at `/docs/whats-new/`.
 3. Delete the old version-specific What's new source pages. In `astro.config.mjs`, redirect both
    slash and non-slash variants of each retired URL to its retained section on the canonical
-   page, or its GitHub release if that release is outside the four-release window. With Astro's
+   page, or its GitHub release if that release is outside the ten-release window. With Astro's
    `trailingSlash: 'ignore'`, one redirect key covers both URL forms; do not add duplicate static
    routes. Test both forms. Keep retired links useful without retaining duplicate content pages.
 4. Repoint internal links, including docs index and upgrade references. Keep any separately needed
@@ -117,7 +119,7 @@ For the rolling page, the checker must:
    `title: What's new`.
 2. Derive the current Bazilion version from the first `## Bazilion X.Y.Z` heading, accepting stable
    and prerelease versions. Derive the current Pi version from the page description.
-3. Require one to four distinct release headings, newest first, and reject leftover standalone
+3. Require one to ten distinct release headings, newest first, and reject leftover standalone
    version-specific What's new source pages or sidebar entries. Validate release order against
    confirmed publication facts during review, not a guessed numerical sort of prerelease labels.
 4. Require the single sidebar entry and matching current-release references in the files below.
@@ -181,7 +183,7 @@ heading anchors and verify them in the built output.
    released CLI/API; do not invent behavior, platform parity or build-source provenance.
 2. Create a focused website branch, such as `release/X.Y.Z-website`.
 3. Consolidate legacy pages if needed; otherwise update `whats-new.md` in place. Keep one page,
-   one sidebar entry, no duplicate versions, and at most the newest four published releases.
+   one sidebar entry, no duplicate versions, and at most the newest ten published releases.
 4. Update current-release references, upgrade guidance, inbound links, guide navigation and
    LLM-doc checks. Keep the homepage free of Pi versions.
 5. Run `pnpm check:docs` and fix every failure without bypassing policy checks.
@@ -202,7 +204,7 @@ Each release section links to its own umbrella GitHub release:
 ## Checklist
 
 - [ ] Exactly one canonical What's new content page, `/docs/whats-new/`, and one sidebar entry
-- [ ] At most four distinct published releases, newest first; oldest removed when adding a fifth
+- [ ] At most ten distinct published releases, newest first; oldest removed when adding an eleventh
 - [ ] No version-specific What's new pages created; legacy pages consolidated and URLs redirected
 - [ ] Current version derived from the first release heading; its Pi version recorded in detailed docs
 - [ ] Homepage points to the permanent slug, shows the current badge, and never states a Pi version

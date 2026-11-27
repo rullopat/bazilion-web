@@ -12,7 +12,7 @@ own team of AI agents on your machine.
 | --- | --- | --- |
 | `src/pages/index.astro`, `src/styles/global.css` | The homepage: one Astro page and its styles | [`/`](https://bazilion.com) |
 | `src/content/docs/docs/` | The guides, built with [Starlight](https://starlight.astro.build); styles in `src/styles/docs.css` | [`/docs/`](https://bazilion.com/docs/) |
-| `src/content/docs/docs/whats-new.md` | One rolling page with the latest four releases, newest first | [`/docs/whats-new/`](https://bazilion.com/docs/whats-new/) |
+| `src/content/docs/docs/whats-new.md` | One rolling page with the latest ten releases, newest first | [`/docs/whats-new/`](https://bazilion.com/docs/whats-new/) |
 | `public/install.sh` | The installer for Linux and macOS | [`/install.sh`](https://bazilion.com/install.sh) |
 | `public/screenshots/` | Pictures of the web UI used by the homepage and the guides | `/screenshots/` |
 | generated | The guides as plain text for LLMs, by `starlight-llms-txt` | [`/llms.txt`](https://bazilion.com/llms.txt) |

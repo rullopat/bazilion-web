@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { releaseNotesPolicy } from './release-notes-policy.mjs';
+import { MAX_RELEASES, releaseNotesPolicy } from './release-notes-policy.mjs';
 
 const page = (versions) => `---\ntitle: What's new\ndescription: Recent releases with Pi 1.4.0.\n---\n${versions.map((version) => `## Bazilion ${version}\n\nRelease facts.\n`).join('\n')}`;
 const fixture = (versions = ['0.24.0', '0.23.0', '0.22.0', '0.21.0']) => ({
@@ -11,10 +11,11 @@ const fixture = (versions = ['0.24.0', '0.23.0', '0.22.0', '0.21.0']) => ({
 });
 const rejected = (input, message) => assert.ok(releaseNotesPolicy(input).failures.some((failure) => failure.includes(message)));
 
-test('one permanent page accepts one through four releases', () => {
-  for (let count = 1; count <= 4; count++) {
-    const input = fixture(['0.24.0', '0.23.0', '0.22.0', '0.21.0'].slice(0, count));
-    assert.deepEqual(releaseNotesPolicy(input).failures, []);
+const releases = (count) => Array.from({ length: count }, (_, index) => `0.${30 - index}.0`);
+test('one permanent page accepts one through ten releases', () => {
+  assert.equal(MAX_RELEASES, 10);
+  for (let count = 1; count <= MAX_RELEASES; count++) {
+    assert.deepEqual(releaseNotesPolicy(fixture(releases(count))).failures, []);
   }
 });
 test('current version comes from the first heading, independent of Pi', () => {
@@ -23,8 +24,8 @@ test('current version comes from the first heading, independent of Pi', () => {
   assert.equal(result.version, '9.8.7-rc.1');
   assert.equal(result.pi, '1.4.0');
 });
-test('empty and fifth release sections are refused', () => {
-  for (const versions of [[], ['5.0.0', '4.0.0', '3.0.0', '2.0.0', '1.0.0']]) rejected(fixture(versions), 'one to four');
+test('empty and eleventh release sections are refused', () => {
+  for (const versions of [[], releases(MAX_RELEASES + 1)]) rejected(fixture(versions), 'one to 10');
 });
 test('duplicate versions are refused', () => rejected(fixture(['0.24.0', '0.24.0']), 'duplicated'));
 test('non-release level-two headings are refused', () => {
