@@ -1,15 +1,16 @@
 ---
 title: Tools & integrations
-description: The tools every Agent turn gets — files and shell, memory, the mailbox, web search and fetch, the managed browser, MCP servers, image generation and file delivery.
+description: The tools every Agent turn gets — files and shell, memory, the mailbox, schedules, secrets, helpers, web search and fetch, pictures and PDFs, the managed browser, MCP servers, image generation and file delivery.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
 
 Every turn gets the same tools, whatever started it: web or CLI chat, a follow-up, Telegram, a
-scheduled trigger or an inbox wake. Three depend on you having started the turn: `agent_create`,
-which a schedule or a teammate's message never gets, `ask_user`
+scheduled trigger or an inbox wake. Some depend on you having started the turn: `agent_create`,
+which a schedule or a teammate's message never gets, `ask_user` and `secret_request`
 ([questions](/docs/questions/)) and dangerous-command approval, which is denied when nobody can
-answer. Learning reviews run separately with a single `propose_lesson` tool.
+answer. A [helper](#helpers) gets the Agent's tools except the helper tools and the ones that ask
+you something. Learning reviews run separately with a single `propose_lesson` tool.
 
 ## Built-in tools
 
@@ -23,7 +24,11 @@ answer. Learning reviews run separately with a single `propose_lesson` tool.
 | `user_md_get`, `user_md_write` | The Team's USER.md |
 | `send_message`, `read_inbox`, `wait_for_reply` | The mailbox, within [Team Policy](/docs/concepts/#team-policy); `to` is a teammate's id or name. A quiet message (`wake: false`) waits without starting a turn; `wait_for_reply` can wait for several replies |
 | `agent_create` | Adds an Agent to its own Team when you ask, in a turn you started ([Agents](/docs/concepts/#agents)) |
-| `web_fetch`, `web_search` | [Web research](#web-research) |
+| `schedule_add`, `schedule_list`, `schedule_remove` | Schedules the Agent sets itself: once, every few minutes or a cron expression, in the conversation it was set in; it removes only its own ([schedules](/docs/operations/#schedules)) |
+| `secret_request`, `secret_list` | Asks you for a secret by name, in a masked field, and lists its secrets' names; the values never reach it ([secrets](/docs/questions/#secrets-an-agent-asks-for)) |
+| `helper_start`, `helper_wait`, `helper_stop` | [Helpers](#helpers): runs of the same Agent on separate tasks at once |
+| `view_image`, `pdf_read` | Looks at pictures (files, the web, saved results) and reads PDFs page by page ([files in and out](#files-in-and-out)) |
+| `web_fetch`, `web_search` | [Web research](#web-research); `web_fetch` takes request headers, and fills in a secret written `{{secret:NAME}}` only for that secret's hosts |
 | `browser_*` | The [managed browser](#managed-browser) |
 | `mcp__<server>__<tool>` | Tools from [MCP servers](#mcp-servers) |
 | `image_generate` | [Image generation](#image-generation), when a model is set |
@@ -227,6 +232,27 @@ pictures, text files as text, and others, such as a PDF, saved with its uploads 
 with their path given. Only tools are supported: no MCP resources, prompts, sampling or automatic
 OAuth sign-in.
 
+## Helpers
+
+An Agent can split its work: `helper_start` runs another turn of the same Agent on one
+self-contained task, in a conversation of its own, beside its own turn, and several can run at
+once. `helper_wait` waits for their answers and shows what each is doing while it waits;
+`helper_stop` ends one. A helper's pages and output stay out of the Agent's context, which gets
+only the answer. A helper cannot start helpers of its own or ask you anything, and dangerous
+commands are refused in it, as in any turn nobody watches. An answer that comes after the
+Agent's turn ended starts a turn of its own; stopping the Agent's turn stops its helpers.
+
+The Agent's **Helpers** sheet lists them with **Stop** and **Open** (its conversation), and the
+side panel counts the ones working. From a terminal:
+
+```sh
+bazilion agent helpers <agent>                 # running first, then the ones that ended
+bazilion agent helpers <agent> --stop all      # or --stop <helper-id>
+```
+
+Helpers live in the daemon's memory: a restart stops them, and their conversations stay. Usage
+counts each helper's conversation under its Agent. They share the Agent's browser.
+
 ## Image generation
 
 `image_generate` creates an image from a prompt and saves it as a [result](/docs/results/). It is
@@ -254,7 +280,16 @@ provider's own account.
 
 **In.** Attach files in the web composer (button, paste or drag and drop), in Telegram, or from
 the CLI. Images reach the model as images; any other file is saved to the Agent's `uploads/`
-directory and the Agent gets its path. Audio and video are stored as files, not model input.
+directory and the Agent gets its path, and reads a PDF with `pdf_read`, page by page (a scanned page has no
+text, and there is no OCR). Video is stored as a file. Audio, such as a Telegram voice note, is
+stored too; with a model chosen under **Transcription** on **Setup → Models**
+(`BAZILION_TRANSCRIPTION_MODEL`: GPT Transcribe through an OpenAI API key, billed per minute of
+audio) it is also turned into words before the turn, which the Agent gets with the file's path.
+Transcription is off by default.
+
+`view_image` shows the model several pictures at once: files in the workspace or uploads,
+pictures on the web and the Agent's saved results, PNG, JPEG, GIF or WebP. A model that takes no
+images is told so instead.
 
 ```sh
 bazilion agent chat <agent> --message "Describe this screenshot" --image ./screenshot.png

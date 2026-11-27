@@ -10,7 +10,7 @@ CLI and the web UI are clients of its HTTP API.
 
 Models are written `provider:model`, for example `anthropic:claude-fable-5-2`,
 `openai-codex:gpt-6.2-sol` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
-catalog; Bazilion 0.63.0 bundles Pi 1.6.1. An id that is not in the catalog is refused as
+catalog; Bazilion 0.64.0 bundles Pi 1.6.1. An id that is not in the catalog is refused as
 "Unknown model" unless the provider has an endpoint you configured, so a typo never sends a key to
 another vendor.
 
@@ -156,6 +156,7 @@ The settings you are most likely to change:
 | `BAZILION_BASH_APPROVAL` | `off` | `dangerous` pauses flagged shell commands for approval in chat |
 | `BAZILION_WEB_SEARCH_ROUTE` | `auto` | `brave`, `searxng`, `native` or `off` ([web research](/docs/tools/#web-research)) |
 | `BAZILION_IMAGE_MODEL` | `off` | the image model and account ([image generation](/docs/tools/#image-generation)) |
+| `BAZILION_TRANSCRIPTION_MODEL` | `off` | what voice notes and audio you send are transcribed with (`openai:gpt-transcribe`; [files in and out](/docs/tools/#files-in-and-out)) |
 | `BROWSER_ENABLED` | `true` | the managed browser ([browser](/docs/tools/#managed-browser)) |
 | `BROWSER_ATTACH` | `false` | `true` makes Agents work in [your running browser](/docs/tools/#your-running-browser) |
 

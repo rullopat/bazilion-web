@@ -134,10 +134,13 @@ bazilion telegram unbind <agent>
 </TabItem>
 </Tabs>
 
-In an Agent topic, plain messages, photos and files go to the Agent's
+In an Agent topic, plain messages, photos, voice notes and files go to the Agent's
 [follow-up queue](/docs/follow-up-queue/) and run one turn at a time; a 👀 reaction shows the
 message was received. Photos reach the model as images; other files (up to 20 MB) are saved for
-the Agent to read.
+the Agent to read. A voice note is turned into words before the turn when a model is chosen under
+**Transcription** on **Setup → Models** ([files in and out](/docs/tools/#files-in-and-out)).
+Ask "remind me tomorrow at nine" and the Agent sets the schedule itself; its reply arrives in the
+topic.
 
 Replies, errors, images and [delivered files](/docs/results/) are mirrored into the topic. An
 Agent's mirror mode (`bazilion agent edit <id> --mirror minimal|verbose`, or **Telegram** in the

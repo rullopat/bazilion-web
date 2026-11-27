@@ -1,11 +1,63 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.63.0 bundles Pi 1.6.1.
+description: The latest four Bazilion releases, newest first; Bazilion 0.64.0 bundles Pi 1.6.1.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.64.0
+
+Published **2026-11-27**. Agents set their own schedules, ask for secrets without seeing them,
+read pictures, PDFs and voice notes, and split work among helpers. The embedded Pi engine stays at
+1.6.1. See the [GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.64.0).
+
+### Install or upgrade
+
+```sh
+curl -fsSL https://bazilion.com/install.sh | bash
+```
+
+Or `npm install -g bazilion@0.64.0`. The database schema changes (schedules gain a one-time kind,
+the conversation they run in and who set them). As with 0.63.0, the daemon copies the database to
+`upgrades/` in the home when it first starts, then migrates it in one transaction; every schedule
+and its runs are kept. To go back to 0.63.0, put that copy back first
+([upgrading](/docs/getting-started/#upgrade)).
+
+### Added
+
+- **Schedules an Agent sets.** Ask "remind me on Friday at nine" or "check the deploy again in two
+  hours", in chat or on Telegram, and the Agent sets the schedule itself: once, every few minutes
+  or a cron expression. It runs in the conversation it was set in. Schedules can now run
+  **once**, and you can **change** any schedule; the ones an Agent set are marked with its name
+  ([schedules](/docs/operations/#schedules)).
+- **Secrets an Agent asks for.** When an Agent needs a token, it asks for it by name and you type
+  it into a masked field (on Telegram, a link to it; in a terminal,
+  `bazilion agent secret set`). The Agent never sees the value: its commands get it as an
+  environment variable, and `web_fetch` sends it only to the hosts you allowed. Each Agent has a
+  **Secrets** sheet ([questions](/docs/questions/#secrets-an-agent-asks-for)).
+- **Pictures, PDFs and voice notes.** `view_image` shows the Agent several pictures at once, from
+  files, the web or its saved results; `pdf_read` reads a PDF page by page. With a model chosen
+  under **Transcription** on **Setup → Models**, voice notes and audio you send are turned into
+  words before the turn ([files in and out](/docs/tools/#files-in-and-out)).
+- **Helpers.** An Agent can run copies of itself on separate tasks at once and wait for their
+  answers, which keeps each task's pages out of its own context. Each helper works in a
+  conversation of its own, listed on the Agent's **Helpers** sheet with **Stop**
+  ([tools](/docs/tools/#helpers)).
+
+### Changed
+
+- Tool output reaches the model and the transcript with secrets and Bazilion's own credentials
+  taken out, not only what the chat shows.
+- `web_fetch` takes request headers, for APIs that need a key.
+
+### Limits
+
+- A secret is kept out of the conversation, not sandboxed: a command can still send it elsewhere,
+  and only its exact value is taken out of output.
+- Scanned PDFs have no text, and there is no OCR. A transcription is not counted in Usage.
+- Helpers and waiting secret requests live in the daemon's memory: a restart stops them.
 
 ## Bazilion 0.63.0
 
@@ -163,35 +215,3 @@ remove it with `npm uninstall -g bazilion`.
 - Updates are not automatic: run the same line again.
 - The background Bazilion does not see your shell's variables, such as provider keys: keep keys in
   **Setup**.
-
-## Bazilion 0.60.1
-
-Published **2026-11-25**. An Agent tells you what a teammate brought back. The embedded Pi engine
-stays at 1.6.0. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.60.1) and the
-[mailbox](/docs/concepts/#mailbox).
-
-### Upgrade: install and start again
-
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.60 home opens as it is. Stop the
-daemon, then:
-
-```sh
-npm install -g bazilion@0.60.1
-bazilion dashboard
-```
-
-### Fixed
-
-- **A teammate's answer reaches you.** When an Agent handed out work and the teammate replied,
-  the Agent was told that no response was required, and it sometimes ended its turn without a
-  word. What the teammate found then stayed in a closed **Update from …** line in the
-  conversation, and the file it named never reached Files. Now the Agent still sends nothing
-  back to the teammate, but tells you in a few lines what came back and delivers the files the
-  reply names, so they show in Files. A reply that only acknowledges gets one line.
-
-### Limits
-
-- The model still decides what is worth telling you and which files you should see.
-- Replies that arrived before the upgrade are not replayed: ask the Agent for a result you
-  missed.
