@@ -123,7 +123,8 @@ new release:
    schema the release ships; only then does it commit.
 
 When a migration fails, nothing it did is kept: the daemon refuses to start, says why and leaves
-the home as it was. Report the message; do not reset the home. Homes from 0.26.0 to 0.62.0 are
+the home as it was. Report the message; do not reset the home. A refusal caused by the Node
+version means upgrading Node, never resetting the home. Homes from 0.26.0 to 0.62.0 are
 recognised and upgraded from there. Copies in `upgrades/` stay until you delete them; backups
 leave them out.
 
@@ -136,38 +137,6 @@ is lost; conversations, memory and Team workspaces are files and are not touched
 Coming from 0.26 or 0.27, the web UI is laid out anew: see the
 [tour of the web interface](/docs/web-interface/). Coming from 0.50 or earlier, providers you had
 switched on keep working and read "Not tested yet" under **Setup → Models** until their first test.
-
-## Upgrade to 0.26.0
-
-**From 0.25.0 or earlier:** 0.26.0 reset the schema, so the home is refused. To move to the
-current release:
-
-1. Stop the daemon and copy the whole home somewhere safe, with any project a linked Team points
-   to. A `bazilion backup create` archive works too, but only the release that wrote it can
-   restore it.
-
-   ```sh
-   cp -a ~/.bazilion ~/.bazilion-0.25
-   ```
-
-2. Install the new release and reset the home. `uninstall` keeps installed skills; `--all`
-   removes them too.
-
-   ```sh
-   npm install -g bazilion@0.63.0
-   bazilion uninstall --yes
-   ```
-
-3. Start Bazilion again; it bootstraps a fresh home. Connect a provider and recreate the Teams and
-   Agents you need.
-
-   ```sh
-   bazilion dashboard
-   ```
-
-Nothing is imported from the old home. Keep the copy, and the release that wrote it, for as long
-as you need the old data. A refusal caused by the Node version means upgrading Node, never
-resetting the home.
 
 ## Reset a home
 
