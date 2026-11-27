@@ -195,8 +195,7 @@ Since 0.63.0 the daemon migrates the database when it starts: it copies it to `u
 applies the release's migrations in one transaction and commits only when the result matches the
 schema the release ships. A home that a later release has already upgraded is refused untouched.
 `bazilion.db` and `auth.json` are a pair: when only one of them exists, or they do not match, the
-daemon refuses too. See [Upgrade](/docs/getting-started/#upgrade),
-[Upgrade to 0.26.0](/docs/getting-started/#upgrade-to-0260) for homes from 0.25 or earlier, and
+daemon refuses too. See [Upgrade](/docs/getting-started/#upgrade) and
 [Reset a home](/docs/getting-started/#reset-a-home).
 
 ## On-disk layout
