@@ -32,6 +32,9 @@ you something. Learning reviews run separately with a single `propose_lesson` to
 | `browser_*` | The [managed browser](#managed-browser) |
 | `mcp__<server>__<tool>` | Tools from [MCP servers](#mcp-servers) |
 | `image_generate` | [Image generation](#image-generation), when a model is set |
+| `video_generate`, `audio_generate` | [Video and sound](#video-and-sound), when a model is set |
+| `speak`, `transcribe` | [Speech](#speech): reads text out in a voice; turns a recording of the workspace into timed text |
+| `progress`, `screen`, `theme`, `canvas` | The Agent in the workspace: a progress card updated in place, opening a panel tab, view or sheet in the tabs on its conversation, the theme, and a small HTML or SVG page in the chat ([web interface](/docs/web-interface/#the-conversation)) |
 | `deliver_file` | Saves a workspace file as a [result](/docs/results/), or shows a saved one again |
 | `ask_user` | Asks you questions, or to do something only you can do, when someone is watching ([questions](/docs/questions/)) |
 
@@ -276,6 +279,50 @@ At most four calls per turn, each waiting up to 180 seconds. Nothing is retried,
 failed after the request was sent may still have been billed. Set spending limits in the
 provider's own account.
 
+## Video and sound
+
+`video_generate` makes a short clip with sound, from a prompt or from a picture as its first
+frame; `audio_generate` makes a song, a jingle, background music or a sound effect. What they make
+is saved as a [result](/docs/results/), plays in the chat and under **Files**, and goes to a bound
+Agent's Telegram topic. Each is off until you choose a model on **Setup → Models** (the **Video**
+and **Music and sound** cards) or with `bazilion config set`:
+
+| Setting | Value | Account |
+| --- | --- | --- |
+| `BAZILION_VIDEO_MODEL` | `xai:grok-imagine-video-1.5` | `XAI_API_KEY`; 1 to 15 seconds |
+| | `google:gemini-omni-1.2-flash` | `GEMINI_API_KEY`; 3 to 15 seconds, landscape or portrait |
+| | `minimax:MiniMax-H3` | `MINIMAX_API_KEY`; 4 to 15 seconds |
+| `BAZILION_AUDIO_MODEL` | `elevenlabs:music_v2_5` | `ELEVENLABS_API_KEY`; music and sound effects |
+| | `google:lyria-3.5` | `GEMINI_API_KEY`; music, with its lyrics |
+
+A video always runs in the background: the Agent is woken in the same conversation when it is
+saved, or with the provider's reason. Music and sound wait, or run in the background.
+**ElevenLabs** is under **Add a provider** as an account for media only, with no chat models.
+OpenAI's Sora and Veo on the Gemini API are not offered: their providers shut them down.
+
+## Speech
+
+A **Speech** model reads text out: `speak` (the audio is saved and sent to Telegram as a voice
+note), the speaker under each Agent message in the web chat, and voice replies to the voice notes
+you send on Telegram. Choose it and its voice on the **Speech** card, which lists the provider's
+voices with a sample, or with `bazilion config set BAZILION_SPEECH_MODEL …` and
+`bazilion speech voices`:
+
+| `BAZILION_SPEECH_MODEL` | Account |
+| --- | --- |
+| `elevenlabs:eleven_v4` | `ELEVENLABS_API_KEY` |
+| `google:gemini-3.8-flash-tts` | `GEMINI_API_KEY` (WAV: Telegram shows it as a file) |
+| `xai:tts` | `XAI_API_KEY` |
+| `minimax:speech-2.8-hd` | `MINIMAX_API_KEY` |
+
+A **Transcription** model turns speech into words: voice notes and audio you send (before the
+turn), dictation with the microphone beside the paperclip (on `https://` or this computer), and
+`transcribe`, which gives a recording's lines with their times where the model gives them.
+`BAZILION_TRANSCRIPTION_MODEL` is `openai:gpt-transcribe`, `google:gemini-3.5-transcribe`,
+`xai:grok-voice-transcribe-2.0`, `groq:whisper-large-v3-turbo`,
+`mistral:voxtral-mini-transcribe-3` or `elevenlabs:scribe_v3`, each on its provider's key and up
+to the largest file it takes.
+
 ## Files in and out
 
 **In.** Attach files in the web composer (button, paste or drag and drop), in Telegram, or from
@@ -283,9 +330,8 @@ the CLI. Images reach the model as images; any other file is saved to the Agent'
 directory and the Agent gets its path, and reads a PDF with `pdf_read`, page by page (a scanned page has no
 text, and there is no OCR). Video is stored as a file. Audio, such as a Telegram voice note, is
 stored too; with a model chosen under **Transcription** on **Setup → Models**
-(`BAZILION_TRANSCRIPTION_MODEL`: GPT Transcribe through an OpenAI API key, billed per minute of
-audio) it is also turned into words before the turn, which the Agent gets with the file's path.
-Transcription is off by default.
+([speech](#speech)) it is also turned into words before the turn, which the Agent gets with the
+file's path. Transcription is off by default.
 
 `view_image` shows the model several pictures at once: files in the workspace or uploads,
 pictures on the web and the Agent's saved results, PNG, JPEG, GIF or WebP. A model that takes no

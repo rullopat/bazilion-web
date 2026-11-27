@@ -1,11 +1,62 @@
 ---
 title: What's new
-description: The latest four Bazilion releases, newest first; Bazilion 0.64.0 bundles Pi 1.6.1.
+description: The latest four Bazilion releases, newest first; Bazilion 0.65.0 bundles Pi 1.6.1.
 ---
 
 The latest four releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.65.0
+
+Published **2026-11-27**. Agents make videos, music and sound, speak and hear, and work in the
+workspace with you; the list on the left takes your order and width, and what arrives from
+elsewhere shows at once. The embedded Pi engine stays at 1.6.1. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.65.0).
+
+### Install or upgrade
+
+```sh
+curl -fsSL https://bazilion.com/install.sh | bash
+```
+
+Or `npm install -g bazilion@0.65.0`. The database schema changes (Teams and Agents get a place in
+the list, numbered in the order they had). The daemon copies the database to `upgrades/` in the
+home when it first starts, then migrates it in one transaction. To go back to 0.64.0, put that
+copy back first ([upgrading](/docs/getting-started/#upgrade)).
+
+### Added
+
+- **Videos, music and sound.** Choose a model on the new **Video** and **Music and sound** cards
+  (Grok Imagine Video, Gemini Omni Flash, MiniMax H3; ElevenLabs, Lyria) and Agents make short
+  clips from a prompt or a picture, songs, jingles and sound effects. They play in the chat and
+  under Files, and go to Telegram. ElevenLabs is a new account for media only
+  ([video and sound](/docs/tools/#video-and-sound)).
+- **Speech, both ways.** A **Speech** card with the provider's voices and a sample; `speak`;
+  **Read aloud** on every Agent message; voice notes on Telegram answered by voice. With a
+  Transcription model, dictation in the composer and `transcribe` for recordings, now through
+  Gemini, xAI, Groq, Mistral and ElevenLabs besides OpenAI ([speech](/docs/tools/#speech)).
+- **The Agent in the workspace.** It opens the Changes or Files tab, a view or its schedules for
+  you, switches the theme when asked, keeps one progress card per long task (one edited message
+  on Telegram), and shows small HTML pages and SVG drawings in the chat in a sealed frame
+  ([web interface](/docs/web-interface/#the-conversation)).
+- **The list in your order and width.** Drag Teams and Agents, or Move up and Move down; the order
+  is kept for every browser and the CLI (`bazilion team order`, `agent order`). Drag the list's
+  edge to resize it ([the list](/docs/web-interface/#the-list)).
+
+### Changed
+
+- What a teammate, Telegram, a schedule or a follow-up adds to the open conversation shows at
+  once and flashes for a moment, instead of waiting behind **Show it**. A teammate's message shows
+  open, with who wrote it.
+
+### Limits
+
+- Not offered because their providers shut them down: OpenAI's Sora and speech endpoint, and Veo
+  on the Gemini API.
+- What is made is saved like any result, at most 25 MiB a file; making, speaking and transcribing
+  are not counted in Usage.
+- A canvas has no network, so it cannot load libraries from a CDN.
 
 ## Bazilion 0.64.0
 
@@ -170,48 +221,3 @@ has loaded it: before a first turn on a model that is not loaded, set its window
   front: replies are cut.
 - Two Agents that keep asking each other new, different things are not stopped by Bazilion: they
   judge it, and you can stop it. A reworded repeat is not caught.
-
-## Bazilion 0.61.0
-
-Published **2026-11-25**. Bazilion installs with one line and nothing installed first, and on a
-Mac it then opens like any app. The installer brings its own Node.js, adds the **Bazilion** app
-to Applications, keeps Bazilion running in the background from login on, and opens it in your
-browser, already signed in. The embedded Pi engine stays at 1.6.0. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.61.0) and
-[getting started](/docs/getting-started/#install-on-a-mac).
-
-![The Bazilion app's icon: the Bazilion cat on a cream rounded square.](/screenshots/bazilion-app-icon.webp)
-
-### Install or upgrade
-
-```sh
-curl -fsSL https://bazilion.com/install.sh | bash
-```
-
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.60 home opens as it is. Stop a
-`bazilion dashboard` you run in a terminal first: the app's Bazilion uses the same ports. The line
-installs its own copy beside one you installed with npm or the earlier installer; keep using
-that one instead (`npm install -g bazilion@0.61.0`, then `bazilion app install` for the app), or
-remove it with `npm uninstall -g bazilion`.
-
-### Added
-
-- **One line, nothing else first.** The installer downloads Node.js 26.12.1 from nodejs.org,
-  checks it against the published checksums, and installs it and Bazilion in
-  `~/.local/share/bazilion`, with a `bazilion` command in `~/.local/bin`. It no longer uses Volta,
-  changes no shell settings and asks for no password. Running it again updates.
-- **The Bazilion app on a Mac.** Opening it starts Bazilion when it is not running and opens it in
-  your browser, signed in. Bazilion runs in the background from login on, and starts again if it
-  fails. `bazilion app install`, `app status` and `app remove` manage it.
-- **Signed in without a token.** The installer, the app, `bazilion dashboard` and the new
-  `bazilion open` open the browser with a link that works once, for two minutes. A token is
-  needed only on another device; the login page says so.
-
-### Limits
-
-- Terminal is still needed once, for the line. A downloadable app needs Apple's notarization and
-  is not available yet.
-- Windows is not supported. On Linux the installer installs Bazilion but adds no app.
-- Updates are not automatic: run the same line again.
-- The background Bazilion does not see your shell's variables, such as provider keys: keep keys in
-  **Setup**.

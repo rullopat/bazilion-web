@@ -65,7 +65,12 @@ Every Team is listed with its Agents, and every Agent has a line that says what 
 
 A Team's header sums its Agents up (`1 waiting · 2 working`). **New** spawns an Agent from a
 Profile or a whole Team from a Team template, or registers a Team. The menu beside an Agent
-renames or archives it. What counts as "new" is remembered in the browser, so another browser has
+renames or archives it.
+
+Teams and Agents are in your order: drag a Team by its header, or an Agent within its Team, or
+use **Move up** and **Move down** in their menus. The order is kept in Bazilion, so every browser,
+Manage and the CLI show it (`bazilion team order`, `bazilion agent order`). Drag the list's right
+edge to make it wider or narrower; each browser keeps its width. What counts as "new" is remembered in the browser, so another browser has
 its own markers.
 
 ### The conversation
@@ -84,6 +89,12 @@ The middle pane streams the open Agent's conversation.
   `working` mean it is working.
 - **Edit**, under your last message, appears when you point at it and replaces that turn; what
   you had typed comes back afterwards.
+- With a Speech model chosen, the speaker under an Agent message reads it aloud; with a
+  Transcription model, the microphone beside the paperclip dictates ([speech](/docs/tools/#speech)).
+- A teammate's message that woke the Agent shows open, with who wrote it.
+- An Agent can open a side-panel tab, a view or one of its sheets for you (`screen`), keep a
+  progress card for a long task (`progress`), and show a small HTML page or SVG drawing in the
+  chat, in a sealed frame with no network (`canvas`).
 - Going to another Agent and back opens the conversation where you left it, with the text you
   had not sent still in the composer.
 - Attach files with the button, by pasting or by dragging them in. Images reach the model as
@@ -148,7 +159,10 @@ holds the stream and shares it with the others. While it cannot connect, for exa
 daemon restarts, the pages ask every few seconds and try the stream again. A Team or an Agent
 added, renamed, moved or archived somewhere else (in a terminal, by an Agent running
 `bazilion`, in another tab) shows up without a reload, and a question asked or answered
-elsewhere comes and goes in the open conversation.
+elsewhere comes and goes in the open conversation. What another source adds to the open
+conversation (a teammate's message, Telegram, a schedule, a follow-up) shows at once, also while
+that turn runs, and flashes for a moment; if you had scrolled up, **New messages ↓** takes you
+down.
 
 **Notify me on this computer**, in the menu at the end of the top bar, turns on desktop
 notifications for this browser, after the browser asks you. When an Agent starts waiting for you
