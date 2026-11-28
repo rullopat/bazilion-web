@@ -78,6 +78,9 @@ in the browser, so another browser has its own markers.
 
 The middle pane streams the open Agent's conversation.
 
+- Each message shows the time it was sent under it, as in a messaging app (point at it for the
+  whole date), and a line before the first message of each day says **Today**, **Yesterday**,
+  the weekday within the last week, or the date, in your browser's language and time zone.
 - Tool calls read as steps in words: `Ran`, `Read`, `Wrote` with the lines added and removed.
   Click a step for its input and output; a running step shows a live tail.
 - A message to a teammate is a hand-off card with the teammate's name, the message and what that
@@ -122,7 +125,7 @@ The panel has five tabs and remembers the last one; the button at the right of t
 bar hides it.
 
 - **Agent**: model and reasoning, saved as soon as you pick them, with **Undo**; the Team the
-  Agent belongs to; rename, archive and delete; and the ways into its schedules, learning,
+  Agent belongs to; rename, archive and delete; and the ways into its schedules,
   mailbox, skills, Telegram topic and managed browser. The model is chosen by name, under its
   provider, with how much it reads and whether it sees images.
 - **Team**: the members with their states (left out beside a Team's own overview), **About you**
@@ -142,9 +145,8 @@ bar hides it.
 
 On a phone the panel's tabs scroll sideways.
 
-The deeper pages open as sheets over the workspace: an Agent's **Schedules**, **Learning**
-([daily operations](/docs/operations/#reviewed-learning)), **Mailbox**, **Skills**, **Telegram**
-and **Browser**; a Team's **About you**, memory and settings. They use the same cards and fields
+The deeper pages open as sheets over the workspace: an Agent's **Schedules**, **Mailbox**,
+**Skills**, **Telegram** and **Browser**; a Team's **About you**, memory and settings. They use the same cards and fields
 as Setup and Manage. A schedule reads as words, such as `Weekdays at 09:00`, says when it runs
 next, and is added in a dialog with presets, or as a cron expression. Memory notes are listed by title and read
 formatted; **Edit** opens the text.
@@ -257,7 +259,7 @@ Everything on screen is in the query string of `/`, so a link or the back button
 screen: `agent`, `team`, `panel` (`agent`, `team`, `connections`, `changes`, `files` or `none`),
 `view` (`connections`, `changes`, `files`), `conversation`, `file`, `result`, `note`, and `section`
 for an open sheet. [Attention](/docs/operations/#attention) items link into the workspace, for
-example `/?agent=<id>&section=learning`.
+example `/?agent=<id>&section=schedules`.
 
 ## Manage
 
@@ -318,7 +320,7 @@ A key is shown as saved, never in full. Replacing or removing one is its own act
 
 What needs you. First what an Agent is waiting on right now: its question, or a command waiting for
 your approval, soonest to expire first, each with the time it stops waiting; **Answer** and
-**Decide** open the conversation. Then lesson proposals, failed learning reviews and triggers,
+**Decide** open the conversation. Then failed triggers,
 stopped message loops, queues paused after a restart, and background turns that failed: a
 follow-up or a turn for new mail, one item per Agent and cause, so an expired key is one line
 however many turns it stopped. Each item links to the Agent's

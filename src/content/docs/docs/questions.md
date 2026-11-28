@@ -23,8 +23,8 @@ An answer is information only: it grants no shell or messaging permission. Do no
 question with credentials: an Agent asks for those with `secret_request`
 ([below](#secrets-an-agent-asks-for)), and Bazilion's own keys go in the configuration.
 
-Turns nobody is watching (scheduled triggers, inbox wakes, queued web messages, piped CLI chats,
-learning reviews) do not get `ask_user` or `secret_request`.
+Turns nobody is watching (scheduled triggers, inbox wakes, queued web messages, piped CLI chats)
+do not get `ask_user` or `secret_request`.
 
 ## Answering
 

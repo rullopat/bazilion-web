@@ -1,6 +1,6 @@
 ---
 title: Daily operations
-description: Diagnose an Agent that does not answer, inspect schedules, work through Attention and review the lessons an Agent proposes.
+description: Diagnose an Agent that does not answer, inspect schedules and work through Attention.
 ---
 
 ## Diagnose an Agent that is not answering
@@ -56,9 +56,8 @@ trigger stops future runs, not a turn that is already running.
 
 **Attention** lists what needs you. First what an Agent is waiting on right now: a
 [question](/docs/questions/) it asked and a command waiting for your approval, soonest to expire
-first, each with the time it stops waiting. Then lesson proposals, failed or cancelled learning
-reviews, failed triggers, stopped Agent message loops, Agent queues paused after a daemon
-restart, and background turns that failed (a follow-up or a turn for new mail, one item per Agent
+first, each with the time it stops waiting. Then failed triggers, stopped Agent message loops,
+Agent queues paused after a daemon restart, and background turns that failed (a follow-up or a turn for new mail, one item per Agent
 and cause). Open the **Attention** page (the count in the top bar stays current, and the browser tab
 counts what waits for you) or:
 
@@ -71,41 +70,9 @@ bazilion attention acknowledge-all --yes
 
 Acknowledging a failure, or Agents that went round in circles, records that you saw it; it repairs nothing. A failed
 background turn opens again when another fails for the same cause. Questions,
-commands, proposals and paused queues leave the list when you act on them; a question or a command
+commands and paused queues leave the list when you act on them; a question or a command
 also leaves it when it stops waiting, or when the daemon restarts. Attention items can also go to Telegram; see
 [Attention notifications](/docs/attention-notifications/).
-
-## Reviewed learning
-
-An Agent can turn its recent conversations into lessons, but only the lessons you approve change
-its behaviour. Learning is off by default.
-
-1. Under **Learning** in the Agent's side panel, switch reviews on and choose how often (every N
-   completed turns you started, default 8), a review model and a reasoning level. From the CLI:
-
-   ```sh
-   bazilion agent review-config <agent> --enable --every 8 --model agent --reasoning low
-   bazilion agent review <agent>            # run one now
-   ```
-
-2. A review runs in a restricted worker whose only tool is `propose_lesson`, and proposes at most
-   five lessons. A review runs once; a failure shows in Attention.
-3. Read each proposal, edit its text or scope, then approve or reject it. A **private** lesson is
-   added to the Agent's system prompt; a **shared** one is written to the Team's memory as
-   `lessons/<id>.md`.
-
-   ```sh
-   bazilion agent lessons <agent> --status pending
-   bazilion agent lesson edit <proposal-id> --text '…' --scope private
-   bazilion agent lesson approve <proposal-id> --yes
-   bazilion agent lesson reject <proposal-id> --yes
-   ```
-
-4. Revoke an approved lesson later with **Revoke** or `bazilion agent lesson revoke <id> --yes`.
-   Earlier conversations are not changed.
-
-Reviews cost model calls; pick a cheap review model for busy Agents. Stable facts about you or the
-project belong in the Team's `USER.md`, not in a lesson.
 
 ## Around a running Agent
 

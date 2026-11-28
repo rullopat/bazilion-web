@@ -10,7 +10,7 @@ CLI and the web UI are clients of its HTTP API.
 
 Models are written `provider:model`, for example `anthropic:claude-fable-5-2`,
 `openai-codex:gpt-6.2-sol` or `lmstudio:my-loaded-model`. Model ids come from Pi's bundled
-catalog; Bazilion 0.65.1 bundles Pi 1.6.1. An id that is not in the catalog is refused as
+catalog; Bazilion 0.66.0 bundles Pi 1.6.1. An id that is not in the catalog is refused as
 "Unknown model" unless the provider has an endpoint you configured, so a typo never sends a key to
 another vendor.
 
@@ -172,7 +172,7 @@ Read only from the process environment:
 | `HOST`, `PORT` | the daemon listener (default `127.0.0.1:4321`) |
 | `WEB_HOST`, `WEB_PORT` | the web UI listener when run as its own service (default `127.0.0.1:4322`) |
 | `BAZILION_PUBLIC_ORIGIN` | the [private gateway](/docs/private-access/) origin |
-| `BAZILION_SCHEDULER=off` | no triggers, inbox wakes or learning reviews |
+| `BAZILION_SCHEDULER=off` | no triggers or inbox wakes |
 | `BAZILION_SCHEDULER_TICK_MS` | the scheduler tick (default 5000) |
 | `BAZILION_SERVER`, `BAZILION_TOKEN` | point the CLI at another daemon |
 

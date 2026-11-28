@@ -111,7 +111,7 @@ bazilion agent chat <agent-id> --message "say hi"
 ## Upgrade
 
 Run the one-line installer again, which updates Bazilion and, on a Mac, restarts it; or stop the
-daemon, run `npm install -g bazilion@0.65.1` and start Bazilion again. If you installed with npm
+daemon, run `npm install -g bazilion@0.66.0` and start Bazilion again. If you installed with npm
 first and then ran the installer, the installer's copy runs: remove the old one with
 `npm uninstall -g bazilion`.
 
@@ -131,6 +131,11 @@ the home as it was. Report the message; do not reset the home. A refusal caused 
 version means upgrading Node, never resetting the home. Homes from 0.26.0 to 0.62.0 are
 recognised and upgraded from there. Copies in `upgrades/` stay until you delete them; backups
 leave them out.
+
+0.66.0 removed reviewed learning. Upgrading from an earlier release adds each Agent's approved
+private lessons to its `AGENTS.md`, so it keeps following them; lessons for the whole Team stay
+notes in its memory. Lessons waiting for a decision and the history of reviews are dropped, and
+the copy in `upgrades/` keeps them.
 
 **Going back to an earlier release.** A release refuses a home that a later one has already
 upgraded. Releases up to 0.62.0 call it incompatible and suggest a reset: do not reset it. Stop
