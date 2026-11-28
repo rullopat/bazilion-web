@@ -1,11 +1,81 @@
 ---
 title: What's new
-description: The latest ten Bazilion releases, newest first; Bazilion 0.65.1 bundles Pi 1.6.1.
+description: The latest ten Bazilion releases, newest first; Bazilion 0.66.0 bundles Pi 1.6.1.
 ---
 
 The latest ten releases, newest first. Older releases are in
 [GitHub Releases](https://github.com/rullopat/bazilion/releases). Each section describes its own
 release; the rest of the documentation describes the current one.
+
+## Bazilion 0.66.0
+
+Published **2026-11-28**. Agents find their tools when they need them and run one script for
+several calls, each message shows when it was sent, and you tell an Agent in the conversation which
+browser to use. Reviewed learning is removed; the lessons you approved are kept. The embedded Pi
+engine stays at 1.6.1, whose own `tool_search` and `codemode` Bazilion now uses. See the
+[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.66.0).
+
+### Install or upgrade
+
+```sh
+curl -fsSL https://bazilion.com/install.sh | bash
+```
+
+Or `npm install -g bazilion@0.66.0`. The database schema changes (reviewed learning's tables and
+settings go). The daemon copies the database to `upgrades/` in the home when it first starts, then
+migrates it in one transaction; the lessons you approved for one Agent are then added to its
+`AGENTS.md` ([upgrading](/docs/getting-started/#upgrade)).
+
+### Added
+
+- **Tool search.** Agents no longer get every MCP tool up front: the prompt lists each connection
+  with how many tools it has, and the Agent loads the ones a task needs with `tool_search`; they
+  stay for the rest of the conversation. Many connections no longer fill the model's window
+  ([tools found when needed](/docs/tools/#tools-found-when-needed)).
+- **Code Mode.** With `codemode` the Agent writes one short script that calls several of its tools,
+  MCP tools included, and hands back only what matters. Scripts run in a sandbox with no network or
+  files; the conversation shows **Ran a script** with the calls it made, and a dangerous command or
+  a tool that asks first still waits for you ([scripts](/docs/tools/#scripts)).
+- **When each message was sent.** Every message shows its time under it, as in a messaging app, and
+  a line before each day's first message says **Today**, **Yesterday**, the weekday or the date,
+  in your browser's language and time zone; earlier conversations too
+  ([the conversation](/docs/web-interface/#the-conversation)).
+- **Which browser, chosen in the conversation.** Tell an Agent "use my Chrome" or "use your own
+  browser": it switches with `browser_use` for the rest of that conversation. Moving to your Chrome
+  asks you first, in the chat and on Telegram, and is refused where nobody can answer
+  ([its own or yours](/docs/tools/#its-own-or-yours-per-conversation)).
+
+### Removed
+
+- **Reviewed learning.** It was off unless switched on, and saw only the selected conversation and
+  each tool call as its name. The **Learning** sheet, the `bazilion agent review-config`, `review`,
+  `reviews`, `lessons` and `lesson` commands, its two kinds of Attention item and Google Vertex's
+  credentials JSON for reviews are gone. Approved lessons for one Agent move into its `AGENTS.md`; Team lessons stay notes in
+  its memory. Skills Agents write for themselves are planned to replace it.
+
+### Changed
+
+- The **Browser** card's choice is now **Which browser, unless you say otherwise**, and the Agent's
+  **Browser** panel names the browser it is using.
+- `/context` counts `codemode` and `tool_search`; MCP tools waiting to be found cost nothing.
+
+### Fixed
+
+- A long command output's full text, which Pi writes to a file in the system's temporary folder,
+  kept any credential the command printed. Output now loses the turn's credentials as it arrives,
+  and a script's long output file is cleaned when it returns.
+- **Add an Agent** picked in Jump to before its lists arrived opened with no Team to choose.
+
+### Limits
+
+- Code Mode adds about 840 tokens to every request. A script's long output file is out of reach of
+  a Docker turn.
+- An Agent works in one browser at a time. Approval to use your Chrome is asked once per
+  conversation; a helper cannot move there itself.
+- Lessons waiting for a decision, rejected ones and the history of reviews are dropped; the copy in
+  `upgrades/` keeps them.
+- Times use the browser's clock; a conversation left open past midnight keeps its day labels until
+  it changes or is reloaded.
 
 ## Bazilion 0.65.1
 
@@ -417,31 +487,3 @@ summarized during its next turn.
   unknown until the next reply.
 - A local server's model is taken to have a 32,768-token window, so its conversations are
   summarized from about 16,000 tokens.
-
-## Bazilion 0.58.2
-
-Published **2026-11-24**. The rest of 0.58.1's fix for keeping your place in a conversation.
-The embedded Pi engine stays at 1.6.0. See the
-[GitHub release](https://github.com/rullopat/bazilion/releases/tag/v0.58.2).
-
-### Upgrade: install and start again
-
-The database schema is unchanged, so a 0.26, 0.27 or 0.50 to 0.58 home opens as it is. Stop the
-daemon, then:
-
-```sh
-npm install -g bazilion@0.58.2
-bazilion dashboard
-```
-
-Then reload the Bazilion tabs you had open, once.
-
-### Fixed
-
-- **Going to another Agent and back keeps where you were, in every tab.** The router keeps
-  scroll positions in the browser tab, and a reload keeps them. 0.58.1 stopped it saving a
-  conversation's position where the next Agent's would find it, but positions saved before, in
-  a tab already open, still landed on every conversation: each Agent opened where the Agent
-  visited last had been. The router no longer restores scrolling in the workspace at all, so
-  each conversation keeps only its own place and a reload opens every conversation at its end.
-  Other pages, such as Setup and Manage, still return to where you were when you go Back.

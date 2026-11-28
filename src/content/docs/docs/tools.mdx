@@ -1,6 +1,6 @@
 ---
 title: Tools & integrations
-description: The tools every Agent turn gets — files and shell, memory, the mailbox, schedules, secrets, helpers, web search and fetch, pictures and PDFs, the managed browser, MCP servers, image generation and file delivery.
+description: The tools every Agent turn gets — files and shell, memory, the mailbox, schedules, secrets, helpers, scripts, web search and fetch, pictures and PDFs, the managed browser, MCP servers found when needed, image generation and file delivery.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -10,7 +10,7 @@ scheduled trigger or an inbox wake. Some depend on you having started the turn: 
 which a schedule or a teammate's message never gets, `ask_user` and `secret_request`
 ([questions](/docs/questions/)) and dangerous-command approval, which is denied when nobody can
 answer. A [helper](#helpers) gets the Agent's tools except the helper tools and the ones that ask
-you something. Learning reviews run separately with a single `propose_lesson` tool.
+you something.
 
 ## Built-in tools
 
@@ -29,8 +29,9 @@ you something. Learning reviews run separately with a single `propose_lesson` to
 | `helper_start`, `helper_wait`, `helper_stop` | [Helpers](#helpers): runs of the same Agent on separate tasks at once |
 | `view_image`, `pdf_read` | Looks at pictures (files, the web, saved results) and reads PDFs page by page ([files in and out](#files-in-and-out)) |
 | `web_fetch`, `web_search` | [Web research](#web-research); `web_fetch` takes request headers, and fills in a secret written `{{secret:NAME}}` only for that secret's hosts |
-| `browser_*` | The [managed browser](#managed-browser) |
-| `mcp__<server>__<tool>` | Tools from [MCP servers](#mcp-servers) |
+| `browser_*`, `browser_use` | The [managed browser](#managed-browser); `browser_use` moves the conversation to [your Chrome or back](#its-own-or-yours-per-conversation) |
+| `mcp__<server>__<tool>`, `tool_search` | Tools from [MCP servers](#mcp-servers), loaded with `tool_search` when a task needs them ([tools found when needed](#tools-found-when-needed)) |
+| `codemode` | Runs one short script that calls several of the Agent's tools and hands back only what matters ([scripts](#scripts)) |
 | `image_generate` | [Image generation](#image-generation), when a model is set |
 | `video_generate`, `audio_generate` | [Video and sound](#video-and-sound), when a model is set |
 | `speak`, `transcribe` | [Speech](#speech): reads text out in a voice; turns a recording of the workspace into timed text |
@@ -116,7 +117,7 @@ inactivity. Its settings are on the **Browser** card under
 | --- | --- | --- |
 | `BROWSER_ENABLED` | `true` | Give Agent turns the browser tools |
 | `BROWSER_EXECUTABLE_PATH` | discovery | Browser binary; otherwise the first installed Chrome, Brave, Edge or Chromium, then the downloaded Chromium |
-| `BROWSER_ATTACH` | `false` | `true` makes Agents work in [your running browser](#your-running-browser) |
+| `BROWSER_ATTACH` | `false` | Which browser, unless you say otherwise: `true` starts every conversation in [your running browser](#your-running-browser) |
 | `BROWSER_ATTACH_URL` | found | DevTools address of the running browser, such as `http://127.0.0.1:9222` |
 | `BROWSER_HEADLESS` | `true` | `false` opens a visible window; not used with a running browser |
 | `BROWSER_ALLOW_PRIVATE_NETWORK` | `false` | Turn the SSRF proxy off; local development only |
@@ -142,16 +143,32 @@ browser or show CAPTCHAs and logins; the Agent is told to stop and tell you. To 
 a site, set `BROWSER_HEADLESS=false`, let the Agent open the site and sign in in the window that
 appears; the login stays in that Agent's profile.
 
+### Its own or yours, per conversation
+
+**Which browser, unless you say otherwise** on the **Browser** card is where every conversation
+starts: the Agent's own browser unless you change it. In a conversation, ask the Agent to "use my
+Chrome" or "use your own browser": it switches with `browser_use`, for the rest of that
+conversation, later turns included. Other conversations keep the default.
+
+- Moving to your Chrome asks you first, in the conversation and on Telegram, because on every site
+  you are signed in to the Agent acts as you. **Allow** lasts for the conversation. Where nobody
+  can answer (a schedule, a teammate's message) the move is refused. With your Chrome as the
+  default, nothing is asked.
+- Going back to its own browser needs nothing. A helper starts in the browser of the conversation
+  that started it.
+- An Agent works in one browser at a time: switching closes the other one, and its profile and
+  logins stay. **Browser** in the Agent's side panel names the one it is using.
+
 ### Your running browser
 
-With `BROWSER_ATTACH=true`, Agents do not get browsers of their own. They work in the Chrome or
-Chromium you have open, signed in wherever you are.
+In your running browser, Agents work in the Chrome or Chromium you have open, signed in wherever
+you are: in a conversation that moved there, or in every conversation with `BROWSER_ATTACH=true`.
 
 1. In Chrome 144 or later, open `chrome://inspect/#remote-debugging` and allow remote debugging.
-2. Choose **My running Chrome** on the **Browser** card under **Setup → Tools**, or run
-   `bazilion config set BROWSER_ATTACH true`.
-3. At an Agent's first browser action, Chrome asks whether to allow the connection. Allow it
-   within a minute.
+2. Ask the Agent to use your Chrome, or choose **My running Chrome** on the **Browser** card under
+   **Setup → Tools** (`bazilion config set BROWSER_ATTACH true`) to make it the default.
+3. When the Agent reaches your Chrome, Chrome asks whether to allow the connection. Allow it within
+   a minute.
 
 For another Chromium-family browser, or a profile outside the default place, start it with
 `--remote-debugging-port=9222 --user-data-dir=<directory>` and set
@@ -179,7 +196,15 @@ only for local development.
 
 ## MCP servers
 
-Tools from Model Context Protocol servers are offered to every turn as `mcp__<server>__<tool>`.
+Tools from Model Context Protocol servers reach every turn as `mcp__<server>__<tool>`.
+
+### Tools found when needed
+
+An Agent is not given every MCP tool up front. Its prompt lists each connection with how many
+tools it has, and the Agent loads the tools a task needs with `tool_search`, from their names and
+descriptions; they stay loaded for the rest of the conversation. A [script](#scripts) can call any
+of them, loaded or not. So many connections with many tools no longer fill the model's window
+before the conversation starts.
 
 ### Common connections
 
@@ -234,6 +259,21 @@ after 60 seconds and are never retried. Files in a tool's result reach the Agent
 pictures, text files as text, and others, such as a PDF, saved with its uploads under `mcp/`
 with their path given. Only tools are supported: no MCP resources, prompts, sampling or automatic
 OAuth sign-in.
+
+## Scripts
+
+With `codemode` an Agent writes one short JavaScript script that calls several of its tools, MCP
+tools included, and hands back only what matters, instead of one round trip through the model per
+call. Scripts run in a sandbox with no network, files or timers of their own: they reach the world
+only through the Agent's tools.
+
+- The conversation shows **Ran a script**, with the calls it made (✓ for each that worked) and the
+  files they saved.
+- A dangerous command or an MCP tool that asks first still waits for you inside a script.
+  Questions to you (`ask_user`, secret requests) and `browser_use` are never made from one.
+- Credentials are taken out of what each call returns, as for any tool result.
+- Code Mode adds about 840 tokens to each request. A script's long output is cut, and the whole of
+  it written to a file in the system's temporary folder, which a Docker turn cannot read.
 
 ## Helpers
 

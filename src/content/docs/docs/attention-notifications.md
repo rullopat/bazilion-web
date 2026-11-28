@@ -3,9 +3,9 @@ title: Attention notifications
 description: Send new Attention items to the Telegram bot's service topic, by kind and with quiet hours, from the web or the CLI.
 ---
 
-**Attention** lists what needs you: an Agent's questions and commands waiting for approval, lesson
-proposals, failed or cancelled learning reviews, failed scheduled triggers, stopped Agent message
-loops, Agent queues paused after a daemon restart, and failed background turns (see
+**Attention** lists what needs you: an Agent's questions and commands waiting for approval,
+failed scheduled triggers, stopped Agent message loops, Agent queues paused after a daemon
+restart, and failed background turns (see
 [Daily operations](/docs/operations/#attention)). Bazilion can post new items to the
 [Telegram](/docs/telegram/) bot's service topic, so they reach your phone. This is off by default.
 Questions and commands waiting for approval are not posted here: they go to the Agent's own topic
@@ -36,14 +36,13 @@ it on, pick the kinds, optionally set quiet hours, and save. From the CLI:
 ```sh
 bazilion notification settings
 bazilion notification configure --enable
-bazilion notification configure --kinds review_failure,trigger_failure
+bazilion notification configure --kinds turn_failure,trigger_failure
 bazilion notification configure --quiet-start 22:00 --quiet-end 07:00 --timezone Europe/Warsaw
 bazilion notification configure --clear-quiet-hours
 bazilion notification configure --disable
 ```
 
-The kinds are `lesson_proposal`, `review_failure`, `trigger_failure`, `agent_loop_break` and
-`queue_interrupted`.
+The kinds are `trigger_failure`, `agent_loop_break`, `queue_interrupted` and `turn_failure`.
 
 ## How sending works
 
